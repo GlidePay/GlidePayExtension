@@ -1,0 +1,7 @@
+https://www.amazon.com/gp/buy/*
+https://www.amazon.com/gp/buy/*
+
+The gp/buy/* is the checkout page.
+
+https://www.amazon.com/gp/buy/payselect/* is the choose a payment method part of checkout
+https://www.amazon.com/gp/buy/spc/* is the review items and shipping part of checkout.
