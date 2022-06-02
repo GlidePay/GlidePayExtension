@@ -8,7 +8,7 @@
     },
     "content_scripts": [
         {
-            "matches": ["*://www.amazon.com/gp/buy/payselect/*"],
+            "matches": ["*://www.amazon.com/*"],
             "js": ["scripts/button.js"]
         }
     ],

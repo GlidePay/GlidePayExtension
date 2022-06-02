@@ -1,12 +1,20 @@
 (function () {
     function addButton() {
-        var button = document.createElement("input");
+        var button = document.createElement("BUTTON");
+        button.innerText = "Pay with crypto"
         button.value = "Pay with crypto.";
         button.id = "crypto-button";
         button.type = "button";
-        // Having trouble getting the line of code below to work. We will need to find an
-        // element on the page that we can reliably query for.
-        document.getElementsByClassName(".a-container").appendChild(button);
+        
+        //This is for the product page
+        //var add_to_cart = document.getElementById("addToCart_feature_div");
+        //add_to_cart.appendChild(button);
+
+        for (const a of document.querySelectorAll("span")) {
+            if (a.textContent.includes("Credit or debit cards")) {
+              a.appendChild(button)
+            }
+          }
     }
 
     function defineEvent() {
@@ -14,7 +22,7 @@
             alert("Pay with crypto.");
         });
     }
-
     addButton();
     defineEvent();
 })();
+
