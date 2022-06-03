@@ -10,6 +10,10 @@
         {
             "matches": ["*://www.amazon.com/gp/buy/*"],
             "js": ["scripts/checkout.js"]
+        },
+        {
+            "matches": ["*://www.amazon.com/*/dp*"],
+            "js": ["scripts/productPage.js"]
         }
     ],
     "permissions": [
