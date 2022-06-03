@@ -8,8 +8,16 @@
     },
     "content_scripts": [
         {
-            "matches": ["*://www.amazon.com/gp/buy/payselect/*"],
-            "js": ["scripts/button.js"]
+            "matches": ["*://www.amazon.com/gp/buy/*"],
+            "js": ["scripts/checkout.js"]
+        },
+        {
+            "matches": ["*://www.amazon.com/*/dp*"],
+            "js": ["scripts/productPage.js"]
+        },
+        {
+            "matches": ["*://www.amazon.com/gp/cart*"],
+            "js": ["scripts/cart.js"]
         }
     ],
     "permissions": [
