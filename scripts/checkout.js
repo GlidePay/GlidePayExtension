@@ -1,3 +1,4 @@
+//Things to do, parse through the output of getProducts to get the id and number of items only and move getProducts in the manifest so it only works in the last page
 (function () {
     function addButton() {
         var button = document.createElement("BUTTON");
@@ -16,12 +17,16 @@
             }
           }
     }
-
+    function getProducts() {
+        var a = document.getElementsByName('dupOrderCheckArgs').values();
+        alert(document.querySelector("[name=dupOrderCheckArgs]").value);
+    }
     function defineEvent() {
         document.getElementById("crypto-button").addEventListener("click", function (event) {
             alert("Pay with crypto.");
         });
     }
+    getProducts();
     addButton();
     defineEvent();
 })();
