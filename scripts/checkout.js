@@ -18,7 +18,7 @@
           }
     }
     function getProducts() {
-        var a = document.getElementsByName('dupOrderCheckArgs').values();
+        var a = document.querySelector("[name=dupOrderCheckArgs]").value;
         alert(document.querySelector("[name=dupOrderCheckArgs]").value);
     }
     function defineEvent() {
