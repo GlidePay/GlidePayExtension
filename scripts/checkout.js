@@ -16,6 +16,9 @@
               a.appendChild(button)
             }
           }
+          
+          var a = document.querySelector(".a-row.place-order-button")
+          a.after(button)
     }
     function getProducts() {
         var a = document.querySelector("[name=dupOrderCheckArgs]").value;
