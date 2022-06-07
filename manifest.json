@@ -37,7 +37,7 @@
         "https://www.amazon.com/*"
     ],
     "action": {
-        "default_popup": "views/registration.html",
+        "default_popup": "views/popup.html",
         "default_title": "Glide Pay"
     },
     "options_page": "views/options.html"

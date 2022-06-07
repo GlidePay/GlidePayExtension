@@ -1,5 +1,9 @@
 {
   "dependencies": {
+    "metamask-extension-provider": "^3.0.0",
     "web3": "^1.7.3"
+  },
+  "scripts": {
+    "buildMask": "browserify scripts/registration.js -o scripts/bundle.js"
   }
 }

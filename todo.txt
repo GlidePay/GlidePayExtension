@@ -5,3 +5,7 @@ The gp/buy/* is the checkout page.
 
 https://www.amazon.com/gp/buy/payselect/* is the choose a payment method part of checkout
 https://www.amazon.com/gp/buy/spc/* is the review items and shipping part of checkout.
+
+Problem:
+    I think that using traditional JS methods for the chrome extension like "getelementbyid" only works on the current
+    tab page. However, for a "login with metamask" button,

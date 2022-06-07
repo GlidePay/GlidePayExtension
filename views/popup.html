@@ -5,10 +5,14 @@
         <script src="/bootstrap/bootstrap-5.2.0-beta1-dist/js/bootstrap.js"></script>
     </head>
     <body>
-        <script src="/scripts/popup.js"></script>
         <script src="/scripts/checkout.js"></script>
-        <div class="vw-100 vh-100">
-            <span id="products"></span>
+        <div class="d-flex flex-row justify-content-center">
+            <img src="/resources/images/testimg.png" alt="testimg" style="width: 50%; height: 50%">
+        </div>
+        <div class="align-content-center">
+            <button id="loginButton" class="btn btn-primary">Login with Metamask</button>
+            <p id='userWallet' class='text-lg text-gray-600 my-2'></p>
+            <script src="/scripts/bundle.js"></script>
         </div>
     </body>
 </html>
