@@ -1,3 +1,4 @@
+// ANY EDITS TO THIS MUST BE COMPILED WITH "npm run buildMask"
 window.userWalletAddress = null
 const loginButton = document.getElementById('loginButton')
 const userWallet = document.getElementById('userWallet')
@@ -16,7 +17,6 @@ function toggleButton() {
 }
 
 async function loginWithMetaMask() {
-    const web3 = new Web3(provider)
     const accounts = await Promise.all([
         provider.request({
             method: 'eth_requestAccounts',
