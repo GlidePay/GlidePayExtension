@@ -13,18 +13,14 @@
     function getProducts() {
         //Following line may not work in firefox
         var url = document.URL;
-        productID = url.split('/')[5];
-        quantityTemp = document.querySelectorAll(".a-dropdown-prompt");
-        quantity = quantityTemp[2].innerHTML;
-        var productInfo = [productID, quantity];
-        alert(productInfo.toString());
-        return productInfo;
+        alert(url.split('/')[5]);
     }
     function defineEvent() {
         document.getElementById("crypto-button").addEventListener("click", function (event) {
-            var purchaseInformation = getProducts();
+            alert("Pay with crypto.");
         });
     }
+    getProducts();
     addButton();
     defineEvent();
 })();
