@@ -13,20 +13,15 @@
     }
     function getProducts() {
         //Following line may not work in firefox
-        var productList = [];
-        for (const a of document.querySelectorAll(".a-row.sc-list-item.sc-list-item-border.sc-java-remote-feature")) {
-            //there is definitely a better way to do this
-            productId = a.outerHTML.split('data-asin="')[1].split('" data-encoded-offering')[0];
-            quantity = a.outerHTML.split('data-item-count="')[1].split('" data-item-index')[0];
-            productList.push([productId, quantity]);
-            alert(productList.toString());
-        }
+        var a = document.querySelectorAll(".a-row.sc-list-item.sc-list-item-border.sc-java-remote-feature");
+        alert(a[1].outerHTML);
     }
     function defineEvent() {
         document.getElementById("crypto-button").addEventListener("click", function (event) {
-            getProducts();
+            alert("Pay with crypto.");
         });
     }
+    getProducts();
     addButton();
     defineEvent();
 })();
