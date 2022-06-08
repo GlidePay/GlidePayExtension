@@ -11,6 +11,26 @@
         add_to_cart.after(button);
 
     }
+    function getPrice(productId) {
+        var price = null;
+        var xhr = new XMLHttpRequest();
+        var url = 'https://www.amazon.com/dp/' + productId;
+        xhr.open("GET", url);
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState == 4 /* DONE */) {
+                html = xhr.response
+                if (html.includes("snsAccordionRowMiddle")){
+                    price = html.split('a-offscreen">$')[3].split("</")[0];
+                    return price;
+                }
+                else {
+                    price = html.split('a-offscreen">')[1].split("</")[0];
+                    return price;
+                }
+            }
+          }
+          xhr.send();
+    }
     function getProducts() {
         //Following line may not work in firefox
         var productList = [];
@@ -25,8 +45,10 @@
     function defineEvent() {
         document.getElementById("crypto-button").addEventListener("click", function (event) {
             getProducts();
+            
         });
     }
+    alert(getPrice('B072BCNRTY'));
     addButton();
     defineEvent();
 })();
