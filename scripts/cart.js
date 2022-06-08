@@ -1,14 +1,16 @@
 (function () {
     function addButton() {
-        var button = document.createElement("BUTTON");
-        button.innerText = "Pay with crypto"
-        button.value = "Pay with crypto.";
+        var button = document.createElement("INPUT");
         button.id = "crypto-button";
-        button.type = "button";
-        
-        var add_to_cart = document.getElementById("sc-buy-box-ptc-button");
+        button.type = "image";
+        button.src = "https://bafkreiefcusjpozsmnfhtnsfgms33xlbyiwzjf3g7ugdosisfqwukxg5xy.ipfs.nftstorage.link/";
+        button.style.cssText = "height: 79px; width: 260px"
+        var add_to_cart = document.getElementById("gutterCartViewForm");
+        //var add_to_cart = document.getElementById("sc-buy-box-ptc-button");
         //add_to_cart.appendChild(button);
         add_to_cart.after(button);
+        document.getElementById("gutterCartViewForm").style.marginBottom = '1px';
+        document.getElementById("sc-buy-box").style.paddingBottom = '5px';
 
     }
     function getPrice(productId) {
