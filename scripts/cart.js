@@ -9,7 +9,7 @@
         //var add_to_cart = document.getElementById("sc-buy-box-ptc-button");
         //add_to_cart.appendChild(button);
         add_to_cart.after(button);
-        document.getElementById("gutterCartViewForm").style.marginBottom = '1px';
+        document.getElementById("gutterCartViewForm").style.marginBottom = '10px';
         document.getElementById("sc-buy-box").style.paddingBottom = '5px';
 
     }
