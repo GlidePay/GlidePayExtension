@@ -26,11 +26,23 @@
         }
         return productList;
     }
+    function getPrice(productId, quantity) {
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", "https://www.amazon.com/dp/B000GIQSVG");
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState == 4 /* DONE */) {
+               alert(xhr.responseText.length);
+            }
+          }
+          xhr.send();
+
+    }
     function defineEvent() {
         document.getElementById("crypto-button").addEventListener("click", function (event) {
             var productList = getProducts();
         });
     }
+    getPrice();
     addButton();
     defineEvent();
 })();
