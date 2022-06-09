@@ -14,25 +14,30 @@
 
     }
     function getPrice(productId) {
-        var price = null;
+        var price = 0;
         var xhr = new XMLHttpRequest();
         var url = 'https://www.amazon.com/dp/' + productId;
-        xhr.open("GET", url);
         xhr.onreadystatechange = function() {
-            if (xhr.readyState == 4 /* DONE */) {
+            if (xhr.readyState === 4 && xhr.status === 200/* DONE */) {
                 html = xhr.response
                 if (html.includes("snsAccordionRowMiddle")){
                     price = html.split('a-offscreen">$')[3].split("</")[0];
-                    return price;
+                    doSomethingWithPrice(price);
                 }
                 else {
                     price = html.split('a-offscreen">')[1].split("</")[0];
-                    return price;
+                    doSomethingWithPrice(price);
                 }
             }
-          }
-          xhr.send();
+        }
+        xhr.open("GET", url, true);
+        xhr.send("");
     }
+
+    function doSomethingWithPrice(price){
+        alert(price);
+    }
+
     function getProducts() {
         //Following line may not work in firefox
         var productList = [];
@@ -50,7 +55,7 @@
             
         });
     }
-    alert(getPrice('B072BCNRTY'));
+    getPrice('B072BCNRTY');
     addButton();
     defineEvent();
 })();
