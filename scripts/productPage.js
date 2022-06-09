@@ -5,7 +5,7 @@
         button.value = "Pay with crypto.";
         button.id = "crypto-button";
         button.type = "button";
-        
+
         var add_to_cart = document.getElementById("addToCart_feature_div");
         add_to_cart.appendChild(button);
 
@@ -28,4 +28,3 @@
     addButton();
     defineEvent();
 })();
-

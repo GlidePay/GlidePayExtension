@@ -5,16 +5,16 @@
         button.value = "Pay with crypto.";
         button.id = "crypto-button";
         button.type = "button";
-        
+
 
         for (const a of document.querySelectorAll("span")) {
             if (a.textContent.includes("Credit or debit cards")) {
-              a.appendChild(button)
+                a.appendChild(button)
             }
-          }
-          
-          var a = document.querySelector(".a-row.place-order-button")
-          a.after(button)
+        }
+
+        var a = document.querySelector(".a-row.place-order-button")
+        a.after(button)
     }
     function getProducts() {
         document.querySelectorAll("[name=dupOrderCheckArgs]");
@@ -46,4 +46,3 @@
     addButton();
     defineEvent();
 })();
-

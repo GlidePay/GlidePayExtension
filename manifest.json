@@ -34,7 +34,7 @@
         "webNavigation"
     ],
     "host_permissions": [
-        "http://www.amazon.com/*"
+        "https://www.amazon.com/*"
     ],
     "action": {
         "default_popup": "views/popup.html",

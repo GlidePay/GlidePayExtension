@@ -54,4 +54,3 @@
     addButton();
     defineEvent();
 })();
-
