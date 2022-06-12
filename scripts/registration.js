@@ -4,7 +4,6 @@ const loginButton = document.getElementById('loginButton')
 const userWallet = document.getElementById('userWallet')
 const createProvider = require('metamask-extension-provider')
 const provider = createProvider()
-const Web3 = require('web3');
 
 function toggleButton() {
     if (!provider) {
