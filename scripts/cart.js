@@ -71,13 +71,9 @@
     }
 
     function checkSignedIn() {
-        if (window.userWalletAddress !== undefined) {
-            alert(window.userWalletAddress);
-            alert("You are signed in!");
-        } else {
-            alert(window.userWalletAddress);
-            alert("You are not signed in!");
-        }
+        chrome.storage.local.get(['userWalletAddress'], function(result) {
+            alert(result.userWalletAddress);
+        });
     }
 
     function defineEvent() {
