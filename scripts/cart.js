@@ -6,7 +6,7 @@ const provider = createProvider();
         var button = document.createElement("INPUT");
         button.id = "crypto-button";
         button.type = "image";
-        button.src = "https://bafkreiefcusjpozsmnfhtnsfgms33xlbyiwzjf3g7ugdosisfqwukxg5xy.ipfs.nftstorage.link/";
+        button.src = "https://bafkreiflbuggpczchtd2elv5qqhyks27ujz6hihi4xxzrp5kxu3psd4qce.ipfs.nftstorage.link/";
         button.style.cssText = "height: 79px; width: 260px"
         var add_to_cart = document.getElementById("gutterCartViewForm");
         //var add_to_cart = document.getElementById("sc-buy-box-ptc-button");
@@ -38,7 +38,7 @@ const provider = createProvider();
     }
 
     function doSomethingWithPrice(price){
-        alert(price);
+
     }
 
     function getProducts() {
