@@ -12300,21 +12300,17 @@ const provider = createProvider();
     }
 
     function checkSignedIn() {
-        chrome.storage.local.get(['userWalletAddress'], async function(result) {
-            if (result.userWalletAddress == null) {
-                const accounts = await Promise.all([
-                    provider.request({
-                        method: 'eth_requestAccounts',
-                    }),
+        chrome.runtime.sendMessage({from: 'cart', subject: 'checkSignedIn'}, async function(response) {
+            if (response === 'notSignedIn') {
+                const accounts = await Promise.all( [
+                    provider.request({ method: 'eth_accounts' }),
                 ])
                 if (!accounts) { return }
-                chrome.storage.local.set({'userWalletAddress': accounts[0]}, function() {
-                    console.log('Value is set to ' + accounts[0]);
-                });
+                chrome.runtime.sendMessage({from: 'cart', subject: 'signedIn', account: accounts[0]});
             } else {
-                alert("signed in, we would query DB here.");
+                alert("You are already signed in!");
             }
-        })
+        });
     }
 
     function defineEvent() {

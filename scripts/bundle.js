@@ -21078,7 +21078,7 @@ const Eth = require('ethjs')
 const provider = createProvider()
 const transactButton = document.getElementById('transactButton')
 
-chrome.storage.local.get('userWalletAddress', function(result) {
+chrome.runtime.sendMessage({from: 'registration', subject: 'needAccount'}, function(result) {
     if (result.userWalletAddress !== null) {
         userWallet.innerText = result.userWalletAddress
         loginButton.innerText = 'Sign out of MetaMask'
@@ -21103,11 +21103,19 @@ function toggleButton() {
     }
 }
 
-function addTransactButton() {
+function addTransactButtonWallet() {
+    chrome.runtime.sendMessage({from: 'registration', subject: 'needAccount'}, function(result) {
+        alert(result.userWalletAddress)
+        addTransactButton(result.userWalletAddress);
+    });
+}
+
+function addTransactButton(userWalletAddress) {
     transactButton.addEventListener('click', async () => {
+        alert('transacting');
         const eth = new Eth(provider);
         eth.sendTransaction({
-            from: localStorage.getItem('userWalletAddress'),
+            from: userWalletAddress[0],
             // replace with our address
             to: '0x6e0E0e02377Bc1d90E8a7c21f12BA385C2C35f78',
             value: '45000000',
@@ -21116,7 +21124,7 @@ function addTransactButton() {
         }).then((result) => {
             alert(result)
         }).catch((error) => {
-            console.log(error)
+            alert(error)
         })
     });
 }
@@ -21128,12 +21136,8 @@ async function loginWithMetaMask() {
         }),
     ])
     if (!accounts) { return }
-    chrome.storage.local.set({'userWalletAddress': accounts[0]}, function() {
-        console.log('Value is set to ' + accounts[0]);
-    });
-    chrome.storage.local.get('userWalletAddress', function(result) {
-        userWallet.innerText = result.userWalletAddress
-    });
+    chrome.runtime.sendMessage({from: 'registration', subject: 'signedIn', account: accounts[0]});
+    userWallet.innerText = accounts[0];
     loginButton.innerText = 'Sign out of MetaMask'
 
     loginButton.removeEventListener('click', loginWithMetaMask)
@@ -21143,9 +21147,7 @@ async function loginWithMetaMask() {
 }
 
 function signOutOfMetaMask() {
-    chrome.storage.local.set({'userWalletAddress': null}, function() {
-        console.log('Value is set to ' + null);
-    });
+    chrome.runtime.sendMessage({from: 'registration', subject: 'signedOut'});
     userWallet.innerText = ''
     loginButton.innerText = 'Sign in with MetaMask'
 
@@ -21157,7 +21159,7 @@ function signOutOfMetaMask() {
 
 window.addEventListener('DOMContentLoaded', () => {
     toggleButton()
-    addTransactButton()
+    addTransactButtonWallet()
 });
 
 },{"ethjs":170,"metamask-extension-provider":202}]},{},[215]);
