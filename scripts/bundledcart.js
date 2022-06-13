@@ -12267,10 +12267,6 @@ const provider = createProvider();
         alert(price);
     }
 
-    function testOrder() {
-
-    }
-
     function getProducts() {
         var productList = [];
         var xhr = new XMLHttpRequest();
@@ -12296,7 +12292,11 @@ const provider = createProvider();
     }
 
     function doSomethingWithProducts(productList){
-        alert("dosomething" + productList.toString());
+        chrome.runtime.onMessage.addListener((msg, sender, response) => {
+            if ((msg.from === 'popup') && (msg.subject === 'needInfo')) {
+                response(productList.toString());
+            }
+        });
     }
 
     function checkSignedIn() {
@@ -12322,11 +12322,16 @@ const provider = createProvider();
             checkSignedIn();
             getPrice('B089ST5SB6');
             getProducts();
-            testOrder();
         });
     }
     addButton();
     defineEvent();
+    chrome.runtime.sendMessage(
+        {
+            from: 'cart',
+            subject: 'productData',
+        });
+    getProducts();
 })();
 
 },{"metamask-extension-provider":90}]},{},[96]);
