@@ -17,7 +17,7 @@
         },
         {
             "matches": ["*://www.amazon.com/gp/cart*"],
-            "js": ["scripts/cart.js"]
+            "js": ["scripts/bundledcart.js"]
         }
     ],
     "permissions": [

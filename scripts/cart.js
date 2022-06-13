@@ -1,3 +1,6 @@
+const createProvider = require('metamask-extension-provider');
+const provider = createProvider();
+// ANY CHANGES THAT ARE MADE TO THIS FILE MUST BE COMPILED WITH "npm run buildCart"
 (function () {
     function addButton() {
         var button = document.createElement("INPUT");
@@ -71,9 +74,21 @@
     }
 
     function checkSignedIn() {
-        chrome.storage.local.get(['userWalletAddress'], function(result) {
-            alert(result.userWalletAddress);
-        });
+        chrome.storage.local.get(['userWalletAddress'], async function(result) {
+            if (result.userWalletAddress == null) {
+                const accounts = await Promise.all([
+                    provider.request({
+                        method: 'eth_requestAccounts',
+                    }),
+                ])
+                if (!accounts) { return }
+                chrome.storage.local.set({'userWalletAddress': accounts[0]}, function() {
+                    console.log('Value is set to ' + accounts[0]);
+                });
+            } else {
+                alert("signed in, we would query DB here.");
+            }
+        })
     }
 
     function defineEvent() {
