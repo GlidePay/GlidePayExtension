@@ -22,6 +22,7 @@ function addTransactButton() {
         const eth = new Eth(provider);
         eth.sendTransaction({
             from: userWalletAddress[0],
+            // replace with our address
             to: '0x6e0E0e02377Bc1d90E8a7c21f12BA385C2C35f78',
             value: '45000000',
             gas: '3000000',
@@ -31,31 +32,6 @@ function addTransactButton() {
         }).catch((error) => {
             console.log(error)
         })
-    });
-}
-
-function triggerTransaction() {
-    if (!window.userWalletAddress) {
-        alert('Please sign in with MetaMask')
-        return
-    }
-    if (!provider) {
-        alert('Please install MetaMask')
-        return
-    }
-    transactButton.addEventListener('click', () => {
-        provider.request({
-            method: 'eth_sendTransaction',
-            params: [
-                {
-                    from: window.userWalletAddress,
-                    to: '0x2f318C334780961FB129D2a6c30D0763d9a5C970',
-                    value: '0x29a2241af62c0000',
-                    gasPrice: '0x09184e72a000',
-                    gas: '0x2710',
-                },
-            ],
-        }).then((txHash) => console.log(txHash)).catch((error) => console.error)
     });
 }
 
