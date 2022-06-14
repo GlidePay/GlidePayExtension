@@ -1,12 +1,18 @@
 const setProductInfo = product => {
-    document.getElementById("productInfo").textContent = product;
+        console.log(product);
 }
 window.addEventListener('DOMContentLoaded', () => {
-    chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
-        chrome.tabs.sendMessage(
-            tabs[0].id,
-            {from: 'popup', subject: 'needInfo'},
+        chrome.windows.getAll({populate:true}, (windows) => {
+            windows.forEach((window) => {
+              window.tabs.forEach((tab) => {
+                console.log(tab.id);
+                chrome.tabs.sendMessage(
+                    tab.id,
+                    {from: 'popup', subject: 'needInfo'},
+                    setProductInfo);
+            });
+            });
+          });
+          
 
-            setProductInfo);
-    })
 });
