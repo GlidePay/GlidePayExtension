@@ -12316,14 +12316,15 @@ const provider = createProvider();
 
     function defineEvent() {
         document.getElementById("crypto-button").addEventListener("click", function (event) {
-
+            checkSignedIn();
+            checkAccount();
             chrome.runtime.sendMessage(
                 {
                     from: 'cart',
                     subject: 'openPopup',
+                    screenSize: screen.width
                 }
             )
-
         });
     }
     addButton();

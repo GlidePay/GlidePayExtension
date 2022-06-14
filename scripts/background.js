@@ -2,7 +2,7 @@ let userWallet;
 chrome.runtime.onMessage.addListener((message, sender, response) => {
     if ((message.from === 'cart') && (message.subject === 'openPopup')) {
         let top = 0;
-        let left = 0;
+        let left = message.screenSize - 300; //300 is width of extension
         try {
             const lastFocused = chrome.getLastFocused()
             top = lastFocused.top;

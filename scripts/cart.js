@@ -100,6 +100,7 @@ const provider = createProvider();
                 {
                     from: 'cart',
                     subject: 'openPopup',
+                    screenSize: screen.width
                 }
             )
         });
