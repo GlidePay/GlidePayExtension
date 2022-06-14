@@ -87,3 +87,4 @@ window.addEventListener('DOMContentLoaded', () => {
     toggleButton()
     addTransactButtonWallet()
 });
+

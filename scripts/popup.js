@@ -10,9 +10,7 @@ window.addEventListener('DOMContentLoaded', () => {
                     tab.id,
                     {from: 'popup', subject: 'needInfo'},
                     setProductInfo);
+              });
             });
-            });
-          });
-          
-
+        });
 });

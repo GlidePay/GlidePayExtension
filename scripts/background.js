@@ -1,16 +1,19 @@
 let userWallet;
+let _popupId;
 chrome.runtime.onMessage.addListener((message, sender, response) => {
+    //TODO: Replace this with a switch statement
     if ((message.from === 'cart') && (message.subject === 'openPopup')) {
         let top = 0;
-        let left = message.screenSize - 300; //300 is width of extension
+        let left = message.screenSize - 360; //300 is width of extension
         try {
             const lastFocused = chrome.getLastFocused()
             top = lastFocused.top;
-            left = lastFocused.left + (lastFocused.width - 250);
         } catch (e) {
         }
         chrome.windows.create({url:"views/popup.html", type: "popup", top: top, left: left,
-            width: 300, height: 300});
+            width: 360, height: 620}, (window) => {
+            _popupId = window.id;
+        });
     }
     if ((message.from === 'cart') && (message.subject === 'productData')) {
         chrome.pageAction.show(sender.tab.id);

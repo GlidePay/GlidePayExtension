@@ -15,6 +15,9 @@ const provider = createProvider();
         document.getElementById("gutterCartViewForm").style.marginBottom = '10px';
         document.getElementById("sc-buy-box").style.paddingBottom = '5px';
     }
+
+    // TODO: Add a listener that listens for the costInfo message from metamask-controller.
+    // TODO: Then, return the total sum of the cost of all items in the cart.
     function getPrice(productId) {
         var price = 0;
         var xhr = new XMLHttpRequest();
