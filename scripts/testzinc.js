@@ -5,7 +5,7 @@ var xhr = new XMLHttpRequest();
 xhr.open("POST", url);
 
 xhr.setRequestHeader("Content-Type", "application/json");
-xhr.setRequestHeader("Authorization", "Basic: " + btoa("2BCEDB1E4313FC88D2196076"));
+xhr.setRequestHeader("Authorization", "Basic: " + btoa("2BCEDB1E4313FC88D2196076:"));
 
 xhr.onreadystatechange = function () {
     if (xhr.readyState === 4) {
@@ -60,8 +60,8 @@ var data = `{
     "phone_number": "5551234567"
   },
   "retailer_credentials": {
-    "email": "timbeaver@gmail.com",
-    "password": "myRetailerPassword",
+    "email": "omario@sas.upenn.edu",
+    "password": "World123$",
     "totp_2fa_key": "3DE4 3ERE 23WE WIKJ GRSQ VOBG CO3D METM 2NO2 OGUX Z7U4 DP2H UYMA"
   },
   "webhooks": {

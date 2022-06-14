@@ -4,3 +4,5 @@
 # Editor-based HTTP Client requests
 /httpRequests/
 node_modules/
+scripts/testzinc.js
+scripts/zinc_api.js

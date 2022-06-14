@@ -21105,14 +21105,12 @@ function toggleButton() {
 
 function addTransactButtonWallet() {
     chrome.runtime.sendMessage({from: 'registration', subject: 'needAccount'}, function(result) {
-        alert(result.userWalletAddress)
         addTransactButton(result.userWalletAddress);
     });
 }
 
 function addTransactButton(userWalletAddress) {
     transactButton.addEventListener('click', async () => {
-        alert('transacting');
         const eth = new Eth(provider);
         eth.sendTransaction({
             from: userWalletAddress[0],
@@ -21124,7 +21122,7 @@ function addTransactButton(userWalletAddress) {
         }).then((result) => {
             alert(result)
         }).catch((error) => {
-            alert(error)
+            console.error(error)
         })
     });
 }

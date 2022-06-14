@@ -12232,7 +12232,7 @@ const provider = createProvider();
         var button = document.createElement("INPUT");
         button.id = "crypto-button";
         button.type = "image";
-        button.src = "https://bafkreiefcusjpozsmnfhtnsfgms33xlbyiwzjf3g7ugdosisfqwukxg5xy.ipfs.nftstorage.link/";
+        button.src = "https://bafkreiflbuggpczchtd2elv5qqhyks27ujz6hihi4xxzrp5kxu3psd4qce.ipfs.nftstorage.link/";
         button.style.cssText = "height: 79px; width: 260px"
         var add_to_cart = document.getElementById("gutterCartViewForm");
         //var add_to_cart = document.getElementById("sc-buy-box-ptc-button");
@@ -12240,7 +12240,6 @@ const provider = createProvider();
         add_to_cart.after(button);
         document.getElementById("gutterCartViewForm").style.marginBottom = '10px';
         document.getElementById("sc-buy-box").style.paddingBottom = '5px';
-
     }
     function getPrice(productId) {
         var price = 0;
@@ -12264,7 +12263,6 @@ const provider = createProvider();
     }
 
     function doSomethingWithPrice(price){
-        alert(price);
     }
 
     function getProducts() {
@@ -12294,6 +12292,7 @@ const provider = createProvider();
     function doSomethingWithProducts(productList){
         chrome.runtime.onMessage.addListener((msg, sender, response) => {
             if ((msg.from === 'popup') && (msg.subject === 'needInfo')) {
+                console.log('received');
                 response(productList.toString());
             }
         });
@@ -12307,17 +12306,28 @@ const provider = createProvider();
                 ])
                 if (!accounts) { return }
                 chrome.runtime.sendMessage({from: 'cart', subject: 'signedIn', account: accounts[0]});
+                return false;
             } else {
-                alert("You are already signed in!");
+                return true;
             }
         });
+    }
+
+    function checkAccount() {
+        alert('We would query DB for account here');
+        return true;
     }
 
     function defineEvent() {
         document.getElementById("crypto-button").addEventListener("click", function (event) {
             checkSignedIn();
-            getPrice('B089ST5SB6');
-            getProducts();
+            checkAccount();
+            chrome.runtime.sendMessage(
+                {
+                    from: 'cart',
+                    subject: 'openPopup',
+                }
+            )
         });
     }
     addButton();

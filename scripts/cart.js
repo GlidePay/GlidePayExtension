@@ -14,7 +14,6 @@ const provider = createProvider();
         add_to_cart.after(button);
         document.getElementById("gutterCartViewForm").style.marginBottom = '10px';
         document.getElementById("sc-buy-box").style.paddingBottom = '5px';
-
     }
     function getPrice(productId) {
         var price = 0;
@@ -38,7 +37,6 @@ const provider = createProvider();
     }
 
     function doSomethingWithPrice(price){
-
     }
 
     function getProducts() {
@@ -68,6 +66,7 @@ const provider = createProvider();
     function doSomethingWithProducts(productList){
         chrome.runtime.onMessage.addListener((msg, sender, response) => {
             if ((msg.from === 'popup') && (msg.subject === 'needInfo')) {
+                console.log('received');
                 response(productList.toString());
             }
         });
@@ -81,17 +80,28 @@ const provider = createProvider();
                 ])
                 if (!accounts) { return }
                 chrome.runtime.sendMessage({from: 'cart', subject: 'signedIn', account: accounts[0]});
+                return false;
             } else {
-                alert("You are already signed in!");
+                return true;
             }
         });
+    }
+
+    function checkAccount() {
+        alert('We would query DB for account here');
+        return true;
     }
 
     function defineEvent() {
         document.getElementById("crypto-button").addEventListener("click", function (event) {
             checkSignedIn();
-            getPrice('B089ST5SB6');
-            getProducts();
+            checkAccount();
+            chrome.runtime.sendMessage(
+                {
+                    from: 'cart',
+                    subject: 'openPopup',
+                }
+            )
         });
     }
     addButton();

@@ -13,15 +13,15 @@ function test(){
         },
         max_price: 2300,
         shipping_address: {
-            first_name: "Tim",
-            last_name: "Beaver",
-            address_line1: "77 Massachusetts Avenue",
+            first_name: "Omar",
+            last_name: "Ameen",
+            address_line1: "998 Balsam Court",
             address_line2: "",
-            zip_code: "02139",
-            city: "Cambridge",
-            state: "MA",
-            country: "US",
-            phone_number: "5551230101"
+            zip_code: "L9E1R5",
+            city: "Milton",
+            state: "ON",
+            country: "CA",
+            phone_number: "2155544036"
         },
         is_gift: true,
         gift_message: "Here is your package, Tim! Enjoy!",
@@ -31,26 +31,29 @@ function test(){
             max_price: 0
         },
         payment_method: {
-            name_on_card: "Ben Bitdiddle",
-            number: "5555555555554444",
-            security_code: "123",
-            expiration_month: 1,
-            expiration_year: 2020,
+            name_on_card: "Omar Ameen",
+            number: "4482330105195879",
+            security_code: "282",
+            expiration_month: 8,
+            expiration_year: 2025,
             use_gift: false
         },
         billing_address: {
-            first_name: "William",
-            last_name: "Rogers",
-            address_line1: "84 Massachusetts Ave",
+            first_name: "Omar",
+            last_name: "Ameen",
+            address_line1: "998 Balsam Court",
             address_line2: "",
-            zip_code: "02139",
-            city: "Cambridge",
-            state: "MA",
-            country: "US",
-            phone_number: "5551234567"
+            zip_code: "L9E1R5",
+            city: "Milton",
+            state: "ON",
+            country: "CA",
+            phone_number: "2155544036"
+        },
+        retailer_credentials: {
+            "email": "omario@sas.upenn.edu",
+            "password": "WOrld123$",
         }
-        }, {
-        withCredentials: true,
+    }, {
         headers: {
             'Authorization': 'Basic ' + btoa(key + ":")
         }
@@ -63,7 +66,7 @@ function test(){
     });
 }
 
-function send_order(orders) {
+function send_order() {
     var url = "https://api.zinc.io/v1/orders";
 
     var xhr = new XMLHttpRequest();
@@ -124,8 +127,8 @@ function send_order(orders) {
             "phone_number": "5551234567"
         },
         "retailer_credentials": {
-            "email": "timbeaver@gmail.com",
-            "password": "myRetailerPassword",
+            "email": "omario@sas.upenn.edu",
+            "password": "World123$",
             "totp_2fa_key": "3DE4 3ERE 23WE WIKJ GRSQ VOBG CO3D METM 2NO2 OGUX Z7U4 DP2H UYMA"
         }
     });
