@@ -28,7 +28,6 @@ const provider = createProvider();
                                     // replace with our address
                                     to: '0x6e0E0e02377Bc1d90E8a7c21f12BA385C2C35f78',
                                     value: ethCostWei.toString(),
-                                    gas: '3000000',
                                     data: '0x',
                                 }).then((result) => {
                                     alert(result)
