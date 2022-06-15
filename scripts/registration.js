@@ -38,6 +38,7 @@ function addTransactButtonWallet() {
 }
 
 function addTransactButton(userWalletAddress) {
+    let transactionHash;
     transactButton.addEventListener('click', async () => {
         const eth = new Eth(provider);
         eth.sendTransaction({
@@ -48,11 +49,37 @@ function addTransactButton(userWalletAddress) {
             gas: '3000000',
             data: '0x',
         }).then((result) => {
+            transactionHash = result;
+            transactionStatus(transactionHash);
             alert(result)
         }).catch((error) => {
             console.error(error)
         })
     });
+}
+
+// ETHERSCAN API functions
+function transactionStatus(transactionHash) {
+    var api = require('etherscan-api').init(process.env.ETHERSCAN_API_KEY);
+    var promiseObject = api.proxy.eth_getTransactionByHash(transactionHash);
+    promiseObject.then(value => {
+        successfulTransaction(value);
+    }).catch(error => {
+        failedTransaction(error);
+    });
+}
+
+function successfulTransaction(message) {
+    console.log("Successful Transaction");
+    console.log(message.toString());
+    // Convert crypto to cash
+    // Send order info to Zinc API
+    // tell Zinc API to buy
+}
+
+function failedTransaction(message) {
+    console.error("Failed transaction");
+    // Show user that transaction failed
 }
 
 async function loginWithMetaMask() {
