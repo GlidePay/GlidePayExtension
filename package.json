@@ -12,7 +12,7 @@
     "xhr2": "^0.2.1"
   },
   "scripts": {
-    "buildMask": "browserify scripts/registration.js -o scripts/bundle.js",
+    "buildMask": "browserify scripts/metamask-controller.js -o scripts/metmaskbundled.js",
     "buildCart": "browserify scripts/cart.js -o scripts/bundledcart.js"
   }
 }

@@ -15,7 +15,6 @@
                     }
                     chrome.windows.create({url:"views/popup.html", type: "popup", top: top, left: left,
                         width: 360, height: 620}, (window) => {
-                        _popupId = window.id;
                     });
                     // TODO: Make sure order popup has a confirm button that sends out a message from windowedpopup
                     //  with message promptTransaction

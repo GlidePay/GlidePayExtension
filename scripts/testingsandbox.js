@@ -1,10 +1,11 @@
-// ANY EDITS TO THIS MUST BE COMPILED WITH "npm run buildMask"
 const loginButton = document.getElementById('loginButton')
 const userWallet = document.getElementById('userWallet')
 const createProvider = require('metamask-extension-provider')
 const Eth = require('ethjs')
 const provider = createProvider()
 const transactButton = document.getElementById('transactButton')
+
+//TODO: Move metamask sign in functions to the appropriate locations.
 
 chrome.runtime.sendMessage({from: 'registration', subject: 'needAccount'}, function(result) {
     if (result.userWalletAddress !== null) {
@@ -37,6 +38,8 @@ function addTransactButtonWallet() {
     });
 }
 
+
+// TODO: Move these functions to the cartconfirmation file and make them async.
 function addTransactButton(userWalletAddress) {
     let transactionHash;
     transactButton.addEventListener('click', async () => {

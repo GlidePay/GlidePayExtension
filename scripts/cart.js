@@ -1,6 +1,3 @@
-const createProvider = require('metamask-extension-provider');
-const provider = createProvider();
-// ANY CHANGES THAT ARE MADE TO THIS FILE MUST BE COMPILED WITH "npm run buildCart"
 (function () {
     function addButton() {
         var button = document.createElement("INPUT");
@@ -74,18 +71,7 @@ const provider = createProvider();
     }
 
     function checkSignedIn() {
-        chrome.runtime.sendMessage({from: 'cart', subject: 'checkSignedIn'}, async function(response) {
-            if (response === 'notSignedIn') {
-                const accounts = await Promise.all( [
-                    provider.request({ method: 'eth_accounts' }),
-                ])
-                if (!accounts) { return }
-                chrome.runtime.sendMessage({from: 'cart', subject: 'signedIn', account: accounts[0]});
-                return false;
-            } else {
-                return true;
-            }
-        });
+        chrome.runtime.sendMessage({from: 'cart', subject: 'checkSignedIn'});
     }
 
     function checkAccount() {
