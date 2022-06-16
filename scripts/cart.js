@@ -16,8 +16,6 @@ const provider = createProvider();
         document.getElementById("sc-buy-box").style.paddingBottom = '5px';
     }
 
-    // TODO: Add a listener that listens for the costInfo message from metamask-controller.
-    // TODO: Then, return the total sum of the cost of all items in the cart.
     function getPrice(productId) {
         var price = 0;
         var xhr = new XMLHttpRequest();
@@ -97,15 +95,20 @@ const provider = createProvider();
 
     function defineEvent() {
         document.getElementById("crypto-button").addEventListener("click", function (event) {
+            // Should check if signed in
             checkSignedIn();
-            checkAccount();
-            chrome.runtime.sendMessage(
-                {
-                    from: 'cart',
-                    subject: 'openPopup',
-                    screenSize: screen.width
-                }
-            )
+            if (checkAccount()) {
+                //TODO: Refactor this so that it passes cart info to the windowpopup
+                chrome.runtime.sendMessage(
+                    {
+                        from: 'cart',
+                        subject: 'createOrderPopup',
+                        //cart: getProducts() <-- Something like this? Although I think we can only pass strings as a
+                        // message so we'll need to convert the array to a string or JSON or something.
+                        screenSize: screen.width
+                    }
+                )
+            }
         });
     }
     addButton();

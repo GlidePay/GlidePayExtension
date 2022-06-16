@@ -10,8 +10,9 @@ const provider = createProvider();
         if (message.from === 'windowpopup') {
             switch (message.subject) {
                 case 'promptTransaction': {
+                    // TODO: Refactor this so that instead the windowpopup passes the costinfo in the data of
+                    //  prompTransaction, making it so that we dont need to send a message to get the costinfo
                     chrome.runtime.sendMessage({from: 'metamask-controller', subject: 'costInfo'}, function (result) {
-                        //TODO: Take costinfo --> convert to wei --> create transaction --> prompt user to confirm transaction
                         var usdCost = result;
                         //TODO: Replace this with a more secure way of calling the API.
                         const key = '2c103fd3455f8aa304a0c71c05bb7b44f12471bae3edaf0f943afbf086719dcb';
