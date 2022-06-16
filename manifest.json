@@ -4,7 +4,7 @@
     "version": "1.0.0",
     "description": "Enables Web 2 payments with Cryptocurrency",
     "background": {
-        "service_worker": "scripts/background.js"
+        "service_worker": "scripts/background.js",
     },
     "content_scripts": [
         {
@@ -18,6 +18,14 @@
         {
             "matches": ["*://www.amazon.com/gp/cart*"],
             "js": ["scripts/bundledcart.js"]
+        },
+        {
+            "matches": ["*"],
+            "js": ["scripts/metamaskbundled.js"]
+        },
+        {
+            "matches": ["*"],
+            "js": ["scripts/popup-controller.js"]
         }
     ],
     "permissions": [
