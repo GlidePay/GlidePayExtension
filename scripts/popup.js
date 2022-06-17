@@ -3,10 +3,8 @@ const setProductInfo = products => {
     console.log(JSON.stringify(products));
     let i = 0;
     for (let value in products) {
-        alert(i);
         const productSection = document.getElementById('productInfo')
         const image = document.createElement('img');
-        alert(products[value]);
         image.src = products[value][2]
         const title = document.createElement('p');
         title.textContent = products[value][3]
