@@ -1,4 +1,3 @@
-//TODO: Integrate this with the rest of the extension (Maybe call it from background.js? or have it be a content script? idk)
 // ALL CHANGES TO THIS FILE MUST BE COMPILED WITH "npm run buildMask"
 const createProvider = require('metamask-extension-provider')
 const Eth = require('ethjs')

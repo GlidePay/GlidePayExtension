@@ -13,32 +13,46 @@
         document.getElementById("sc-buy-box").style.paddingBottom = '5px';
     }
 
-    function getPrice(productId) {
-        var price = 0;
-        var xhr = new XMLHttpRequest();
-        var url = 'https://www.amazon.com/dp/' + productId;
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState === 4 && xhr.status === 200/* DONE */) {
-                html = xhr.response
-                if (html.includes("snsAccordionRowMiddle")){
-                    price = html.split('a-offscreen">$')[3].split("</")[0];
-                    doSomethingWithPrice(price);
+    function getPrice(productDict) {
+        //Sometimes doesnt get price for subscription options
+        for(let key in productDict) {
+            let productId = key;
+            let price = 0;
+            let xhr = new XMLHttpRequest();
+            let url = 'https://www.amazon.com/dp/' + productId;
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4 && xhr.status === 200/* DONE */) {
+                    html = xhr.response
+                    productDict[productId][2] = html.split('<div id="imgTagWrapperId" class="imgTagWrapper"')[1].split('</div')[0].split('src')[1].split('"')[1];
+                    productDict[productId][3] = html.split('class="a-size-large product-title-word-break">')[1].split("</")[0]
+                    if (html.includes("snsAccordionRowMiddle")){
+                        price = html.split('a-offscreen">$')[3].split("</")[0];
+                        productDict[productId][1] = price;
+                    }
+                    else {
+                        price = html.split('a-offscreen">')[1].split("</")[0];
+                        productDict[productId][1] = price;
+                    }
+
                 }
-                else {
-                    price = html.split('a-offscreen">')[1].split("</")[0];
-                    doSomethingWithPrice(price);
-                }
+                sendProductInfo(productDict);
             }
+            xhr.open("GET", url, true);
+            xhr.send("");
         }
-        xhr.open("GET", url, true);
-        xhr.send("");
     }
 
-    function doSomethingWithPrice(price){
+    function sendProductInfo(productDict){
+        chrome.runtime.onMessage.addListener((msg, sender, response) => {
+            if ((msg.from === 'popup') && (msg.subject === 'needInfo')) {
+                console.log("Received")
+                response(productDict);
+            }
+        });
     }
 
     function getProducts() {
-        var productList = [];
+        var productDict = {};
         var xhr = new XMLHttpRequest();
         xhr.responseType = "document";
         var url = 'https://www.amazon.com/gp/cart/view.html';
@@ -48,26 +62,15 @@
                 let div_list = html.querySelectorAll("div.a-section.a-spacing-mini.sc-list-body.sc-java-remote-feature > .a-row.sc-list-item.sc-list-item-border.sc-java-remote-feature");
                 let div_array = [...div_list];
                 for (let i = 0; i < div_array.length; i++) {
-                        console.log("colog" + div_array[i].outerHTML);
-                        let product_id = div_array[i].outerHTML.split('data-asin="')[1].split('" data-encoded-offering')[0];
-                        let quantity = div_array[i].outerHTML.toString().split('data-quantity="')[1].split('" data-subtotal')[0];
-                        productList.push([product_id, quantity]);
-                        console.log("Colog2" + productList);
+                    let product_id = div_array[i].outerHTML.split('data-asin="')[1].split('" data-encoded-offering')[0];
+                    let quantity = div_array[i].outerHTML.toString().split('data-quantity="')[1].split('" data-subtotal')[0];
+                    productDict[product_id] = [quantity, 0, '', ''];
                 }
-                doSomethingWithProducts(productList);
+                getPrice(productDict);
             }
         }
         xhr.open("GET", url, true);
         xhr.send("");
-    }
-
-    function doSomethingWithProducts(productList){
-        chrome.runtime.onMessage.addListener((msg, sender, response) => {
-            if ((msg.from === 'popup') && (msg.subject === 'needInfo')) {
-                console.log('received');
-                response(productList.toString());
-            }
-        });
     }
 
     function checkSignedIn() {
