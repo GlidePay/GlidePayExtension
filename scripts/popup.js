@@ -3,6 +3,7 @@ const setProductInfo = products => {
     for (let value in products) {
         const productSection = document.getElementById('productInfo')
         const image = document.createElement('img');
+        alert(products[value]);
         image.src = products[value][2]
         const title = document.createElement('p');
         title.textContent = products[value][3]

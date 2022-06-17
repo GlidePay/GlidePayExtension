@@ -29,15 +29,15 @@
             if (xhr.readyState === 4 && xhr.status === 200/* DONE */) {
                 html = xhr.response
                 let div_list = html.querySelectorAll("div.a-section.a-spacing-mini.sc-list-body.sc-java-remote-feature > .a-row.sc-list-item.sc-list-item-border.sc-java-remote-feature");
+                let img_list = html.querySelectorAll("div.a-section.a-spacing-mini.sc-list-body.sc-java-remote-feature > .a-row.sc-list-item.sc-list-item-border.sc-java-remote-feature > .sc-list-item-content > .a-row.a-spacing-base.a-spacing-top-base > .a-column.a-span10 > .a-fixed-left-grid > .a-fixed-left-grid-inner > .a-fixed-left-grid-col.a-float-left.sc-product-image-desktop.a-col-left > .a-link-normal.sc-product-link");
                 let div_array = [...div_list];
+                let img_array = [...img_list];
                 for (let i = 0; i < div_array.length; i++) {
                     let product_id = div_array[i].outerHTML.split('data-asin="')[1].split('" data-encoded-offering')[0];
                     let quantity = div_array[i].outerHTML.toString().split('data-quantity="')[1].split('" data-subtotal')[0];
                     let price = div_array[i].outerHTML.toString().split('data-price="')[1].split('" data-quantity')[0];
-                    productDict[product_id] = [quantity, 0, '', ''];
-                    productDict[product_id][1] = price;
-                    alert(html.split('<div id="imgTagWrapperId" class="imgTagWrapper"')[1].split('</div')[0].split('src')[1].split('"')[1]);
-                    productDict[product_id][2] = html.split('<div id="imgTagWrapperId" class="imgTagWrapper"')[1].split('</div')[0].split('src')[1].split('"')[1];
+                    let img = img_array[i].outerHTML.toString().split('src="')[1].split('"')[0];
+                    productDict[product_id] = [quantity, price, img, ''];
                     productDict[product_id][3] = html.split('class="a-size-large product-title-word-break">')[1].split("</")[0]
                 }
             }
