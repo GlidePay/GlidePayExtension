@@ -32,14 +32,10 @@ chrome.runtime.onMessage.addListener((message, sender, response) => {
                 //TODO: Integrate passing cart price to the metamask controller page
                 chrome.runtime.sendMessage({from: 'background', subject: 'promptTransaction'});
             } break;
-            case 'needInfo': {
-
-            }
         }
     } else if (message.from === 'metamask-controller') {
         switch (message.subject) {
             case 'costInfo': {
-
             }
         }
     }
