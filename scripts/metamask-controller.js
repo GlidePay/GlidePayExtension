@@ -8,7 +8,7 @@ let userWallet;
     const eth = new Eth(provider);
     chrome.runtime.onMessage.addListener((message, sender, response) => {
         // Handling interaction with the windowed popup (Example: Confirmation cart)
-        if (message.from === 'windowpopup') {
+        if (message.from === 'background') {
             switch (message.subject) {
                 case 'promptTransaction': {
                     // TODO: Refactor this so that instead the windowpopup passes the costinfo in the data of
@@ -39,17 +39,11 @@ let userWallet;
                             }
                         );
                     });
-                }
-            }
-        }
-        else if (message.from === 'cart') {
-            switch (message.subject) {
-                case 'checkSignedIn': {
-                    if (userWallet === null || userWallet === undefined) {
-                        loginWithMetaMask().then(accounts => {
-                            userWallet = accounts[0];
-                        });
-                    }
+                } break;
+                case 'metaSignIn': {
+                    loginWithMetaMask().then(accounts => {
+                        userWallet = accounts[0];
+                    });
                 } break;
             }
         }
