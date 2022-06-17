@@ -33,9 +33,9 @@
                         productDict[product_id] = [quantity, price, img, ''];
                         console.log("PRODUCT DICK" + JSON.stringify(productDict));
                     }
+                    console.log("Product Dict: " + JSON.stringify(productDict));
+                    response(productDict);
                 }
-                console.log("Product Dict: " + JSON.stringify(productDict));
-                response(productDict);
             }
             xhr.open("GET", url, true);
             xhr.send("");

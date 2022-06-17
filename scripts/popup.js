@@ -1,5 +1,5 @@
 const setProductInfo = products => {
-    alert("CALLED!");// This pops up like a 10000 times? I dont know why.
+    console.log("Receceived product info");
     console.log(JSON.stringify(products));
     let i = 0;
     for (let value in products) {
