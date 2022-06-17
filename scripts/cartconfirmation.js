@@ -2,8 +2,8 @@ const setProductInfo = products => {
     console.log("Receceived product info");
     console.log(JSON.stringify(products));
     let i = 0;
+    const productSection = document.getElementById('productInfo')
     for (let value in products) {
-        const productSection = document.getElementById('productInfo')
         const image = document.createElement('img');
         image.src = products[value][2]
         const title = document.createElement('p');
@@ -14,18 +14,22 @@ const setProductInfo = products => {
         productSection.appendChild(title);
         i++;
     }
+    const confirmButton = document.createElement('button');
+    confirmButton.setAttribute('class', 'btn btn-primary');
+    confirmButton.textContent = 'Confirm Order';
+    productSection.appendChild(confirmButton);
 }
 
 window.addEventListener('DOMContentLoaded', () => {
     chrome.windows.getAll({populate:true}, (windows) => {
-        windows.forEach((window) => {
-            window.tabs.forEach((tab) => {
-                console.log(tab.id);
-                chrome.tabs.sendMessage(
-                    tab.id,
-                    {from: 'popup', subject: 'needInfo'},
-                    setProductInfo);
-            });
-        });
+        for (let a in windows) {
+            for (let b in windows[a].tabs) {
+                if (windows[a].tabs[b].url.includes('amazon.com')) {
+                    chrome.tabs.sendMessage(windows[a].tabs[b].id, {from: 'popup', subject: 'needInfo'},
+                        setProductInfo);
+                    break;
+                }
+            }
+        }
     });
 });
