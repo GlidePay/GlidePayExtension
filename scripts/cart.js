@@ -34,9 +34,14 @@
                     let product_id = div_array[i].outerHTML.split('data-asin="')[1].split('" data-encoded-offering')[0];
                     let quantity = div_array[i].outerHTML.toString().split('data-quantity="')[1].split('" data-subtotal')[0];
                     let price = div_array[i].outerHTML.toString().split('data-price="')[1].split('" data-quantity')[0];
-                    productDict[product_id] = [quantity, price, 0, '', ''];
+                    productDict[product_id] = [quantity, 0, '', ''];
+                    productDict[product_id][1] = price;
+                    alert(html.split('<div id="imgTagWrapperId" class="imgTagWrapper"')[1].split('</div')[0].split('src')[1].split('"')[1]);
+                    productDict[product_id][2] = html.split('<div id="imgTagWrapperId" class="imgTagWrapper"')[1].split('</div')[0].split('src')[1].split('"')[1];
+                    productDict[product_id][3] = html.split('class="a-size-large product-title-word-break">')[1].split("</")[0]
                 }
             }
+            console.log("Product Dict: " + JSON.stringify(productDict));
             sendProductInfo(productDict);
         }
         xhr.open("GET", url, true);
@@ -56,6 +61,7 @@
         document.getElementById("crypto-button").addEventListener("click", function (event) {
             // Should check if signed in
             checkSignedIn();
+            getProducts();
             if (checkAccount()) {
                 //TODO: Refactor this so that it passes cart info to the windowpopup
                 chrome.runtime.sendMessage(
@@ -77,5 +83,4 @@
             from: 'cart',
             subject: 'productData',
         });
-    getProducts();
 })();
