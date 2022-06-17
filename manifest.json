@@ -14,10 +14,6 @@
         {
             "matches": ["http://*/*", "https://*/*"],
             "js": ["scripts/metamaskbundled.js"]
-        },
-        {
-            "matches": ["http://*/*", "https://*/*"],
-            "js": ["scripts/popup-controller.js"]
         }
     ],
     "permissions": [
