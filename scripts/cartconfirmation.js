@@ -20,7 +20,7 @@ const setProductInfo = products => {
     productSection.appendChild(confirmButton);
 }
 
-window.addEventListener('DOMContentLoaded', () => {
+window.addEventListener('load', () => {
     chrome.windows.getAll({populate:true}, (windows) => {
         for (let a in windows) {
             for (let b in windows[a].tabs) {
