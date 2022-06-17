@@ -49,6 +49,13 @@
         });
     }
 
+    chrome.runtime.onMessage.addListener((msg, sender, response) => {
+        if (msg.from === 'popup' && msg.subject === 'promptTransaction') {
+            chrome.runtime.sendMessage({from: 'cart', subject: 'promptTransaction', price: msg.price});
+            alert(msg.price + "msgreceived");
+        }
+    });
+
     function checkSignedIn() {
         chrome.runtime.sendMessage({from: 'cart', subject: 'checkSignedIn'});
     }

@@ -23259,6 +23259,7 @@ let userWallet;
         if (message.from === 'background') {
             switch (message.subject) {
                 case 'promptTransaction': {
+                    alert(message.price + "eth");
                     // TODO: Refactor this so that instead the windowpopup passes the costinfo in the data of
                     //  promptTransaction, making it so that we dont need to send a message to get the costinfo
                     chrome.runtime.sendMessage({from: 'metamask-controller', subject: 'costInfo'}, function (result) {

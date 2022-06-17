@@ -8,9 +8,6 @@ chrome.runtime.onMessage.addListener((message, sender, response) => {
                 chrome.runtime.sendMessage({from: 'background', subject: 'metaSignIn'});
             } break;
             case 'createOrderPopup': {
-                //TODO: Integrate getting cart info (Raiyan's code would go here I assume)
-                // TODO: Make sure order popup has a confirm button that sends out a message from windowedpopup
-                //  with message promptTransaction
                 let top = 0;
                 let left = message.screenSize - 720;
                 try {
@@ -25,12 +22,9 @@ chrome.runtime.onMessage.addListener((message, sender, response) => {
             case 'createRegistrationPopup': {
                 // TODO: Create registration popup (Need DB integration first.)
             } break;
-        }
-    } else if (message.from === 'popup') {
-        switch (message.subject) {
             case 'promptTransaction': {
-                //TODO: Integrate passing cart price to the metamask controller page
-                chrome.runtime.sendMessage({from: 'background', subject: 'promptTransaction'});
+                alert('Transaction prompt');
+                chrome.runtime.sendMessage({from: 'background', subject: 'promptTransaction', price: message.price});
             } break;
         }
     } else if (message.from === 'metamask-controller') {
