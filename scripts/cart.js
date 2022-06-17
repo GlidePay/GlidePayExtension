@@ -38,7 +38,6 @@
                     let price = div_array[i].outerHTML.toString().split('data-price="')[1].split('" data-quantity')[0];
                     let img = img_array[i].outerHTML.toString().split('src="')[1].split('"')[0];
                     productDict[product_id] = [quantity, price, img, ''];
-                    productDict[product_id][3] = html.split('class="a-size-large product-title-word-break">')[1].split("</")[0]
                 }
             }
             console.log("Product Dict: " + JSON.stringify(productDict));

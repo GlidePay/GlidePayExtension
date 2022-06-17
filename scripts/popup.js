@@ -1,6 +1,8 @@
 const setProductInfo = products => {
     console.log(JSON.stringify(products));
+    let i = 0;
     for (let value in products) {
+        alert(i);
         const productSection = document.getElementById('productInfo')
         const image = document.createElement('img');
         alert(products[value]);
@@ -9,7 +11,7 @@ const setProductInfo = products => {
         title.textContent = products[value][3]
         productSection.appendChild(image);
         productSection.appendChild(title);
-
+        i++;
     }
 }
 
