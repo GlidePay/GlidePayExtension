@@ -14,6 +14,7 @@
     }
 
     function sendProductInfo(productDict){
+        alert(productDict.toString());
         chrome.runtime.onMessage.addListener((msg, sender, response) => {
             if ((msg.from === 'popup') && (msg.subject === 'needInfo')) {
                 console.log("Received")

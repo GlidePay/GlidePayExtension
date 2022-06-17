@@ -4,27 +4,19 @@
     "version": "1.0.0",
     "description": "Enables Web 2 payments with Cryptocurrency",
     "background": {
-        "service_worker": "scripts/background.js",
+        "service_worker": "scripts/background.js"
     },
     "content_scripts": [
         {
-            "matches": ["*://www.amazon.com/gp/buy/*"],
-            "js": ["scripts/checkout.js"]
-        },
-        {
-            "matches": ["*://www.amazon.com/*/dp*"],
-            "js": ["scripts/productPage.js"]
-        },
-        {
             "matches": ["*://www.amazon.com/gp/cart*"],
-            "js": ["scripts/bundledcart.js"]
+            "js": ["scripts/cart.js"]
         },
         {
-            "matches": ["*"],
+            "matches": ["http://*/*", "https://*/*"],
             "js": ["scripts/metamaskbundled.js"]
         },
         {
-            "matches": ["*"],
+            "matches": ["http://*/*", "https://*/*"],
             "js": ["scripts/popup-controller.js"]
         }
     ],
