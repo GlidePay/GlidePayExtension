@@ -20,7 +20,6 @@ const setProductInfo = products => {
     confirmButton.setAttribute('class', 'btn btn-primary');
     confirmButton.textContent = 'Confirm Order';
     confirmButton.addEventListener('click', () => {
-        alert(totalprice + "buttonclicked");
         chrome.windows.getAll({populate:true}, (windows) => {
             for (let a in windows) {
                 for (let b in windows[a].tabs) {

@@ -1,11 +1,9 @@
 // ALL CHANGES TO THIS FILE MUST BE COMPILED WITH "npm run buildCart"
 (function () {
-    let userWallet;
     const createProvider = require('metamask-extension-provider')
     const Eth = require('ethjs')
     const axios = require("axios");
     const provider = createProvider();
-    const eth = new Eth(provider);
 
     function addButton() {
         let button = document.createElement("INPUT");
@@ -59,30 +57,21 @@
 
     chrome.runtime.onMessage.addListener((msg, sender, response) => {
         if (msg.from === 'popup' && msg.subject === 'promptTransaction') {
+            const eth = new Eth(provider);
             const usdCost = msg.price;
             //TODO: Replace this with a more secure way of calling the API.
             const key = '2c103fd3455f8aa304a0c71c05bb7b44f12471bae3edaf0f943afbf086719dcb';
-            alert(msg.price + "msgreceived");
             axios.get(`https://min-api.cryptocompare.com/data/price?fsym=ETH&tsyms=USD` + '&api_key={' + key + '}').then(
-                r => {
-                    const ethCost = r.data.USD;
-                    const ethFinal = ethCost / usdCost;
-                    // This is throwing an error >_<
-                    const ethCostWei = eth.utils.toWei(ethFinal, 'ether');
+                function (response) {
+                    const ethCost = response.data.USD;
+                    const ethFinal = usdCost / ethCost;
                     eth.sendTransaction({
-                        //TODO: Replace this with the address of the user's wallet.
-                        from: '0x6e0E0e02377Bc1d90E8a7c21f12BA385C2C35f78',
-                        // replace with our address
-                        to: '0x6e0E0e02377Bc1d90E8a7c21f12BA385C2C35f78',
-                        value: ethCostWei.toString(),
-                        data: '0x',
-                    }).then((result) => {
-                        alert(result)
-                    }).catch((error) => {
-                        console.error(error)
+                        from: provider.selectedAddress,
+                        to: '0x8d12a197cb00d4747a1fe03395095ce2a5cc6819',
+                        value: ethFinal * 1000000000000000000,
+                        data: provider.selectedAddress,
                     });
-                }
-            );
+                });
         }
     });
 
@@ -93,11 +82,8 @@
             }),
         ])
         if (!accounts) {
-            userWallet = null;
-        } else {
-            userWallet = accounts[0];
+            alert('Please sign in to MetaMask.');
         }
-        alert(accounts[0]);
     }
 
     function checkAccount() {
@@ -108,20 +94,23 @@
     function defineEvent() {
         document.getElementById("crypto-button").addEventListener("click", function (event) {
             // Should check if signed in
-            getProducts();
-            checkSignedIn();
-            if (checkAccount()) {
-                //TODO: Refactor this so that it passes cart info to the windowpopup
-                chrome.runtime.sendMessage(
-                    {
-                        from: 'cart',
-                        subject: 'createOrderPopup',
-                        //cart: getProducts() <-- Something like this? Although I think we can only pass strings as a
-                        // message so we'll need to convert the array to a string or JSON or something.
-                        screenSize: screen.width
-                    }
-                )
-            }
+            checkSignedIn().then(() => {
+                getProducts();
+                if (checkAccount()) {
+                    //TODO: Refactor this so that it passes cart info to the windowpopup
+                    chrome.runtime.sendMessage(
+                        {
+                            from: 'cart',
+                            subject: 'createOrderPopup',
+                            // cart: getProducts() <-- Something like this? Although I think we can only pass strings as a
+                            // message so we'll need to convert the array to a string or JSON or something.
+                            screenSize: screen.width
+                        }
+                    )
+                }
+            }, () => {
+                alert('You must be signed in to use this feature.');
+            });
         });
     }
     addButton();

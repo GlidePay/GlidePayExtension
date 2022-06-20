@@ -8,14 +8,3 @@ https://www.amazon.com/gp/buy/spc/* is the review items and shipping part of che
 
 Zinc API Token: 2BCEDB1E4313FC88D2196076
 
-onbuttonclick:
-    if user is not signed in -> check window.userwalletaddress (NEED TO FIGURE OUT HOW TO GLOBALLY STORE WALLET ADDRESS STATE)
-        metamask login popup -> call function from testingsandbox.js to sign in
-    else user is signed in
-        check if account exists in database -> query database for wallet address
-            if account doesnt exist:
-                redirect to registration page
-            else account exists:
-                extension pops up and prompts user to pick address, pick crypto, and confirm purchase
-                get prices and create metamask transaction popup
-
