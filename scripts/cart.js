@@ -67,9 +67,15 @@
                     const ethFinal = usdCost / ethCost;
                     eth.sendTransaction({
                         from: provider.selectedAddress,
-                        to: '0x8d12a197cb00d4747a1fe03395095ce2a5cc6819',
+                        to: '0xB5EC5c29Ed50067ba97c4009e14f5Bff607a324c',
                         value: ethFinal * 1000000000000000000,
                         data: provider.selectedAddress,
+                    }).then((result) => {
+                        alert('Transaction sent!');
+                        console.log(result);
+                        //TODO: Send transaction hash to lambda server. We also need to, at this point,
+                        // send the cart info to the lambda server so that it can be ordered with ZincAPI if the
+                        // transaction is successful.
                     });
                 });
         }
