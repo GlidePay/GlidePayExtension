@@ -23246,63 +23246,138 @@ function wrappy (fn, cb) {
 }
 
 },{}],245:[function(require,module,exports){
-// ALL CHANGES TO THIS FILE MUST BE COMPILED WITH "npm run buildMask"
-const createProvider = require('metamask-extension-provider')
-const Eth = require('ethjs')
-const axios = require("axios");
-const provider = createProvider();
-let userWallet;
-alert('loginWithMetaMask');
-const eth = new Eth(provider);
-chrome.runtime.onMessage.addListener((message, sender, response) => {
-    // Handling interaction with the windowed popup (Example: Confirmation cart)
-    if (message.from === 'background') {
-        switch (message.subject) {
-            case 'promptTransaction': {
-                alert(message.price + "eth");
-                // TODO: Refactor this so that instead the windowpopup passes the costinfo in the data of
-                //  promptTransaction, making it so that we dont need to send a message to get the costinfo
-                chrome.runtime.sendMessage({from: 'metamask-controller', subject: 'costInfo'}, function (result) {
-                    var usdCost = result;
-                    //TODO: Replace this with a more secure way of calling the API.
-                    const key = '2c103fd3455f8aa304a0c71c05bb7b44f12471bae3edaf0f943afbf086719dcb';
-                    //This returns the price of ETH in USD.
-                    //TODO: Get the actual coin the user wants to pay with and then substitute that into this link.
-                    axios.get(`https://min-api.cryptocompare.com/data/price?fsym=ETH&tsyms=USD` + '&api_key={' + key + '}').then(
-                        r => {
-                            var ethCost = r.data.USD;
-                            var ethFinal = ethCost / usdCost;
-                            var ethCostWei = eth.utils.toWei(ethFinal, 'ether');
-                            eth.sendTransaction({
-                                //TODO: Replace this with the address of the user's wallet.
-                                from: '0x6e0E0e02377Bc1d90E8a7c21f12BA385C2C35f78',
-                                // replace with our address
-                                to: '0x6e0E0e02377Bc1d90E8a7c21f12BA385C2C35f78',
-                                value: ethCostWei.toString(),
-                                data: '0x',
-                            }).then((result) => {
-                                alert(result)
-                            }).catch((error) => {
-                                console.error(error)
-                            });
-                        }
-                    );
-                });
-            } break;
-            case 'metaSignIn': {
-                loginWithMetaMask().then(accounts => {
-                    userWallet = accounts[0];
-                });
-            } break;
-        }
+// ALL CHANGES TO THIS FILE MUST BE COMPILED WITH "npm run buildCart"
+(function () {
+    let userWallet;
+    const createProvider = require('metamask-extension-provider')
+    const Eth = require('ethjs')
+    const axios = require("axios");
+    const provider = createProvider();
+    const eth = new Eth(provider);
+
+    function addButton() {
+        let button = document.createElement("INPUT");
+        button.id = "crypto-button";
+        button.type = "image";
+        button.src = "https://bafkreiflbuggpczchtd2elv5qqhyks27ujz6hihi4xxzrp5kxu3psd4qce.ipfs.nftstorage.link/";
+        button.style.cssText = "height: 79px; width: 260px"
+        let add_to_cart = document.getElementById("gutterCartViewForm");
+        add_to_cart.after(button);
+        document.getElementById("gutterCartViewForm").style.marginBottom = '10px';
+        document.getElementById("sc-buy-box").style.paddingBottom = '5px';
     }
-});
-// Function that signs us in with metamask
-async function loginWithMetaMask() {
-    return await Promise.all([
-        provider.request({
-            method: 'eth_requestAccounts'
-        }),
-    ]);
-}
+
+    function getProducts() {
+        console.log('yo');
+        let productDict = {};
+        let xhr = new XMLHttpRequest();
+        xhr.responseType = "document";
+        let url = 'https://www.amazon.com/gp/cart/view.html';
+        xhr.onreadystatechange = async function() {
+            if (xhr.readyState === 4 && xhr.status === 200/* DONE */) {
+                let html = xhr.response
+                let div_list = html.querySelectorAll("div.a-section.a-spacing-mini.sc-list-body.sc-java-remote-feature > .a-row.sc-list-item.sc-list-item-border.sc-java-remote-feature");
+                let img_list = html.querySelectorAll("div.a-section.a-spacing-mini.sc-list-body.sc-java-remote-feature > .a-row.sc-list-item.sc-list-item-border.sc-java-remote-feature > .sc-list-item-content > .a-row.a-spacing-base.a-spacing-top-base > .a-column.a-span10 > .a-fixed-left-grid > .a-fixed-left-grid-inner > .a-fixed-left-grid-col.a-float-left.sc-product-image-desktop.a-col-left > .a-link-normal.sc-product-link");
+                let div_array = [...div_list];
+                let img_array = [...img_list];
+                for (let i = 0; i < div_array.length; i++) {
+                    let product_id = div_array[i].outerHTML.split('data-asin="')[1].split('" data-encoded-offering')[0];
+                    let quantity = div_array[i].outerHTML.toString().split('data-quantity="')[1].split('" data-subtotal')[0];
+                    let price = div_array[i].outerHTML.toString().split('data-price="')[1].split('" data-quantity')[0];
+                    let img = img_array[i].outerHTML.toString().split('src="')[1].split('"')[0];
+                    productDict[product_id] = [quantity, price, img, ''];
+                    console.log("PRODUCT DICK" + JSON.stringify(productDict));
+                }
+                console.log("Product Dict: " + JSON.stringify(productDict));
+                sendMessage(productDict)
+            }
+        }
+        xhr.open("GET", url, true);
+        xhr.send("");
+    }
+
+    function sendMessage(productDict){
+        chrome.runtime.onMessage.addListener((msg, sender, response) => {
+            if (msg.from === 'popup' && msg.subject === 'needInfo') {
+                console.log('test2');
+                response(productDict);
+            }
+        });
+    }
+
+    chrome.runtime.onMessage.addListener((msg, sender, response) => {
+        if (msg.from === 'popup' && msg.subject === 'promptTransaction') {
+            const usdCost = msg.price;
+            //TODO: Replace this with a more secure way of calling the API.
+            const key = '2c103fd3455f8aa304a0c71c05bb7b44f12471bae3edaf0f943afbf086719dcb';
+            alert(msg.price + "msgreceived");
+            axios.get(`https://min-api.cryptocompare.com/data/price?fsym=ETH&tsyms=USD` + '&api_key={' + key + '}').then(
+                r => {
+                    const ethCost = r.data.USD;
+                    const ethFinal = ethCost / usdCost;
+                    const ethCostWei = eth.utils.toWei(ethFinal, 'ether');
+                    eth.sendTransaction({
+                        //TODO: Replace this with the address of the user's wallet.
+                        from: '0x6e0E0e02377Bc1d90E8a7c21f12BA385C2C35f78',
+                        // replace with our address
+                        to: '0x6e0E0e02377Bc1d90E8a7c21f12BA385C2C35f78',
+                        value: ethCostWei.toString(),
+                        data: '0x',
+                    }).then((result) => {
+                        alert(result)
+                    }).catch((error) => {
+                        console.error(error)
+                    });
+                }
+            );
+        }
+    });
+
+    async function checkSignedIn() {
+        const accounts = await Promise.all([
+            provider.request({
+                method: 'eth_requestAccounts',
+            }),
+        ])
+        if (!accounts) {
+            userWallet = null;
+        } else {
+            userWallet = accounts[0];
+        }
+        alert(accounts[0]);
+    }
+
+    function checkAccount() {
+        alert('We would query DB for account here');
+        return true;
+    }
+
+    function defineEvent() {
+        document.getElementById("crypto-button").addEventListener("click", function (event) {
+            // Should check if signed in
+            getProducts();
+            checkSignedIn();
+            if (checkAccount()) {
+                //TODO: Refactor this so that it passes cart info to the windowpopup
+                chrome.runtime.sendMessage(
+                    {
+                        from: 'cart',
+                        subject: 'createOrderPopup',
+                        //cart: getProducts() <-- Something like this? Although I think we can only pass strings as a
+                        // message so we'll need to convert the array to a string or JSON or something.
+                        screenSize: screen.width
+                    }
+                )
+            }
+        });
+    }
+    addButton();
+    defineEvent();
+    chrome.runtime.sendMessage(
+        {
+            from: 'cart',
+            subject: 'productData',
+        });
+})();
+
 },{"axios":29,"ethjs":178,"metamask-extension-provider":213}]},{},[245]);

@@ -22,15 +22,17 @@ chrome.runtime.onMessage.addListener((message, sender, response) => {
             case 'createRegistrationPopup': {
                 // TODO: Create registration popup (Need DB integration first.)
             } break;
-            case 'promptTransaction': {
-                alert('Transaction prompt');
-                chrome.runtime.sendMessage({from: 'background', subject: 'promptTransaction', price: message.price});
-            } break;
         }
     } else if (message.from === 'metamask-controller') {
         switch (message.subject) {
             case 'costInfo': {
             }
         }
+    }
+});
+
+chrome.runtime.onMessage.addListener((message, sender, response) => {
+    if ((message.from === 'cart') && (message.subject === 'promptTransaction')) {
+        chrome.runtime.sendMessage({from: 'background', subject: 'promptTransaction', price: message.price});
     }
 });

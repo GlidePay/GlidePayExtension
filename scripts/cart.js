@@ -1,4 +1,12 @@
+// ALL CHANGES TO THIS FILE MUST BE COMPILED WITH "npm run buildCart"
 (function () {
+    let userWallet;
+    const createProvider = require('metamask-extension-provider')
+    const Eth = require('ethjs')
+    const axios = require("axios");
+    const provider = createProvider();
+    const eth = new Eth(provider);
+
     function addButton() {
         let button = document.createElement("INPUT");
         button.id = "crypto-button";
@@ -51,13 +59,45 @@
 
     chrome.runtime.onMessage.addListener((msg, sender, response) => {
         if (msg.from === 'popup' && msg.subject === 'promptTransaction') {
-            chrome.runtime.sendMessage({from: 'cart', subject: 'promptTransaction', price: msg.price});
+            const usdCost = msg.price;
+            //TODO: Replace this with a more secure way of calling the API.
+            const key = '2c103fd3455f8aa304a0c71c05bb7b44f12471bae3edaf0f943afbf086719dcb';
             alert(msg.price + "msgreceived");
+            axios.get(`https://min-api.cryptocompare.com/data/price?fsym=ETH&tsyms=USD` + '&api_key={' + key + '}').then(
+                r => {
+                    const ethCost = r.data.USD;
+                    const ethFinal = ethCost / usdCost;
+                    // This is throwing an error >_<
+                    const ethCostWei = eth.utils.toWei(ethFinal, 'ether');
+                    eth.sendTransaction({
+                        //TODO: Replace this with the address of the user's wallet.
+                        from: '0x6e0E0e02377Bc1d90E8a7c21f12BA385C2C35f78',
+                        // replace with our address
+                        to: '0x6e0E0e02377Bc1d90E8a7c21f12BA385C2C35f78',
+                        value: ethCostWei.toString(),
+                        data: '0x',
+                    }).then((result) => {
+                        alert(result)
+                    }).catch((error) => {
+                        console.error(error)
+                    });
+                }
+            );
         }
     });
 
-    function checkSignedIn() {
-        chrome.runtime.sendMessage({from: 'cart', subject: 'checkSignedIn'});
+    async function checkSignedIn() {
+        const accounts = await Promise.all([
+            provider.request({
+                method: 'eth_requestAccounts',
+            }),
+        ])
+        if (!accounts) {
+            userWallet = null;
+        } else {
+            userWallet = accounts[0];
+        }
+        alert(accounts[0]);
     }
 
     function checkAccount() {
