@@ -23337,7 +23337,7 @@ function wrappy (fn, cb) {
             if (!accounts) {
                 alert('Please sign in to MetaMask.');
             } else {
-                return await checkAccount(accounts[0]);
+                return checkAccount(accounts[0]);
             }
         } catch (err) {
             console.log(err);
@@ -23345,6 +23345,7 @@ function wrappy (fn, cb) {
     }
 
     function checkAccount(wallet) {
+        //TODO: Check if returns account. If not, call createuser lambda function.
         console.log("WALLET: " + wallet);
         fetch ("https://de1tn2srhk.execute-api.us-east-1.amazonaws.com/default/findUserByWalletRDS", {
                 method: 'POST',
@@ -23353,6 +23354,16 @@ function wrappy (fn, cb) {
                 })
             }).then(response => response.text()).then(data => {
                 console.log("DATA" + data);
+                if (data === "") {
+                    fetch ("https://kyr8ehszh2.execute-api.us-east-1.amazonaws.com/default/createUserRDS", {
+                            method: 'POST',
+                            body: JSON.stringify({
+                                wallet,
+                            })
+                    }).then(response => response.text()).then(data => {
+                        console.log("DATA" + data);
+                    });
+                }
         });
     }
 

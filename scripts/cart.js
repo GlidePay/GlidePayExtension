@@ -97,6 +97,7 @@
     }
 
     function checkAccount(wallet) {
+        // Checks if account exists, if not creates one.
         console.log("WALLET: " + wallet);
         fetch ("https://de1tn2srhk.execute-api.us-east-1.amazonaws.com/default/findUserByWalletRDS", {
                 method: 'POST',
@@ -105,6 +106,16 @@
                 })
             }).then(response => response.text()).then(data => {
                 console.log("DATA" + data);
+                if (data === "") {
+                    fetch ("https://kyr8ehszh2.execute-api.us-east-1.amazonaws.com/default/createUserRDS", {
+                            method: 'POST',
+                            body: JSON.stringify({
+                                wallet,
+                            })
+                    }).then(response => response.text()).then(data => {
+                        console.log("DATA" + data);
+                    });
+                }
         });
     }
 
