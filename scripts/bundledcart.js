@@ -23284,9 +23284,7 @@ function wrappy (fn, cb) {
                     let price = div_array[i].outerHTML.toString().split('data-price="')[1].split('" data-quantity')[0];
                     let img = img_array[i].outerHTML.toString().split('src="')[1].split('"')[0];
                     productDict[product_id] = [quantity, price, img, ''];
-                    console.log("PRODUCT DICK" + JSON.stringify(productDict));
                 }
-                console.log("Product Dict: " + JSON.stringify(productDict));
                 sendMessage(productDict)
             }
         }
@@ -23315,36 +23313,54 @@ function wrappy (fn, cb) {
                     const ethFinal = usdCost / ethCost;
                     eth.sendTransaction({
                         from: provider.selectedAddress,
-                        to: 'omario.eth',
+                        to: '0xB5EC5c29Ed50067ba97c4009e14f5Bff607a324c',
                         value: ethFinal * 1000000000000000000,
                         data: provider.selectedAddress,
+                    }).then((result) => {
+                        alert('Transaction sent!');
+                        console.log(result);
+                        //TODO: Send transaction hash to lambda server. We also need to, at this point,
+                        // send the cart info to the lambda server so that it can be ordered with ZincAPI if the
+                        // transaction is successful.
                     });
                 });
         }
     });
 
     async function checkSignedIn() {
-        const accounts = await Promise.all([
-            provider.request({
-                method: 'eth_requestAccounts',
-            }),
-        ])
-        if (!accounts) {
-            alert('Please sign in to MetaMask.');
+        try {
+            const accounts = await Promise.all([
+                provider.request({
+                    method: 'eth_requestAccounts',
+                }),
+            ])
+            if (!accounts) {
+                alert('Please sign in to MetaMask.');
+            } else {
+                return await checkAccount(accounts[0]);
+            }
+        } catch (err) {
+            console.log(err);
         }
     }
 
-    function checkAccount() {
-        alert('We would query DB for account here');
-        return true;
+    function checkAccount(wallet) {
+        console.log("WALLET: " + wallet);
+        fetch ("https://de1tn2srhk.execute-api.us-east-1.amazonaws.com/default/findUserByWalletRDS", {
+                method: 'POST',
+                body: JSON.stringify({
+                    wallet,
+                })
+            }).then(response => response.text()).then(data => {
+                console.log("DATA" + data);
+        });
     }
 
     function defineEvent() {
         document.getElementById("crypto-button").addEventListener("click", function (event) {
             // Should check if signed in
-            checkSignedIn().then(() => {
-                getProducts();
-                if (checkAccount()) {
+            checkSignedIn().then((res) => {
+                if (res) {
                     //TODO: Refactor this so that it passes cart info to the windowpopup
                     chrome.runtime.sendMessage(
                         {
@@ -23355,7 +23371,10 @@ function wrappy (fn, cb) {
                             screenSize: screen.width
                         }
                     )
+                } else {
+                    alert('Would prompt to register here.');
                 }
+                getProducts();
             }, () => {
                 alert('You must be signed in to use this feature.');
             });

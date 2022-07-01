@@ -20,6 +20,7 @@ const setProductInfo = products => {
     confirmButton.setAttribute('class', 'btn btn-primary');
     confirmButton.textContent = 'Confirm Order';
     confirmButton.addEventListener('click', () => {
+        lambdaTest();
         chrome.windows.getAll({populate:true}, (windows) => {
             for (let a in windows) {
                 for (let b in windows[a].tabs) {
@@ -28,7 +29,6 @@ const setProductInfo = products => {
                             from: 'popup',
                             subject: 'promptTransaction',
                             price: totalprice});
-                        window.close();
                         break;
                     }
                 }
@@ -36,6 +36,17 @@ const setProductInfo = products => {
         });
     });
     productSection.appendChild(confirmButton);
+}
+
+function lambdaTest() {
+    fetch('https://a5w54in31c.execute-api.us-east-1.amazonaws.com/default/omarpython', {
+        method: 'post',
+    })
+        .then(response => response.text())
+        .then(data => {
+            console.log(data);
+            //use keys
+        });
 }
 
 window.addEventListener('load', () => {
