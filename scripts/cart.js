@@ -1,7 +1,7 @@
 // ALL CHANGES TO THIS FILE MUST BE COMPILED WITH "npm run buildCart"
 (function () {
     const createProvider = require('metamask-extension-provider')
-    const Eth = require('ethjs')
+    const Web3 = require('web3');
     const axios = require("axios");
     const provider = createProvider();
 
@@ -55,7 +55,7 @@
 
     chrome.runtime.onMessage.addListener((msg, sender, response) => {
         if (msg.from === 'popup' && msg.subject === 'promptTransaction') {
-            const eth = new Eth(provider);
+            const web3 = new Web3(provider);
             const usdCost = msg.price;
             //TODO: Replace this with a more secure way of calling the API.
             const key = '2c103fd3455f8aa304a0c71c05bb7b44f12471bae3edaf0f943afbf086719dcb';
@@ -63,17 +63,22 @@
                 function (response) {
                     const ethCost = response.data.USD;
                     const ethFinal = usdCost / ethCost;
-                    eth.sendTransaction({
+                    web3.eth.sendTransaction({
                         from: provider.selectedAddress,
                         to: '0xB5EC5c29Ed50067ba97c4009e14f5Bff607a324c',
                         value: ethFinal * 1000000000000000000,
-                        data: provider.selectedAddress,
-                    }).then((result) => {
-                        alert('Transaction sent!');
-                        console.log(result);
-                        //TODO: Send transaction hash to lambda server. We also need to, at this point,
-                        // send the cart info to the lambda server so that it can be ordered with ZincAPI if the
-                        // transaction is successful.
+                    }).on(('error'), function (error) {
+                        console.log(error.stack);
+                    }).on(('transactionHash'), function (txHash) {
+                        console.log(txHash);
+                        fetch ('https://u1krl1v735.execute-api.us-east-1.amazonaws.com/default/getTransaction', {
+                            method: 'post',
+                            body: txHash
+                        }).then(response => response.text()).then(data => {
+                            console.log("Transaction hash: " + txHash + "Result: " + data);
+                        }).catch(error => {
+                            console.log(error.stack);
+                        });
                     });
                 });
         }
@@ -114,7 +119,10 @@
                             })
                     }).then(response => response.text()).then(data => {
                         console.log("DATA" + data);
+                        return data;
                     });
+                } else {
+                    return data;
                 }
         });
     }
@@ -122,21 +130,17 @@
     function defineEvent() {
         document.getElementById("crypto-button").addEventListener("click", function (event) {
             // Should check if signed in
-            checkSignedIn().then((res) => {
-                if (res) {
-                    //TODO: Refactor this so that it passes cart info to the windowpopup
-                    chrome.runtime.sendMessage(
-                        {
-                            from: 'cart',
-                            subject: 'createOrderPopup',
-                            // cart: getProducts() <-- Something like this? Although I think we can only pass strings as a
-                            // message so we'll need to convert the array to a string or JSON or something.
-                            screenSize: screen.width
-                        }
-                    )
-                } else {
-                    alert('Would prompt to register here.');
-                }
+            checkSignedIn().then(() => {
+                //TODO: Refactor this so that it passes cart info to the windowpopup
+                chrome.runtime.sendMessage(
+                    {
+                        from: 'cart',
+                        subject: 'createOrderPopup',
+                        // cart: getProducts() <-- Something like this? Although I think we can only pass strings as a
+                        // message so we'll need to convert the array to a string or JSON or something.
+                        screenSize: screen.width
+                    }
+                )
                 getProducts();
             }, () => {
                 alert('You must be signed in to use this feature.');
