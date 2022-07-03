@@ -92947,6 +92947,12 @@ function extend() {
             }).then(response => response.text()).then(data => {
                 console.log("DATA" + data);
                 if (data === "") {
+                    //TODO: My metamask wallet is already in DB, figure out how to test this.
+                    //TODO: Registration prompt.
+                    chrome.runtime.sendMessage({
+                        from: 'popup',
+                        subject: 'promptRegistration',
+                    });
                     fetch ("https://kyr8ehszh2.execute-api.us-east-1.amazonaws.com/default/createUserRDS", {
                             method: 'POST',
                             body: JSON.stringify({
@@ -92962,17 +92968,26 @@ function extend() {
         });
     }
 
+    function addRegistrationButton() {
+        let button = document.createElement("INPUT");
+        button.id = "register-button";
+        button.type = "image";
+        button.src = "https://www.metamask.io/images/metamask-logo-icon.png";
+        button.style.cssText = "height: 79px; width: 260px"
+        let add_to_cart = document.getElementById("crypto-button");
+        add_to_cart.after(button);
+        document.getElementById("gutterCartViewForm").style.marginBottom = '10px';
+        document.getElementById("sc-buy-box").style.paddingBottom = '5px';
+    }
+
     function defineEvent() {
         document.getElementById("crypto-button").addEventListener("click", function (event) {
             // Should check if signed in
             checkSignedIn().then(() => {
-                //TODO: Refactor this so that it passes cart info to the windowpopup
                 chrome.runtime.sendMessage(
                     {
                         from: 'cart',
                         subject: 'createOrderPopup',
-                        // cart: getProducts() <-- Something like this? Although I think we can only pass strings as a
-                        // message so we'll need to convert the array to a string or JSON or something.
                         screenSize: screen.width
                     }
                 )
@@ -92982,8 +92997,23 @@ function extend() {
             });
         });
     }
+
+    function defineRegistrationEvent() {
+        document.getElementById("register-button").addEventListener("click", function (event) {
+            alert('Registration button');
+            chrome.runtime.sendMessage(
+                {
+                    from: 'cart',
+                    subject: 'createRegistrationPopup',
+                }
+            )
+        });
+    }
+
     addButton();
+    addRegistrationButton();
     defineEvent();
+    defineRegistrationEvent();
     chrome.runtime.sendMessage(
         {
             from: 'cart',

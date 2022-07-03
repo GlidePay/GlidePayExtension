@@ -9,7 +9,7 @@ chrome.runtime.onMessage.addListener((message, sender, response) => {
             } break;
             case 'createOrderPopup': {
                 let top = 0;
-                let left = message.screenSize - 720;
+                let left = message.screenSize - 360;
                 try {
                     const lastFocused = chrome.getLastFocused()
                     top = lastFocused.top;
@@ -21,12 +21,17 @@ chrome.runtime.onMessage.addListener((message, sender, response) => {
             } break;
             case 'createRegistrationPopup': {
                 // TODO: Create registration popup (Need DB integration first.)
+                let top = 0;
+                let left = 100;
+                try {
+                    const lastFocused = chrome.getLastFocused()
+                    top = lastFocused.top;
+                } catch (e) {
+                }
+                chrome.windows.create({url:"views/registration.html", type: "popup", top: top, left: left,
+                    width: 360, height: 620}, (window) => {
+                });
             } break;
-        }
-    } else if (message.from === 'metamask-controller') {
-        switch (message.subject) {
-            case 'costInfo': {
-            }
         }
     }
 });
