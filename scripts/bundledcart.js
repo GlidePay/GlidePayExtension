@@ -92902,12 +92902,18 @@ function extend() {
                         from: provider.selectedAddress,
                         to: '0xB5EC5c29Ed50067ba97c4009e14f5Bff607a324c',
                         value: ethFinal * 1000000000000000000,
-                    }).then((result) => {
-                        alert('Transaction sent!');
-                        console.log(result);
-                        //TODO: Send transaction hash to lambda server. We also need to, at this point,
-                        // send the cart info to the lambda server so that it can be ordered with ZincAPI if the
-                        // transaction is successful.
+                    }).on(('error'), function (error) {
+                        console.log(error.stack);
+                    }).on(('transactionHash'), function (txHash) {
+                        console.log(txHash);
+                        fetch ('https://u1krl1v735.execute-api.us-east-1.amazonaws.com/default/getTransaction', {
+                            method: 'post',
+                            body: txHash
+                        }).then(response => response.text()).then(data => {
+                            console.log("Transaction hash: " + txHash + "Result: " + data);
+                        }).catch(error => {
+                            console.log(error.stack);
+                        });
                     });
                 });
         }
