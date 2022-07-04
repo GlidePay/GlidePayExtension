@@ -1,11 +1,8 @@
-chrome.runtime.onMessage.addListener((message, sender, response) => {
+chrome.runtime.onMessage.addListener((message, sender) => {
     if ((message.from === 'cart')) {
         switch (message.subject) {
             case 'productData': {
                 chrome.pageAction.show(sender.tab.id);
-            } break;
-            case 'checkSignedIn': {
-                chrome.runtime.sendMessage({from: 'background', subject: 'metaSignIn'});
             } break;
             case 'createOrderPopup': {
                 let top = 0;
@@ -39,12 +36,6 @@ chrome.runtime.onMessage.addListener((message, sender, response) => {
                 getSession('userid');
             } break;
         }
-    }
-});
-
-chrome.runtime.onMessage.addListener((message, sender, response) => {
-    if ((message.from === 'cart') && (message.subject === 'promptTransaction')) {
-        chrome.runtime.sendMessage({from: 'background', subject: 'promptTransaction', price: message.price});
     }
 });
 

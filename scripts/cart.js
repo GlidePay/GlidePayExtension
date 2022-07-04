@@ -1,6 +1,6 @@
 // ALL CHANGES TO THIS FILE MUST BE COMPILED WITH "npm run buildCart"
 (function () {
-    const createProvider = require('metamask-extension-provider')
+    const createProvider = require('metamask-extension-provider');
     const Web3 = require('web3');
     const axios = require("axios");
     const provider = createProvider();
@@ -18,7 +18,6 @@
     }
 
     function getProducts() {
-        console.log('yo');
         let productDict = {};
         let xhr = new XMLHttpRequest();
         xhr.responseType = "document";
@@ -169,7 +168,6 @@
                 )
                 getProducts();
             }, () => {
-                alert('You must be signed in to use this feature.');
             });
         });
     }
