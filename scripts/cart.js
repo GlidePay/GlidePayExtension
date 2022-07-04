@@ -124,10 +124,21 @@
                                 wallet,
                             })
                     }).then(response => response.text()).then(data => {
-                        console.log("DATA" + data);
+                        //TODO: Test the parsing of this data to make sure it works.
+                        chrome.runtime.sendMessage({
+                            from: 'cart',
+                            subject: 'storeUser',
+                            userid: JSON.parse(data).User_ID,
+                        });
                         return data;
                     });
                 } else {
+                    // This works perfectly.
+                    chrome.runtime.sendMessage({
+                        from: 'cart',
+                        subject: 'storeUser',
+                        userid: JSON.parse(data).User_ID,
+                    });
                     return data;
                 }
         });

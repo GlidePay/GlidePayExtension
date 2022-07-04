@@ -5,7 +5,7 @@
         <script src="/bootstrap/bootstrap-5.2.0-beta1-dist/js/bootstrap.js"></script>
     </head>
 <body>
-    <div class="col-md-8 mb-4">
+    <div class="col-md-8 mb-4" id="formbody">
         <div class="card mb-4">
             <div class="card-header py-3">
                 <h5 class="mb-0">Address</h5>
@@ -16,61 +16,61 @@
                     <div class="row">
                         <div class="col">
                             <div class="form-outline">
-                                <input type="text" id="form7Example1" class="form-control" />
-                                <label class="form-label" for="form7Example1">First name</label>
+                                <input type="text" id="firstname" class="form-control" />
+                                <label class="form-label" for="firstname">First name</label>
                             </div>
                         </div>
                         <div class="col">
                             <div class="form-outline">
-                                <input type="text" id="form7Example2" class="form-control" />
-                                <label class="form-label" for="form7Example2">Last name</label>
+                                <input type="text" id="lastname" class="form-control" />
+                                <label class="form-label" for="lastname">Last name</label>
                             </div>
                         </div>
                     </div>
 
                     <!-- Text input -->
                     <div class="form-outline">
-                        <input type="text" id="form7Example4" class="form-control" />
-                        <label class="form-label" for="form7Example4">Address Line 1</label>
+                        <input type="text" id="address1" class="form-control" />
+                        <label class="form-label" for="address1">Address Line 1</label>
                     </div>
 
                     <!-- Text input -->
                     <div class="form-outline">
-                        <input type="text" id="form7Example5" class="form-control" />
-                        <label class="form-label" for="form7Example4">Address Line 2</label>
+                        <input type="text" id="address2" class="form-control" />
+                        <label class="form-label" for="address2">Address Line 2</label>
                     </div>
 
                     <div class="row">
                         <div class="col">
                             <div class="form-outline">
-                                <input type="text" id="Zip" class="form-control" />
-                                <label class="form-label" for="form7Example4">Zip/Postal Code</label>
+                                <input type="text" id="zip" class="form-control" />
+                                <label class="form-label" for="zip">Zip/Postal Code</label>
                             </div>
                         </div>
                         <div class="col">
                             <div class="form-outline">
                                 <input type="text" id="city" class="form-control" />
-                                <label class="form-label" for="form7Example4">City</label>
+                                <label class="form-label" for="city">City</label>
                             </div>
                         </div>
                     </div>
 
                     <!-- Text input -->
                     <div class="form-outline">
-                        <input type="text" id="State/Province" class="form-control" />
-                        <label class="form-label" for="form7Example4">State/Province</label>
+                        <input type="text" id="stateprovince" class="form-control" />
+                        <label class="form-label" for="stateprovince">State/Province</label>
                     </div>
 
                     <!-- Text input -->
                     <div class="form-outline">
                         <input type="text" id="country" class="form-control" />
-                        <label class="form-label" for="form7Example4">Country</label>
+                        <label class="form-label" for="country">Country</label>
                     </div>
 
                     <!-- Number input -->
                     <div class="form-outline">
-                        <input type="number" id="form7Example6" class="form-control" />
-                        <label class="form-label" for="form7Example6">Phone</label>
+                        <input type="text" id="phone" class="form-control" pattern="[0-9]{10}"/>
+                        <label class="form-label" for="phone">Phone</label>
                     </div>
 
                     <!-- Checkbox -->
@@ -79,6 +79,10 @@
                         <label class="form-check-label" for="form7Example8">
                             Save address?
                         </label>
+                    </div>
+                    <div class="col text-center">
+                        <button type="button" class="btn btn-primary btn-lg btn-block" id="submit-button">Add Address</button>
+                        <script src="/scripts/registrationpopup.js"></script>
                     </div>
                 </form>
             </div>

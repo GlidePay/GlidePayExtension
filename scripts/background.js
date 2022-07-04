@@ -32,6 +32,12 @@ chrome.runtime.onMessage.addListener((message, sender, response) => {
                     width: 360, height: 620}, (window) => {
                 });
             } break;
+            case 'storeUser': {
+                storeSession('userid', message.userid);
+            } break;
+            case 'getUser': {
+                getSession('userid');
+            } break;
         }
     }
 });
@@ -41,3 +47,19 @@ chrome.runtime.onMessage.addListener((message, sender, response) => {
         chrome.runtime.sendMessage({from: 'background', subject: 'promptTransaction', price: message.price});
     }
 });
+
+// Store a variable in chrome session storage.
+function storeSession(key, value) {
+    chrome.storage.session.set({
+        [key]: value,
+    }, function () {
+        console.log('Value is set to ' + value);
+    });
+}
+
+// Access a variable in chrome session storage.
+function getSession(key) {
+    chrome.storage.session.get(key, function(result) {
+        console.log(JSON.parse(result[key]));
+    });
+}
