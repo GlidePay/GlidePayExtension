@@ -1,3 +1,5 @@
+//TODO: Load in all saved addresses and display them as selectable options
+//TODO: Think about how we should handle it if someone tries to order to an address the product doesnt ship to
 const setProductInfo = products => {
     console.log("Receceived product info");
     console.log(JSON.stringify(products));

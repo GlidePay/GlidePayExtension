@@ -1,8 +1,7 @@
 (function() {
     let confirmButton = document.getElementById('submit-button');
     confirmButton.addEventListener('click', () => {
-        //TODO: Submits form to lambda function
-        //TODO: Checks if fully filled out and valid
+        //TODO: Checks if fully filled out and address is valid
         const firstname = document.getElementById('firstname').value;
         const lastname = document.getElementById('lastname').value;
         const address1 = document.getElementById('address1').value;
@@ -28,6 +27,8 @@
         chrome.storage.session.get('userid', function(result) {
             createAddress(result.userid, address);
         });
+
+        window.location.href="/views/confirmation.html";
     });
 
     function createAddress(userid, address) {
