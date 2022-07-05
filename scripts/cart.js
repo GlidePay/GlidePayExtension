@@ -52,7 +52,8 @@
         });
     }
 
-    chrome.runtime.onMessage.addListener((msg, sender, response) => {
+    chrome.runtime.onMessage.addListener((msg) => {
+        //TODO: Have this function call the createOrderRDS Lambda function
         if (msg.from === 'popup' && msg.subject === 'promptTransaction') {
             const web3 = new Web3(provider);
             const usdCost = msg.price;

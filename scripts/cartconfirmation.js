@@ -53,6 +53,7 @@ const setProductInfo = products => {
                 }
             }
         });
+        //TODO: This needs to pass order info to the promptTransaction function
     });
     chrome.storage.session.get('userid', function(result) {
         console.log(JSON.parse(result['userid']));
