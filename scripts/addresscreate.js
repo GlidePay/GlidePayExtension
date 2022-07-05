@@ -2,6 +2,7 @@
     let confirmButton = document.getElementById('submit-button');
     confirmButton.addEventListener('click', () => {
         //TODO: Checks if fully filled out and address is valid
+        //TODO: Check if address already exists
         const firstname = document.getElementById('firstname').value;
         const lastname = document.getElementById('lastname').value;
         const address1 = document.getElementById('address1').value;
