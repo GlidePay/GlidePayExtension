@@ -17,7 +17,7 @@
         document.getElementById("sc-buy-box").style.paddingBottom = '5px';
     }
 
-    function getProducts() {
+    let getProducts = new Promise((resolve, reject) => {
         let productDict = {};
         let xhr = new XMLHttpRequest();
         xhr.responseType = "document";
@@ -37,11 +37,12 @@
                     productDict[product_id] = [quantity, price, img, ''];
                 }
                 sendMessage(productDict)
+                resolve("true");
             }
         }
         xhr.open("GET", url, true);
         xhr.send("");
-    }
+    });
 
     function sendMessage(productDict){
         chrome.runtime.onMessage.addListener((msg, sender, response) => {
@@ -53,7 +54,6 @@
     }
 
     chrome.runtime.onMessage.addListener((msg) => {
-        //TODO: Have this function call the createOrderRDS Lambda function
         if (msg.from === 'popup' && msg.subject === 'promptTransaction') {
             const web3 = new Web3(provider);
             const usdCost = msg.price;
@@ -70,14 +70,26 @@
                     }).on(('error'), function (error) {
                         console.log(error.stack);
                     }).on(('transactionHash'), function (txHash) {
-                        console.log(txHash);
-                        fetch ('https://u1krl1v735.execute-api.us-east-1.amazonaws.com/default/getTransaction', {
-                            method: 'post',
-                            body: txHash
-                        }).then(response => response.text()).then(data => {
-                            console.log("Transaction hash: " + txHash + "Result: " + data);
-                        }).catch(error => {
-                            console.log(error.stack);
+                        chrome.runtime.sendMessage({
+                            from: 'cart',
+                            subject: 'getUser',
+                        }).then((user) => {
+                            fetch ('https://u1krl1v735.execute-api.us-east-1.amazonaws.com/default/getTransaction', {
+                                method: 'post',
+                                body: JSON.stringify({
+                                    txhash: txHash,
+                                    wallet: provider.selectedAddress,
+                                    userid: user,
+                                    retailer: 'amazon',
+                                    status: 'Transaction Pending Confirmation.',
+                                    productidsarr: msg.products,
+                                    addressid: msg.addressid
+                                })
+                            }).then(response => response.text()).then(data => {
+                                console.log("Transaction hash: " + txHash + "Result: " + data);
+                            }).catch(error => {
+                                console.log(error.stack);
+                            });
                         });
                     });
                 });
@@ -159,17 +171,18 @@
     function defineEvent() {
         document.getElementById("crypto-button").addEventListener("click", function (event) {
             // Should check if signed in
-            checkSignedIn().then(() => {
-                chrome.runtime.sendMessage(
-                    {
-                        from: 'cart',
-                        subject: 'createOrderPopup',
-                        screenSize: screen.width
-                    }
-                )
-                getProducts();
-            }, () => {
-            });
+            checkSignedIn().then(
+                () => {
+                    getProducts.then((message) => {
+                        chrome.runtime.sendMessage({
+                            from: "cart",
+                            subject: "createOrderPopup",
+                            screenSize: screen.width,
+                        });
+                    });
+                },
+                () => {
+                });
         });
     }
 

@@ -92835,7 +92835,7 @@ function extend() {
 },{}],575:[function(require,module,exports){
 // ALL CHANGES TO THIS FILE MUST BE COMPILED WITH "npm run buildCart"
 (function () {
-    const createProvider = require('metamask-extension-provider')
+    const createProvider = require('metamask-extension-provider');
     const Web3 = require('web3');
     const axios = require("axios");
     const provider = createProvider();
@@ -92852,8 +92852,7 @@ function extend() {
         document.getElementById("sc-buy-box").style.paddingBottom = '5px';
     }
 
-    function getProducts() {
-        console.log('yo');
+    let getProducts = new Promise((resolve, reject) => {
         let productDict = {};
         let xhr = new XMLHttpRequest();
         xhr.responseType = "document";
@@ -92873,11 +92872,12 @@ function extend() {
                     productDict[product_id] = [quantity, price, img, ''];
                 }
                 sendMessage(productDict)
+                resolve("true");
             }
         }
         xhr.open("GET", url, true);
         xhr.send("");
-    }
+    });
 
     function sendMessage(productDict){
         chrome.runtime.onMessage.addListener((msg, sender, response) => {
@@ -92888,7 +92888,8 @@ function extend() {
         });
     }
 
-    chrome.runtime.onMessage.addListener((msg, sender, response) => {
+    chrome.runtime.onMessage.addListener((msg) => {
+        //TODO: Have this function call the createOrderRDS Lambda function
         if (msg.from === 'popup' && msg.subject === 'promptTransaction') {
             const web3 = new Web3(provider);
             const usdCost = msg.price;
@@ -92994,18 +92995,18 @@ function extend() {
     function defineEvent() {
         document.getElementById("crypto-button").addEventListener("click", function (event) {
             // Should check if signed in
-            checkSignedIn().then(() => {
-                chrome.runtime.sendMessage(
-                    {
-                        from: 'cart',
-                        subject: 'createOrderPopup',
-                        screenSize: screen.width
-                    }
-                )
-                getProducts();
-            }, () => {
-                alert('You must be signed in to use this feature.');
-            });
+            checkSignedIn().then(
+                () => {
+                    getProducts.then((message) => {
+                        chrome.runtime.sendMessage({
+                            from: "cart",
+                            subject: "createOrderPopup",
+                            screenSize: screen.width,
+                        });
+                    });
+                },
+                () => {
+                });
         });
     }
 

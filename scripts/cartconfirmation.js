@@ -47,7 +47,11 @@ const setProductInfo = products => {
                         chrome.tabs.sendMessage(windows[a].tabs[b].id, {
                             from: 'popup',
                             subject: 'promptTransaction',
-                            price: totalPrice});
+                            price: totalPrice,
+                            //address: document.getElementById('addressSelect').value
+                            products: products,
+                            addressid: '1' //TODO: Get address id from select
+                        });
                         break;
                     }
                 }

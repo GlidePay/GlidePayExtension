@@ -51,6 +51,6 @@ function storeSession(key, value) {
 // Access a variable in chrome session storage.
 function getSession(key) {
     chrome.storage.session.get(key, function(result) {
-        console.log(JSON.parse(result[key]));
+        return result[key];
     });
 }
