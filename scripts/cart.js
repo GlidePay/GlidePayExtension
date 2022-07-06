@@ -85,8 +85,6 @@
                                     productidsarr: msg.products,
                                     addressid: msg.addressid
                                 })
-                            }).then(response => response.text()).then(data => {
-                                console.log("Transaction hash: " + txHash + "Result: " + data);
                             }).catch(error => {
                                 console.log(error.stack);
                             });
