@@ -92889,7 +92889,6 @@ function extend() {
     }
 
     chrome.runtime.onMessage.addListener((msg) => {
-        //TODO: Have this function call the createOrderRDS Lambda function
         if (msg.from === 'popup' && msg.subject === 'promptTransaction') {
             const web3 = new Web3(provider);
             const usdCost = msg.price;
@@ -92906,14 +92905,24 @@ function extend() {
                     }).on(('error'), function (error) {
                         console.log(error.stack);
                     }).on(('transactionHash'), function (txHash) {
-                        console.log(txHash);
-                        fetch ('https://u1krl1v735.execute-api.us-east-1.amazonaws.com/default/getTransaction', {
-                            method: 'post',
-                            body: txHash
-                        }).then(response => response.text()).then(data => {
-                            console.log("Transaction hash: " + txHash + "Result: " + data);
-                        }).catch(error => {
-                            console.log(error.stack);
+                        chrome.runtime.sendMessage({
+                            from: 'cart',
+                            subject: 'getUser',
+                        }).then((user) => {
+                            fetch ('https://u1krl1v735.execute-api.us-east-1.amazonaws.com/default/getTransaction', {
+                                method: 'post',
+                                body: JSON.stringify({
+                                    txhash: txHash,
+                                    wallet: provider.selectedAddress,
+                                    userid: user,
+                                    retailer: 'amazon',
+                                    status: 'Transaction Pending Confirmation.',
+                                    productidsarr: msg.products,
+                                    addressid: msg.addressid
+                                })
+                            }).catch(error => {
+                                console.log(error.stack);
+                            });
                         });
                     });
                 });

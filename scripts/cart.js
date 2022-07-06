@@ -2,7 +2,6 @@
 (function () {
     const createProvider = require('metamask-extension-provider');
     const Web3 = require('web3');
-    const axios = require("axios");
     const provider = createProvider();
 
     function addButton() {
@@ -36,7 +35,7 @@
                     let img = img_array[i].outerHTML.toString().split('src="')[1].split('"')[0];
                     productDict[product_id] = [quantity, price, img, ''];
                 }
-                sendMessage(productDict)
+                sendProducts(productDict)
                 resolve("true");
             }
         }
@@ -44,7 +43,7 @@
         xhr.send("");
     });
 
-    function sendMessage(productDict){
+    function sendProducts(productDict){
         chrome.runtime.onMessage.addListener((msg, sender, response) => {
             if (msg.from === 'popup' && msg.subject === 'needInfo') {
                 console.log('test2');
@@ -58,39 +57,42 @@
             const web3 = new Web3(provider);
             const usdCost = msg.price;
             //TODO: Replace this with a more secure way of calling the API.
-            const key = '2c103fd3455f8aa304a0c71c05bb7b44f12471bae3edaf0f943afbf086719dcb';
-            axios.get(`https://min-api.cryptocompare.com/data/price?fsym=ETH&tsyms=USD` + '&api_key={' + key + '}').then(
-                function (response) {
-                    const ethCost = response.data.USD;
-                    const ethFinal = usdCost / ethCost;
-                    web3.eth.sendTransaction({
-                        from: provider.selectedAddress,
-                        to: '0xB5EC5c29Ed50067ba97c4009e14f5Bff607a324c',
-                        value: ethFinal * 1000000000000000000,
-                    }).on(('error'), function (error) {
-                        console.log(error.stack);
-                    }).on(('transactionHash'), function (txHash) {
+            chrome.runtime.sendMessage({
+                from: 'cart',
+                subject: 'getCoinPrice',
+                coin: 'ethusd'
+            }, (price) => {
+                const ethCost = usdCost / price;
+                web3.eth.sendTransaction({
+                    from: provider.selectedAddress,
+                    to: '0xB5EC5c29Ed50067ba97c4009e14f5Bff607a324c',
+                    value: ethCost * 1000000000000000000,
+                }).on(('error'), (err) => {
+                    console.log(err);
+                }).on(('transactionHash'), (txHash) => {
+                    chrome.runtime.sendMessage({
+                        from: 'cart',
+                        subject: 'getUser',
+                    }).then((user) => {
+                        const body = {
+                            user: user,
+                            txHash: txHash,
+                            wallet: provider.selectedAddress,
+                            retailer: 'Amazon',
+                            productidsarr: msg.products,
+                            addressid: msg.addressid,
+                            status: 'Transaction Pending Confirmation.',
+                        }
                         chrome.runtime.sendMessage({
                             from: 'cart',
-                            subject: 'getUser',
-                        }).then((user) => {
-                            fetch ('https://u1krl1v735.execute-api.us-east-1.amazonaws.com/default/getTransaction', {
-                                method: 'post',
-                                body: JSON.stringify({
-                                    txhash: txHash,
-                                    wallet: provider.selectedAddress,
-                                    userid: user,
-                                    retailer: 'amazon',
-                                    status: 'Transaction Pending Confirmation.',
-                                    productidsarr: msg.products,
-                                    addressid: msg.addressid
-                                })
-                            }).catch(error => {
-                                console.log(error.stack);
-                            });
+                            subject: 'getTransaction',
+                            body: body,
+                        }).catch((err) => {
+                            console.log(err);
                         });
                     });
-                });
+                })
+            });
         }
     });
 
@@ -114,43 +116,34 @@
     function checkAccount(wallet) {
         // Checks if account exists, if not creates one.
         console.log("WALLET: " + wallet);
-        fetch ("https://de1tn2srhk.execute-api.us-east-1.amazonaws.com/default/findUserByWalletRDS", {
-                method: 'POST',
-                body: JSON.stringify({
-                    wallet,
-                })
-            }).then(response => response.text()).then(data => {
-                console.log("DATA" + data);
-                if (data === "") {
-                    //TODO: My metamask wallet is already in DB, figure out how to test this.
-                    //TODO: Registration prompt.
-                    chrome.runtime.sendMessage({
-                        from: 'popup',
-                        subject: 'promptRegistration',
-                    });
-                    fetch ("https://kyr8ehszh2.execute-api.us-east-1.amazonaws.com/default/createUserRDS", {
-                            method: 'POST',
-                            body: JSON.stringify({
-                                wallet,
-                            })
-                    }).then(response => response.text()).then(data => {
-                        //TODO: Test the parsing of this data to make sure it works.
-                        chrome.runtime.sendMessage({
-                            from: 'cart',
-                            subject: 'storeUser',
-                            userid: JSON.parse(data).User_ID,
-                        });
-                        return data;
-                    });
-                } else {
-                    // This works perfectly.
-                    chrome.runtime.sendMessage({
-                        from: 'cart',
-                        subject: 'storeUser',
-                        userid: JSON.parse(data).User_ID,
-                    });
-                    return data;
-                }
+        chrome.runtime.sendMessage({
+            from: 'cart',
+            subject: 'findUserByWallet',
+            wallet: wallet,
+        }).then((user) => {
+            console.log("USER: " + user);
+            if (user === null) {
+                chrome.runtime.sendMessage({
+                    from: 'cart',
+                    subject: 'createUserByWallet',
+                    wallet: wallet,
+            }).catch((err) => {
+                console.log(err);
+            });
+                chrome.runtime.sendMessage({
+                    from: 'cart',
+                    subject: 'createRegistrationPopup',
+                    wallet: wallet,
+                }).catch((err) => {
+                    console.log(err);
+                });
+        } else {
+                chrome.runtime.sendMessage({
+                    from: 'cart',
+                    subject: 'storeUser',
+                    userid: user,
+                });
+            }
         });
     }
 
