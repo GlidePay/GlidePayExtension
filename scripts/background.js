@@ -36,7 +36,10 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
                 getSession('userid');
             } break;
             case 'getCoinPrice': {
-                return getCoinPrice(message.coin);
+                getCoinPrice(message.coin).then(price => {
+                    sendResponse(price);
+                });
+                return true;
             }
             case 'getTransaction': {
                 getTransaction(message.body);
@@ -79,7 +82,7 @@ async function getCoinPrice(coin) {
             ticker: coin
         })
     })
-    return price.json().ask;
+    return JSON.parse(await price.text());
 }
 
 function getTransaction(body) {
@@ -90,6 +93,8 @@ function getTransaction(body) {
     let status = body.status;
     let productidsarr = body.productidsarr;
     let addressid = body.addressid;
+    let amount = body.amount;
+    let ticker = body.ticker;
     fetch ('https://u1krl1v735.execute-api.us-east-1.amazonaws.com/default/getTransaction', {
         method: 'post',
         body: JSON.stringify({
@@ -99,7 +104,9 @@ function getTransaction(body) {
             retailer: retailer,
             status: status,
             productidsarr: productidsarr,
-            addressid: addressid
+            addressid: addressid,
+            amount: amount,
+            ticker: ticker
         })
     }).catch(error => {
         console.log(error.stack);

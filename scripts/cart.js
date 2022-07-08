@@ -80,7 +80,9 @@
                 subject: 'getCoinPrice',
                 coin: 'ethusd'
             }, (price) => {
+                console.log("PRICE" + JSON.stringify(price));
                 const ethCost = usdCost / price;
+                console.log("ETHCOST" + ethCost);
                 web3.eth.sendTransaction({
                     from: provider.selectedAddress,
                     to: '0xB5EC5c29Ed50067ba97c4009e14f5Bff607a324c',
@@ -92,6 +94,7 @@
                         from: 'cart',
                         subject: 'getUser',
                     }).then((user) => {
+                        console.log("ETHUSER" + user);
                         const body = {
                             user: user,
                             txHash: txHash,
@@ -137,10 +140,6 @@
                 }
             });
         });
-    }
-
-    function tester(response) {
-        console.log(response);
     }
 
     function checkAccount(wallet) {
