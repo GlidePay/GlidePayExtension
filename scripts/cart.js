@@ -16,32 +16,50 @@
         document.getElementById("sc-buy-box").style.paddingBottom = '5px';
     }
 
-    let getProducts = new Promise((resolve, reject) => {
-        let productDict = {};
-        let xhr = new XMLHttpRequest();
-        xhr.responseType = "document";
-        let url = 'https://www.amazon.com/gp/cart/view.html';
-        xhr.onreadystatechange = async function() {
-            if (xhr.readyState === 4 && xhr.status === 200/* DONE */) {
-                let html = xhr.response
-                let div_list = html.querySelectorAll("div.a-section.a-spacing-mini.sc-list-body.sc-java-remote-feature > .a-row.sc-list-item.sc-list-item-border.sc-java-remote-feature");
-                let img_list = html.querySelectorAll("div.a-section.a-spacing-mini.sc-list-body.sc-java-remote-feature > .a-row.sc-list-item.sc-list-item-border.sc-java-remote-feature > .sc-list-item-content > .a-row.a-spacing-base.a-spacing-top-base > .a-column.a-span10 > .a-fixed-left-grid > .a-fixed-left-grid-inner > .a-fixed-left-grid-col.a-float-left.sc-product-image-desktop.a-col-left > .a-link-normal.sc-product-link");
-                let div_array = [...div_list];
-                let img_array = [...img_list];
-                for (let i = 0; i < div_array.length; i++) {
-                    let product_id = div_array[i].outerHTML.split('data-asin="')[1].split('" data-encoded-offering')[0];
-                    let quantity = div_array[i].outerHTML.toString().split('data-quantity="')[1].split('" data-subtotal')[0];
-                    let price = div_array[i].outerHTML.toString().split('data-price="')[1].split('" data-quantity')[0];
-                    let img = img_array[i].outerHTML.toString().split('src="')[1].split('"')[0];
-                    productDict[product_id] = [quantity, price, img, ''];
+    async function getProducts() {
+        return new Promise((resolve, reject) => {
+            let productDict = {};
+            let xhr = new XMLHttpRequest();
+            xhr.responseType = "document";
+            let url = 'https://www.amazon.com/gp/cart/view.html';
+            xhr.onreadystatechange = async function() {
+                if (xhr.readyState === 4 && xhr.status === 200/* DONE */) {
+                    let html = xhr.response
+                    let div_list = html.querySelectorAll(
+                        "div.a-section.a-spacing-mini.sc-list-body.sc-java-remote-feature > .a-row.sc-list-item.sc-list-item-border.sc-java-remote-feature"
+                    );
+                    let img_list = html.querySelectorAll(
+                        "div.a-section.a-spacing-mini.sc-list-body.sc-java-remote-feature > .a-row.sc-list-item.sc-list-item-border.sc-java-remote-feature > .sc-list-item-content > .a-row.a-spacing-base.a-spacing-top-base > .a-column.a-span10 > .a-fixed-left-grid > .a-fixed-left-grid-inner > .a-fixed-left-grid-col.a-float-left.sc-product-image-desktop.a-col-left > .a-link-normal.sc-product-link"
+                    );
+                    let div_array = [...div_list];
+                    let img_array = [...img_list];
+                    for (let i = 0; i < div_array.length; i++) {
+                        let divHTML = new DOMParser().parseFromString(
+                            div_array[i].outerHTML,
+                            "text/xml"
+                        );
+                        let productDiv = divHTML.getElementsByClassName(
+                            "a-row sc-list-item sc-list-item-border sc-java-remote-feature"
+                        )[0];
+                        let product_id = productDiv.getAttribute("data-asin");
+                        let quantity = productDiv.getAttribute("data-quantity");
+                        let price = productDiv.getAttribute("data-price");
+                        let imgInnterHTML = new DOMParser().parseFromString(
+                            img_array[i].innerHTML,
+                            "text/xml"
+                        );
+                        let productImg = imgInnterHTML.getElementsByTagName("img")[0];
+                        let img = productImg.getAttribute("src");
+                        productDict[product_id] = [quantity, price, img, ''];
+                    }
+                    sendProducts(productDict)
+                    resolve("true");
                 }
-                sendProducts(productDict)
-                resolve("true");
             }
-        }
-        xhr.open("GET", url, true);
-        xhr.send("");
-    });
+            xhr.open("GET", url, true);
+            xhr.send("");
+        });
+    }
 
     function sendProducts(productDict){
         chrome.runtime.onMessage.addListener((msg, sender, response) => {
@@ -82,6 +100,8 @@
                             productidsarr: msg.products,
                             addressid: msg.addressid,
                             status: 'Transaction Pending Confirmation.',
+                            ticker: 'ETH', //TODO: In future this needs to be changed to the ticker of the coin being used.
+                            amount: ethCost,
                         }
                         chrome.runtime.sendMessage({
                             from: 'cart',
@@ -97,20 +117,26 @@
     });
 
     async function checkSignedIn() {
-        try {
-            const accounts = await Promise.all([
-                provider.request({
-                    method: 'eth_requestAccounts',
-                }),
-            ])
-            if (!accounts) {
-                alert('Please sign in to MetaMask.');
-            } else {
-                return checkAccount(accounts[0]);
-            }
-        } catch (err) {
-            console.log(err);
-        }
+        const payWithCryptoButton = document.getElementById("crypto-button");
+        payWithCryptoButton.disabled = true;
+        return new Promise((resolve, reject) => {
+            const web3 = new Web3(provider);
+            web3.eth.getAccounts(function (err, accounts) {
+                if (err) {
+                    payWithCryptoButton.disabled = false;
+                    console.log(err);
+                    reject(err);
+                } else if (accounts.length === 0) {
+                    payWithCryptoButton.disabled = false;
+                    console.log('No accounts found');
+                    reject('No accounts found');
+                } else {
+                    payWithCryptoButton.disabled = false;
+                    checkAccount(accounts[0]);
+                    resolve();
+                }
+            });
+        });
     }
 
     function checkAccount(wallet) {
@@ -160,21 +186,42 @@
     }
 
     function defineEvent() {
-        document.getElementById("crypto-button").addEventListener("click", function (event) {
-            // Should check if signed in
-            checkSignedIn().then(
-                () => {
-                    getProducts.then((message) => {
-                        chrome.runtime.sendMessage({
-                            from: "cart",
-                            subject: "createOrderPopup",
-                            screenSize: screen.width,
+        const payWithCryptoButton = document.getElementById("crypto-button");
+        document
+            .getElementById("crypto-button")
+            .addEventListener("click", function (event) {
+                // Should check if signed in
+                checkSignedIn()
+                    .then(() => {
+                        console.log("Getting products");
+                        getProducts.then(() => {
+                            console.log("Creating popup");
+                            chrome.runtime.sendMessage({
+                                from: "cart",
+                                subject: "createOrderPopup",
+                                screenSize: screen.width,
+                            });
                         });
+                    })
+                    .catch(() => {
+                        provider
+                            .request({method: "eth_accounts"})
+                            .then(() => {
+                                console.log("Logged in");
+                                getProducts().then((message) => {
+                                    chrome.runtime.sendMessage({
+                                        from: "cart",
+                                        subject: "createOrderPopup",
+                                        screenSize: screen.width,
+                                    });
+                                });
+                            })
+                            .catch(() => {
+                                console.log("NOt logged in");
+                                payWithCryptoButton.disabled = false;
+                            });
                     });
-                },
-                () => {
-                });
-        });
+            });
     }
 
     function defineRegistrationEvent() {

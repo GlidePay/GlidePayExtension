@@ -42,8 +42,11 @@ chrome.runtime.onMessage.addListener((message, sender) => {
                 getTransaction(message.body);
             } break;
             case 'findUserByWallet': {
-                return findUserByWallet(message.wallet);
-            }
+
+                findUserByWallet(message.wallet).then(userid => {
+                    return userid;
+                })
+            } break;
             case 'createUserByWallet': {
                 createUser(message.wallet);
             }
@@ -103,13 +106,18 @@ function getTransaction(body) {
 }
 
 async function findUserByWallet(wallet) {
-    const user = await fetch('https://u1krl1v735.execute-api.us-east-1.amazonaws.com/default/findUserByWalletRDS', {
+    const user = fetch('https://de1tn2srhk.execute-api.us-east-1.amazonaws.com/default/findUserByWalletRDS', {
         method: 'post',
         body: JSON.stringify({
             wallet: wallet
         })
     })
-    return JSON.parse(user.text()).User_ID;
+    try {
+        const { User_ID } = await user.then(res => res.json());
+        return User_ID;
+    } catch {
+        return null;
+    }
 }
 
 function createUser(wallet) {
