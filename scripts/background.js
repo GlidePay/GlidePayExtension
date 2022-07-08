@@ -56,7 +56,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
                 return true;
             }
             case 'createUserByWallet': {
-                createUser(message.wallet);
+                createUser(message.wallet).then(uid => {
+                    console.log("second");
+                    sendResponse(uid);
+                });
+                return true;
             }
         }
     }
@@ -120,14 +124,13 @@ async function findUserByWallet(wallet) {
     return JSON.parse(await user.text()).User_ID;
 }
 
-function createUser(wallet) {
-    fetch ('https://kyr8ehszh2.execute-api.us-east-1.amazonaws.com/default/createUserRDS', {
+async function createUser(wallet) {
+    const user = await fetch ('https://kyr8ehszh2.execute-api.us-east-1.amazonaws.com/default/createUserRDS', {
         method: 'POST',
         body: JSON.stringify({
             wallet: wallet
         })
-    }).catch(error => {
-        console.log(error.stack);
     });
+    return JSON.parse(await user.text()).User_ID;
 }
 

@@ -90834,8 +90834,12 @@ function extend() {
                     from: 'cart',
                     subject: 'createUserByWallet',
                     wallet: wallet,
-                }).catch((err) => {
-                    console.log(err);
+                }, (user) => {
+                    chrome.runtime.sendMessage({
+                        from: 'cart',
+                        subject: 'storeUser',
+                        userid: user
+                    });
                 });
                 chrome.runtime.sendMessage({
                     from: 'cart',
