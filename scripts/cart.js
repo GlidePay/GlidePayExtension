@@ -235,7 +235,7 @@
                     })
                     .catch(() => {
                         provider
-                            .request({method: "eth_accounts"})
+                            .request({method: "eth_requestAccounts"})
                             .then(() => {
                                 console.log("Logged in");
                                 getProducts().then((message) => {
