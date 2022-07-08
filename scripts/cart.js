@@ -139,6 +139,10 @@
         });
     }
 
+    function tester(response) {
+        console.log(response);
+    }
+
     function checkAccount(wallet) {
         // Checks if account exists, if not creates one.
         console.log("WALLET: " + wallet);
@@ -146,16 +150,16 @@
             from: 'cart',
             subject: 'findUserByWallet',
             wallet: wallet,
-        }).then((user) => {
-            console.log("USER: " + user);
+        }, (user) => {
+            console.log("USER: " + JSON.stringify(user) + " WALLET: " + wallet);
             if (user === null) {
                 chrome.runtime.sendMessage({
                     from: 'cart',
                     subject: 'createUserByWallet',
                     wallet: wallet,
-            }).catch((err) => {
-                console.log(err);
-            });
+                }).catch((err) => {
+                    console.log(err);
+                });
                 chrome.runtime.sendMessage({
                     from: 'cart',
                     subject: 'createRegistrationPopup',
@@ -163,7 +167,7 @@
                 }).catch((err) => {
                     console.log(err);
                 });
-        } else {
+            } else {
                 chrome.runtime.sendMessage({
                     from: 'cart',
                     subject: 'storeUser',

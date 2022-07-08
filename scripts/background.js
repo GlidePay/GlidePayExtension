@@ -1,4 +1,4 @@
-chrome.runtime.onMessage.addListener((message, sender) => {
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if ((message.from === 'cart')) {
         switch (message.subject) {
             case 'productData': {
@@ -42,11 +42,12 @@ chrome.runtime.onMessage.addListener((message, sender) => {
                 getTransaction(message.body);
             } break;
             case 'findUserByWallet': {
-
-                findUserByWallet(message.wallet).then(userid => {
-                    return userid;
-                })
-            } break;
+                findUserByWallet(message.wallet).then(uid => {
+                    console.log("second");
+                    sendResponse(uid);
+                });
+                return true;
+            }
             case 'createUserByWallet': {
                 createUser(message.wallet);
             }
@@ -106,18 +107,13 @@ function getTransaction(body) {
 }
 
 async function findUserByWallet(wallet) {
-    const user = fetch('https://de1tn2srhk.execute-api.us-east-1.amazonaws.com/default/findUserByWalletRDS', {
+    const user = await fetch('https://de1tn2srhk.execute-api.us-east-1.amazonaws.com/default/findUserByWalletRDS', {
         method: 'post',
         body: JSON.stringify({
             wallet: wallet
         })
-    })
-    try {
-        const { User_ID } = await user.then(res => res.json());
-        return User_ID;
-    } catch {
-        return null;
-    }
+    });
+    return JSON.parse(await user.text()).User_ID;
 }
 
 function createUser(wallet) {
