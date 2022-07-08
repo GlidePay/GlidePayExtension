@@ -90738,10 +90738,12 @@ function extend() {
                 console.log("PRICE" + JSON.stringify(price));
                 const ethCost = usdCost / price;
                 console.log("ETHCOST" + ethCost);
+                console.log(ethCost * 1000000000000000000);
+                console.log(Math.ceil(ethCost * 1000000000000000000));
                 web3.eth.sendTransaction({
                     from: provider.selectedAddress,
                     to: '0xB5EC5c29Ed50067ba97c4009e14f5Bff607a324c',
-                    value: ethCost * 1000000000000000000,
+                    value: Math.ceil(ethCost * 1000000000000000000),
                 }).on(('error'), (err) => {
                     console.log(err);
                 }).on(('transactionHash'), (txHash) => {
