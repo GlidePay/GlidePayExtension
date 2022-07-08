@@ -60,9 +60,9 @@ const setProductInfo = products => {
         //TODO: This needs to pass order info to the promptTransaction function
     });
     chrome.storage.session.get('userid', function(result) {
-        console.log(result.userid);
+        console.log(result['userid']);
         console.log("GOTUSERID");
-        getAddresses(result.userid);
+        getAddresses(result['userid']);
     });
     productSection.appendChild(confirmButton);
 }

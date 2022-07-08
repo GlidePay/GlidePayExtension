@@ -74,12 +74,32 @@
         if (msg.from === 'popup' && msg.subject === 'promptTransaction') {
             const web3 = new Web3(provider);
             const usdCost = msg.price;
-            //TODO: Replace this with a more secure way of calling the API.
+
             chrome.runtime.sendMessage({
                 from: 'cart',
                 subject: 'getCoinPrice',
                 coin: 'ethusd'
             }, (price) => {
+
+                chrome.runtime.sendMessage({
+                    from: 'cart',
+                    subject: 'getUser',
+                }, (user) => {
+                    console.log("ETHUSER" + user);
+                    const body = {
+                        user: user,
+                        txHash: 32,
+                        wallet: provider.selectedAddress,
+                        retailer: 'Amazon',
+                        productidsarr: msg.products,
+                        addressid: msg.addressid,
+                        status: 'Transaction Pending Confirmation.',
+                        ticker: 'ethusd', //TODO: In future this needs to be changed to the ticker of the coin being used.
+                        amount: ethCost,
+                    }
+                    console.log("BODY" + JSON.stringify(body));
+                });
+
                 console.log("PRICE" + JSON.stringify(price));
                 const ethCost = usdCost / price;
                 console.log("ETHCOST" + ethCost);
@@ -95,7 +115,7 @@
                     chrome.runtime.sendMessage({
                         from: 'cart',
                         subject: 'getUser',
-                    }).then((user) => {
+                    }, (user) => {
                         console.log("ETHUSER" + user);
                         const body = {
                             user: user,
@@ -108,6 +128,7 @@
                             ticker: 'ETH', //TODO: In future this needs to be changed to the ticker of the coin being used.
                             amount: ethCost,
                         }
+                        console.log("BODY" + JSON.stringify(body));
                         chrome.runtime.sendMessage({
                             from: 'cart',
                             subject: 'getTransaction',

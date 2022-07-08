@@ -33,8 +33,12 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
                 storeSession('userid', message.userid);
             } break;
             case 'getUser': {
-                getSession('userid');
-            } break;
+                chrome.storage.session.get('userid', function(result) {
+                    console.log("USER IS" + result['userid']);
+                    sendResponse(result['userid']);
+                });
+                return true;
+            }
             case 'getCoinPrice': {
                 getCoinPrice(message.coin).then(price => {
                     sendResponse(price);
@@ -67,13 +71,6 @@ function storeSession(key, value) {
     });
 }
 
-// Access a variable in chrome session storage.
-function getSession(key) {
-    chrome.storage.session.get(key, function(result) {
-        return result[key];
-    });
-}
-
 async function getCoinPrice(coin) {
     //coin must be in the form of "xxxusd" IE "ethusd"
     const price = await fetch('https://okmf73layh.execute-api.us-east-1.amazonaws.com/default/getCoinPriceGemini', {
@@ -87,7 +84,7 @@ async function getCoinPrice(coin) {
 
 function getTransaction(body) {
     let user = body.user;
-    let txhash = body.txhash;
+    let txhash = body.txHash;
     let wallet = body.wallet;
     let retailer = body.retailer;
     let status = body.status;
@@ -95,7 +92,7 @@ function getTransaction(body) {
     let addressid = body.addressid;
     let amount = body.amount;
     let ticker = body.ticker;
-    fetch ('https://u1krl1v735.execute-api.us-east-1.amazonaws.com/default/getTransaction', {
+    fetch ('https://bbeh09t5ub.execute-api.us-east-1.amazonaws.com', {
         method: 'post',
         body: JSON.stringify({
             txhash: txhash,

@@ -26,9 +26,9 @@
         };
 
         chrome.storage.session.get('userid', function(result) {
-            createAddress(result.userid, address);
+            console.log("USERID" + result['userid']);
+            createAddress(result['userid'], address);
         });
-
         window.location.href="/views/confirmation.html";
     });
 
@@ -44,7 +44,7 @@
             body: JSON.stringify(data)
         }).then(response => response.text())
             .then(responseData => {
-                console.log(responseData);
+                console.log(JSON.parse(responseData));
             })
     }
 })();
