@@ -1,21 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <link rel="stylesheet" href="/bootstrap/bootstrap-5.2.0-beta1-dist/css/bootstrap.css">
+  <head>
+    <link
+      rel="stylesheet"
+      href="/bootstrap/bootstrap-5.2.0-beta1-dist/css/bootstrap.css"
+    />
     <script src="/bootstrap/bootstrap-5.2.0-beta1-dist/js/bootstrap.js"></script>
     <title></title>
-</head>
-<body class="border border-info">
-<div class="d-flex flex-row justify-content-center border border-danger">
-    <img src="/resources/images/testimg.png" alt="testimg" style="width: 50%; height: 50%">
-</div>
-<div class="row border border-danger">
-    <h1 class="text-center">Confirm Order</h1>
-    <div class="col d-flex justify-content-between">
-        <p id="productInfo"></p>
-        <p id="addressSelect"></p>
-        <script src="/scripts/cartconfirmation.js"></script>
+  </head>
+  <body class="border border-info">
+    <div class="d-flex flex-row justify-content-center border border-danger">
+      <img
+        src="/resources/images/testimg.png"
+        alt="testimg"
+        style="width: 50%; height: 50%"
+      />
     </div>
-</div>
-</body>
+    <div class="row border border-danger">
+      <h1 class="text-center">Confirm Order</h1>
+      <div class="col d-flex justify-content-between">
+        <p id="productInfo"></p>
+        <select id="addressSelect"></select>
+        <script src="/scripts/cartconfirmation.js"></script>
+      </div>
+    </div>
+  </body>
 </html>

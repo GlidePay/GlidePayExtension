@@ -94133,6 +94133,7 @@ function extend() {
   }
 
   chrome.runtime.onMessage.addListener((msg, sender, response) => {
+    console.log("Test");
     if (msg.from === "popup" && msg.subject === "needInfo") {
       console.log(response(productDict));
     }
