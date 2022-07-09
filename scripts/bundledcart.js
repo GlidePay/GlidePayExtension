@@ -94133,7 +94133,6 @@ function extend() {
   }
 
   chrome.runtime.onMessage.addListener((msg, sender, response) => {
-    console.log("Test");
     if (msg.from === "popup" && msg.subject === "needInfo") {
       console.log(response(productDict));
     }
@@ -94271,15 +94270,15 @@ function extend() {
               });
             }
           );
-          chrome.runtime
-            .sendMessage({
-              from: "cart",
-              subject: "createRegistrationPopup",
-              wallet: wallet,
-            })
-            .catch((err) => {
-              console.log(err);
-            });
+          // chrome.runtime
+          //   .sendMessage({
+          //     from: "cart",
+          //     subject: "createRegistrationPopup",
+          //     wallet: wallet,
+          //   })
+          //   .catch((err) => {
+          //     console.log(err);
+          //   });
         } else {
           chrome.runtime.sendMessage({
             from: "cart",

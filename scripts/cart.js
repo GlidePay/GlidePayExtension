@@ -200,15 +200,15 @@
               });
             }
           );
-          chrome.runtime
-            .sendMessage({
-              from: "cart",
-              subject: "createRegistrationPopup",
-              wallet: wallet,
-            })
-            .catch((err) => {
-              console.log(err);
-            });
+          // chrome.runtime
+          //   .sendMessage({
+          //     from: "cart",
+          //     subject: "createRegistrationPopup",
+          //     wallet: wallet,
+          //   })
+          //   .catch((err) => {
+          //     console.log(err);
+          //   });
         } else {
           chrome.runtime.sendMessage({
             from: "cart",
