@@ -11,9 +11,27 @@ function getAddresses(userid) {
     .then((response) => response.json())
     .then((responseData) => {
       console.log(responseData);
+
+      const tempAddress = sessionStorage.getItem("tempAddress");
+      if (tempAddress == null) {
+        console.log("no temp address");
+      } else {
+        responseData.push(JSON.parse(tempAddress));
+      }
+
       const addressSelect = document.getElementById("addressSelect");
       for (let i = 0; i < responseData.length; i++) {
         const option = document.createElement("option");
+        address = [
+          responseData[i].Address_Line_1,
+          responseData[i].Address_Line_2,
+          responseData[i].City,
+          responseData[i].Province_State,
+          responseData[i].Zip_Postal_Code,
+          responseData[i].Country,
+          responseData[i].Phone_Number,
+        ];
+        option.setAttribute("address", address);
         const addressString =
           responseData[i].Address_Line_1 +
           " " +
@@ -33,12 +51,6 @@ function getAddresses(userid) {
         addressSelect.appendChild(option);
       }
     });
-  const tempAddress = sessionStorage.getItem("tempAddress");
-  if (tempAddress == null) {
-    console.log("no temp address");
-  } else {
-    console.log(tempAddress);
-  }
 }
 
 const setProductInfo = (products) => {
@@ -65,15 +77,10 @@ const setProductInfo = (products) => {
     itemImageColumn.appendChild(itemImage);
 
     const itemNameColumn = document.createElement("col-md-4");
-    // const itemName = document.createElement("h2");
     itemNameColumn.textContent = products[value][3];
-    // itemNameColumn.appendChild(itemImage);
 
     const itemPriceColumn = document.createElement("col-md-4");
-    // const itemPrice = document.createElement("h2");
     itemPriceColumn.textContent = `$${products[value][1]}`;
-    // itemPrice.classList.add("pull-right");
-    // itemPriceColumn.appendChild(itemImage);
 
     const itemQuantity = document.createElement("h2");
     itemQuantity.textContent = `Qty: ${products[value][0]}`;
@@ -90,11 +97,19 @@ const setProductInfo = (products) => {
     productSection.appendChild(cartItem);
     i++;
   }
+
   const confirmButton = document.createElement("button");
   confirmButton.setId;
   confirmButton.setAttribute("class", "btn btn-primary");
   confirmButton.textContent = "Confirm Order";
   confirmButton.addEventListener("click", () => {
+    const addressSelect = document.getElementById("addressSelect");
+    if (addressSelect.selectedIndex == -1) {
+      console.log("Please select an address");
+      return;
+    }
+    let value = addressSelect.options[addressSelect.selectedIndex].text;
+    console.log(value);
     lambdaTest();
     chrome.windows.getAll({ populate: true }, (windows) => {
       for (let a in windows) {
@@ -117,6 +132,27 @@ const setProductInfo = (products) => {
     getAddresses(result["userid"]);
   });
   productSection.appendChild(confirmButton);
+
+  const addressButtonRow = document.createElement("div");
+  addressButtonRow.setAttribute(
+    "class",
+    "bg-light d-flex justify-content-between"
+  );
+  const addAddressButton = document.createElement("button");
+  addAddressButton.textContent = "Add Address";
+  addAddressButton.setAttribute("class", "btn btn-primary");
+  addAddressButton.addEventListener("click", () => {
+    chrome.runtime
+      .sendMessage({
+        from: "cart",
+        subject: "createRegistrationPopup",
+      })
+      .then(() => {
+        window.close();
+      });
+  });
+  addressButtonRow.appendChild(addAddressButton);
+  productSection.appendChild(addressButtonRow);
 };
 
 function lambdaTest() {
