@@ -94087,9 +94087,10 @@ function extend() {
     document.getElementById("sc-buy-box").style.paddingBottom = "5px";
   }
 
+  let productDict = {};
   async function getProducts() {
+    //TODO: ERROR HANDLING FOR REQUEST
     return new Promise((resolve, reject) => {
-      let productDict = {};
       let xhr = new XMLHttpRequest();
       xhr.responseType = "document";
       let url = "https://www.amazon.com/gp/cart/view.html";
@@ -94123,8 +94124,7 @@ function extend() {
             let img = productImg.getAttribute("src");
             productDict[product_id] = [quantity, price, img, ""];
           }
-          sendProducts(productDict);
-          resolve("true");
+          resolve();
         }
       };
       xhr.open("GET", url, true);
@@ -94132,14 +94132,11 @@ function extend() {
     });
   }
 
-  function sendProducts(productDict) {
-    chrome.runtime.onMessage.addListener((msg, sender, response) => {
-      if (msg.from === "popup" && msg.subject === "needInfo") {
-        console.log("test2");
-        response(productDict);
-      }
-    });
-  }
+  chrome.runtime.onMessage.addListener((msg, sender, response) => {
+    if (msg.from === "popup" && msg.subject === "needInfo") {
+      console.log(response(productDict));
+    }
+  });
 
   chrome.runtime.onMessage.addListener((msg) => {
     if (msg.from === "popup" && msg.subject === "promptTransaction") {
@@ -94328,7 +94325,7 @@ function extend() {
               .request({ method: "eth_requestAccounts" })
               .then(() => {
                 console.log("Logged in");
-                getProducts().then((message) => {
+                getProducts().then(() => {
                   chrome.runtime.sendMessage({
                     from: "cart",
                     subject: "createOrderPopup",
