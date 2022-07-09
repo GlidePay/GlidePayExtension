@@ -94227,21 +94227,19 @@ function extend() {
   });
 
   async function checkSignedIn() {
-    const payWithCryptoButton = document.getElementById("crypto-button");
-    payWithCryptoButton.disabled = true;
+    const payWithCyrptoButton = document.getElementById("crypto-button");
+    payWithCyrptoButton.disabled = true;
     return new Promise((resolve, reject) => {
       const web3 = new Web3(provider);
       web3.eth.getAccounts(function (err, accounts) {
-        if (err) {
-          payWithCryptoButton.disabled = false;
-          console.log(err);
-          reject(err);
-        } else if (accounts.length === 0) {
-          payWithCryptoButton.disabled = false;
-          console.log("No accounts found");
-          reject("No accounts found");
+        if (err != null) {
+          payWithCyrptoButton.disabled = false;
+          console.log("An error occurred: " + err);
+          reject();
+        } else if (accounts.length == 0) {
+          reject();
         } else {
-          payWithCryptoButton.disabled = false;
+          payWithCyrptoButton.disabled = false;
           checkAccount(accounts[0]);
           resolve();
         }
@@ -94316,7 +94314,7 @@ function extend() {
         checkSignedIn()
           .then(() => {
             console.log("Getting products");
-            getProducts.then(() => {
+            getProducts().then(() => {
               console.log("Creating popup");
               chrome.runtime.sendMessage({
                 from: "cart",
@@ -94336,6 +94334,7 @@ function extend() {
                     subject: "createOrderPopup",
                     screenSize: screen.width,
                   });
+                  payWithCryptoButton.disabled = false;
                 });
               })
               .catch(() => {
