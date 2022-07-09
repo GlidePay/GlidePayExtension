@@ -238,7 +238,7 @@
   }
 
   function defineEvent() {
-    const payWithCryptoButton = document.getElementById("crypto-button");
+    const payWithCyrptoButton = document.getElementById("crypto-button");
     document
       .getElementById("crypto-button")
       .addEventListener("click", function (event) {
@@ -246,7 +246,7 @@
         checkSignedIn()
           .then(() => {
             console.log("Getting products");
-            getProducts.then(() => {
+            getProducts().then(() => {
               console.log("Creating popup");
               chrome.runtime.sendMessage({
                 from: "cart",
@@ -270,7 +270,7 @@
               })
               .catch(() => {
                 console.log("NOt logged in");
-                payWithCryptoButton.disabled = false;
+                payWithCyrptoButton.disabled = false;
               });
           });
       });
