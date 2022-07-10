@@ -34,19 +34,19 @@ function getAddresses(userid) {
         ];
         option.setAttribute("address", address);
         const addressString =
-            responseData[i].Address_Line_1 +
-            " " +
-            responseData[i].Address_Line_2 +
-            " " +
-            responseData[i].City +
-            " " +
-            responseData[i].Province_State +
-            " " +
-            responseData[i].Zip_Postal_Code +
-            " " +
-            responseData[i].Country +
-            " " +
-            responseData[i].Phone_Number;
+          responseData[i].Address_Line_1 +
+          " " +
+          responseData[i].Address_Line_2 +
+          " " +
+          responseData[i].City +
+          " " +
+          responseData[i].Province_State +
+          " " +
+          responseData[i].Zip_Postal_Code +
+          " " +
+          responseData[i].Country +
+          " " +
+          responseData[i].Phone_Number;
         option.textContent = addressString.substring(0, 20) + "...";
         option.value = responseData[i].Address_ID;
         addressSelect.appendChild(option);
@@ -82,10 +82,14 @@ const setProductInfo = (products) => {
 
     const itemPrice = document.createElement("h2");
     itemPrice.setAttribute("class", "p pr-2");
-    itemPrice.textContent = products[value][0] + " " + "x" + " " + "$" + products[value][1];
+    itemPrice.textContent =
+      products[value][0] + " " + "x" + " " + "$" + products[value][1];
 
     const itemPriceColumn = document.createElement("col-md-4");
-    itemPriceColumn.setAttribute("class", "col-md-4 my-auto mr-4 px-4 text-center");
+    itemPriceColumn.setAttribute(
+      "class",
+      "col-md-4 my-auto mr-4 px-4 text-center"
+    );
     itemPriceColumn.appendChild(itemPrice);
 
     const itemQuantity = document.createElement("p");
@@ -121,7 +125,8 @@ const setProductInfo = (products) => {
               from: "popup",
               subject: "promptTransaction",
               price: totalprice,
-              addressid: addressSelect.options[addressSelect.selectedIndex].value,
+              addressid:
+                addressSelect.options[addressSelect.selectedIndex].value,
               products: products,
             });
             window.close();
@@ -140,10 +145,7 @@ const setProductInfo = (products) => {
   addressLabel.textContent = "Address";
 
   const addressButtonRow = document.createElement("div");
-  addressButtonRow.setAttribute(
-    "class",
-    "d-flex justify-content-between"
-  );
+  addressButtonRow.setAttribute("class", "d-flex justify-content-between");
   const buttonRowHR = document.createElement("hr");
   const addAddressButton = document.createElement("button");
   addAddressButton.textContent = "Add Address";

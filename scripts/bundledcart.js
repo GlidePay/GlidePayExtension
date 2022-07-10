@@ -94068,33 +94068,113 @@ function extend() {
 }
 
 },{}],543:[function(require,module,exports){
+const createProvider = require("metamask-extension-provider");
+const Web3 = require("web3");
+const provider = createProvider();
 // ALL CHANGES TO THIS FILE MUST BE COMPILED WITH "npm run buildCart"
-(function () {
-  const createProvider = require("metamask-extension-provider");
-  const Web3 = require("web3");
-  const provider = createProvider();
-
-  function addButton() {
-    let button = document.createElement("INPUT");
-    button.id = "crypto-button";
-    button.type = "image";
-    button.src =
-      "https://bafkreiflbuggpczchtd2elv5qqhyks27ujz6hihi4xxzrp5kxu3psd4qce.ipfs.nftstorage.link/";
-    button.style.cssText = "height: 79px; width: 260px";
-    let add_to_cart = document.getElementById("gutterCartViewForm");
-    add_to_cart.after(button);
-    document.getElementById("gutterCartViewForm").style.marginBottom = "10px";
-    document.getElementById("sc-buy-box").style.paddingBottom = "5px";
+class EcommerceContentScript {
+  constructor() {
+    this.cryptoButton = this.createButton();
+    this.walletID;
+    this.productDict = 1;
   }
 
-  let productDict = {};
-  async function getProducts() {
-    //TODO: ERROR HANDLING FOR REQUEST
+  createListeners() {
+    chrome.runtime.onMessage.addListener((msg, sender, response) => {
+      if (msg.from === "popup" && msg.subject === "needInfo") {
+        console.log("Weeee");
+        console.log(this.productDict);
+        response(this.productDict);
+      }
+    });
+  }
+
+  createButton() {
+    let cryptoButton = document.createElement("INPUT");
+    cryptoButton.id = "crypto-button";
+    cryptoButton.type = "image";
+    cryptoButton.src =
+      "https://bafkreiflbuggpczchtd2elv5qqhyks27ujz6hihi4xxzrp5kxu3psd4qce.ipfs.nftstorage.link/";
+    cryptoButton.style.cssText = "height: 79px; width: 260px";
+
+    cryptoButton.addEventListener("click", () => {
+      console.log("1");
+      this.checkMetamaskSignIn()
+        .then((walletID) => {
+          this.walletID = walletID;
+          console.log(this.walletID);
+          console.log("2");
+          this.getProducts().then((productDict) => {
+            this.productDict = productDict;
+            chrome.runtime.sendMessage({
+              from: "cart",
+              subject: "createOrderPopup",
+              screenSize: screen.width,
+            });
+          });
+        })
+        .catch((error) => {
+          console.log("(checkMetamaskSignIn)");
+          console.log(error);
+        });
+    });
+    console.log(cryptoButton);
+    return cryptoButton;
+  }
+
+  async checkMetamaskSignIn() {
+    this.cryptoButton.disabled = true;
+    return new Promise((resolve, reject) => {
+      const web3 = new Web3(provider);
+      web3.eth.getAccounts((error, accounts) => {
+        if (error != null) {
+          this.cryptoButton.disabled = false;
+          reject(error);
+        } else if (accounts.length == 0) {
+          reject("No Accounts Found");
+        } else {
+          resolve(accounts[0]);
+        }
+      });
+    });
+  }
+
+  async checkAccount(walletID) {
+    return new Promise((resolve, reject) => {
+      chrome.runtime
+        .sendMessage({
+          from: "cart",
+          subject: "findUserByWallet",
+          wallet: walletID,
+        })
+        .then((userID) => {
+          if (userID != null) {
+            chrome.runtime.sendMessage({
+              from: "cart",
+              subject: "createUserByWallet",
+              wallet: walletID,
+            });
+          }
+        })
+        .then((userID) => {
+          chrome.runtime.sendMessage({
+            from: "cart",
+            subject: "storeUser",
+            userid: userID,
+          });
+        });
+    });
+  }
+
+  async getProducts() {
+    let productDict = {};
     return new Promise((resolve, reject) => {
       let xhr = new XMLHttpRequest();
       xhr.responseType = "document";
       let url = "https://www.amazon.com/gp/cart/view.html";
+      console.log("3");
       xhr.onreadystatechange = async function () {
+        console.log("4");
         if (xhr.readyState === 4 && xhr.status === 200 /* DONE */) {
           let html = xhr.response;
           let div_list = html.querySelectorAll(
@@ -94124,19 +94204,80 @@ function extend() {
             let img = productImg.getAttribute("src");
             productDict[product_id] = [quantity, price, img, ""];
           }
-          resolve();
+          resolve(productDict);
         }
       };
+      console.log("5");
       xhr.open("GET", url, true);
       xhr.send("");
     });
   }
+}
 
-  chrome.runtime.onMessage.addListener((msg, sender, response) => {
-    if (msg.from === "popup" && msg.subject === "needInfo") {
-      console.log(response(productDict));
-    }
-  });
+class Amazon extends EcommerceContentScript {
+  constructor() {
+    super();
+  }
+  injectButton() {
+    const add_to_cart = document.getElementById("gutterCartViewForm");
+    add_to_cart.after(this.cryptoButton);
+    document.getElementById("gutterCartViewForm").style.marginBottom = "10px";
+    document.getElementById("sc-buy-box").style.paddingBottom = "5px";
+  }
+}
+
+(function () {
+  // let productDict = {};
+  // async function getProducts() {
+  //   //TODO: ERROR HANDLING FOR REQUEST
+
+  //   return new Promise((resolve, reject) => {
+  //     let xhr = new XMLHttpRequest();
+  //     xhr.responseType = "document";
+  //     let url = "https://www.amazon.com/gp/cart/view.html";
+  //     xhr.onreadystatechange = async function () {
+  //       if (xhr.readyState === 4 && xhr.status === 200 /* DONE */) {
+  //         let html = xhr.response;
+  //         let div_list = html.querySelectorAll(
+  //           "div.a-section.a-spacing-mini.sc-list-body.sc-java-remote-feature > .a-row.sc-list-item.sc-list-item-border.sc-java-remote-feature"
+  //         );
+  //         let img_list = html.querySelectorAll(
+  //           "div.a-section.a-spacing-mini.sc-list-body.sc-java-remote-feature > .a-row.sc-list-item.sc-list-item-border.sc-java-remote-feature > .sc-list-item-content > .a-row.a-spacing-base.a-spacing-top-base > .a-column.a-span10 > .a-fixed-left-grid > .a-fixed-left-grid-inner > .a-fixed-left-grid-col.a-float-left.sc-product-image-desktop.a-col-left > .a-link-normal.sc-product-link"
+  //         );
+  //         let div_array = [...div_list];
+  //         let img_array = [...img_list];
+  //         for (let i = 0; i < div_array.length; i++) {
+  //           let divHTML = new DOMParser().parseFromString(
+  //             div_array[i].outerHTML,
+  //             "text/xml"
+  //           );
+  //           let productDiv = divHTML.getElementsByClassName(
+  //             "a-row sc-list-item sc-list-item-border sc-java-remote-feature"
+  //           )[0];
+  //           let product_id = productDiv.getAttribute("data-asin");
+  //           let quantity = productDiv.getAttribute("data-quantity");
+  //           let price = productDiv.getAttribute("data-price");
+  //           let imgInnterHTML = new DOMParser().parseFromString(
+  //             img_array[i].innerHTML,
+  //             "text/xml"
+  //           );
+  //           let productImg = imgInnterHTML.getElementsByTagName("img")[0];
+  //           let img = productImg.getAttribute("src");
+  //           productDict[product_id] = [quantity, price, img, ""];
+  //         }
+  //         resolve();
+  //       }
+  //     };
+  //     xhr.open("GET", url, true);
+  //     xhr.send("");
+  //   });
+  // }
+
+  // chrome.runtime.onMessage.addListener((msg, sender, response) => {
+  //   if (msg.from === "popup" && msg.subject === "needInfo") {
+  //     console.log(response(productDict));
+  //   }
+  // });
 
   chrome.runtime.onMessage.addListener((msg) => {
     if (msg.from === "popup" && msg.subject === "promptTransaction") {
@@ -94223,109 +94364,113 @@ function extend() {
     }
   });
 
-  async function checkSignedIn() {
-    const payWithCyrptoButton = document.getElementById("crypto-button");
-    payWithCyrptoButton.disabled = true;
-    return new Promise((resolve, reject) => {
-      const web3 = new Web3(provider);
-      web3.eth.getAccounts(function (err, accounts) {
-        if (err != null) {
-          payWithCyrptoButton.disabled = false;
-          console.log("An error occurred: " + err);
-          reject();
-        } else if (accounts.length == 0) {
-          reject();
-        } else {
-          payWithCyrptoButton.disabled = false;
-          checkAccount(accounts[0]);
-          resolve();
-        }
-      });
-    });
-  }
+  // async function checkSignedIn() {
+  //   const payWithCyrptoButton = document.getElementById("crypto-button");
+  //   payWithCyrptoButton.disabled = true;
+  //   return new Promise((resolve, reject) => {
+  //     const web3 = new Web3(provider);
+  //     web3.eth.getAccounts(function (err, accounts) {
+  //       if (err != null) {
+  //         payWithCyrptoButton.disabled = false;
+  //         console.log("An error occurred: " + err);
+  //         reject();
+  //       } else if (accounts.length == 0) {
+  //         reject();
+  //       } else {
+  //         payWithCyrptoButton.disabled = false;
+  //         checkAccount(accounts[0]);
+  //         resolve();
+  //       }
+  //     });
+  //   });
+  // }
 
-  function checkAccount(wallet) {
-    // Checks if account exists, if not creates one.
-    console.log("WALLET: " + wallet);
-    chrome.runtime.sendMessage(
-      {
-        from: "cart",
-        subject: "findUserByWallet",
-        wallet: wallet,
-      },
-      (user) => {
-        console.log("USER: " + JSON.stringify(user) + " WALLET: " + wallet);
-        if (user === null) {
-          chrome.runtime.sendMessage(
-            {
-              from: "cart",
-              subject: "createUserByWallet",
-              wallet: wallet,
-            },
-            (user) => {
-              console.log("storing user");
-              chrome.runtime.sendMessage({
-                from: "cart",
-                subject: "storeUser",
-                userid: user,
-              });
-            }
-          );
-        } else {
-          chrome.runtime.sendMessage({
-            from: "cart",
-            subject: "storeUser",
-            userid: user,
-          });
-        }
-      }
-    );
-  }
+  // function checkAccount(wallet) {
+  //   // Checks if account exists, if not creates one.
+  //   console.log("WALLET: " + wallet);
+  //   chrome.runtime.sendMessage(
+  //     {
+  //       from: "cart",
+  //       subject: "findUserByWallet",
+  //       wallet: wallet,
+  //     },
+  //     (user) => {
+  //       console.log("USER: " + JSON.stringify(user) + " WALLET: " + wallet);
+  //       if (user === null) {
+  //         chrome.runtime.sendMessage(
+  //           {
+  //             from: "cart",
+  //             subject: "createUserByWallet",
+  //             wallet: wallet,
+  //           },
+  //           (user) => {
+  //             console.log("storing user");
+  //             chrome.runtime.sendMessage({
+  //               from: "cart",
+  //               subject: "storeUser",
+  //               userid: user,
+  //             });
+  //           }
+  //         );
+  //       } else {
+  //         chrome.runtime.sendMessage({
+  //           from: "cart",
+  //           subject: "storeUser",
+  //           userid: user,
+  //         });
+  //       }
+  //     }
+  //   );
+  // }
 
-  function defineEvent() {
-    const payWithCryptoButton = document.getElementById("crypto-button");
-    document
-      .getElementById("crypto-button")
-      .addEventListener("click", function (event) {
-        // Should check if signed in
-        checkSignedIn()
-          .then(() => {
-            console.log("Getting products");
-            getProducts().then(() => {
-              console.log("Creating popup");
-              chrome.runtime.sendMessage({
-                from: "cart",
-                subject: "createOrderPopup",
-                screenSize: screen.width,
-              });
-            });
-          })
-          .catch(() => {
-            provider
-              .request({ method: "eth_requestAccounts" })
-              .then(() => {
-                console.log("Logged in");
-                checkSignedIn().then(() => {
-                  getProducts().then(() => {
-                    chrome.runtime.sendMessage({
-                      from: "cart",
-                      subject: "createOrderPopup",
-                      screenSize: screen.width,
-                    });
-                    payWithCryptoButton.disabled = false;
-                  });
-                });
-              })
-              .catch(() => {
-                console.log("NOt logged in");
-                payWithCryptoButton.disabled = false;
-              });
-          });
-      });
-  }
+  // function defineEvent() {
+  //   const payWithCryptoButton = document.getElementById("crypto-button");
+  //   document
+  //     .getElementById("crypto-button")
+  //     .addEventListener("click", function (event) {
+  //       // Should check if signed in
+  //       checkSignedIn()
+  //         .then(() => {
+  //           console.log("Getting products");
+  //           getProducts().then(() => {
+  //             console.log("Creating popup");
+  //             chrome.runtime.sendMessage({
+  //               from: "cart",
+  //               subject: "createOrderPopup",
+  //               screenSize: screen.width,
+  //             });
+  //           });
+  //         })
+  //         .catch(() => {
+  //           provider
+  //             .request({ method: "eth_requestAccounts" })
+  //             .then(() => {
+  //               console.log("Logged in");
+  //               checkSignedIn().then(() => {
+  //                 getProducts().then(() => {
+  //                   chrome.runtime.sendMessage({
+  //                     from: "cart",
+  //                     subject: "createOrderPopup",
+  //                     screenSize: screen.width,
+  //                   });
+  //                   payWithCryptoButton.disabled = false;
+  //                 });
+  //               });
+  //             })
+  //             .catch(() => {
+  //               console.log("NOt logged in");
+  //               payWithCryptoButton.disabled = false;
+  //             });
+  //         });
+  //     });
+  // }
 
-  addButton();
-  defineEvent();
+  let amazon = new Amazon();
+  amazon.createListeners();
+  amazon.injectButton();
+  console.log("weeeu");
+  console.log(amazon.productDict);
+  // defineEvent();
   chrome.runtime.sendMessage({
     from: "cart",
     subject: "productData",
