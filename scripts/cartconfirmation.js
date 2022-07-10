@@ -124,7 +124,7 @@ const setProductInfo = (products) => {
               addressid: addressSelect.options[addressSelect.selectedIndex].value,
               products: products,
             });
-            break;
+            window.close();
           }
         }
       }
