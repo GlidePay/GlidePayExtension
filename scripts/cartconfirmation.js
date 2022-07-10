@@ -64,44 +64,46 @@ const setProductInfo = (products) => {
   console.log(Object.keys(products));
   if (Object.keys(products).length > 0) {
     const horizontal_divider = document.createElement("hr");
+    horizontal_divider.setAttribute("class", "hr");
     productSection.appendChild(horizontal_divider);
   }
   for (let value in products) {
     const cartItem = document.createElement("div");
+    cartItem.setAttribute("class", "div");
     totalprice += parseFloat(products[value][1]) * parseInt(products[value][0]);
 
     const itemImageColumn = document.createElement("col-md-4");
+    itemImageColumn.setAttribute("class", "col-md-4 px-4 py-2");
     const itemImage = document.createElement("img");
     itemImage.src = products[value][2];
     itemImage.setAttribute("height", "100px");
     itemImage.setAttribute("width", "100px");
     itemImageColumn.appendChild(itemImage);
 
-    const itemNameColumn = document.createElement("col-md-4");
-    itemNameColumn.textContent = products[value][3];
+    const itemPrice = document.createElement("h2");
+    itemPrice.setAttribute("class", "p pr-2");
+    itemPrice.textContent = products[value][0] + " " + "x" + " " + "$" + products[value][1];
 
     const itemPriceColumn = document.createElement("col-md-4");
-    itemPriceColumn.textContent = `$${products[value][1]}`;
+    itemPriceColumn.setAttribute("class", "col-md-4 my-auto mr-4 px-4 text-center");
+    itemPriceColumn.appendChild(itemPrice);
 
-    const itemQuantity = document.createElement("h2");
-    itemQuantity.textContent = `Qty: ${products[value][0]}`;
+    const itemQuantity = document.createElement("p");
+    itemQuantity.setAttribute("class", "text-center");
+    itemQuantity.textContent = `${products[value][0]}`;
 
-    const horizontal_divider = document.createElement("hr");
     const cellRow1 = document.createElement("div");
-    cellRow1.setAttribute("class", "bg-light d-flex justify-content-between");
+    cellRow1.setAttribute("class", "d-flex justify-content-between");
     cellRow1.appendChild(itemImageColumn);
-    cellRow1.appendChild(itemNameColumn);
     cellRow1.appendChild(itemPriceColumn);
     cartItem.appendChild(cellRow1);
-    cartItem.appendChild(itemQuantity);
-    cartItem.appendChild(horizontal_divider);
     productSection.appendChild(cartItem);
     i++;
   }
 
   const confirmButton = document.createElement("button");
   confirmButton.setId;
-  confirmButton.setAttribute("class", "btn btn-primary");
+  confirmButton.setAttribute("class", "btn btn-primary mx-4");
   confirmButton.textContent = "Confirm Order";
   confirmButton.addEventListener("click", () => {
     const addressSelect = document.getElementById("addressSelect");
@@ -111,7 +113,6 @@ const setProductInfo = (products) => {
     }
     let value = addressSelect.options[addressSelect.selectedIndex].text;
     console.log(value);
-    lambdaTest();
     chrome.windows.getAll({ populate: true }, (windows) => {
       for (let a in windows) {
         for (let b in windows[a].tabs) {
@@ -134,43 +135,27 @@ const setProductInfo = (products) => {
     console.log("GOTUSERID");
     getAddresses(result["userid"]);
   });
-  productSection.appendChild(confirmButton);
+
+  const addressLabel = document.createElement("h2");
+  addressLabel.textContent = "Address";
 
   const addressButtonRow = document.createElement("div");
   addressButtonRow.setAttribute(
     "class",
-    "bg-light d-flex justify-content-between"
+    "d-flex justify-content-between"
   );
+  const buttonRowHR = document.createElement("hr");
   const addAddressButton = document.createElement("button");
   addAddressButton.textContent = "Add Address";
-  addAddressButton.setAttribute("class", "btn btn-primary");
+  addAddressButton.setAttribute("class", "btn btn-primary mx-4");
   addAddressButton.addEventListener("click", () => {
-    chrome.runtime
-      .sendMessage({
-        from: "cart",
-        subject: "createRegistrationPopup",
-      })
-      .then(() => {
-        window.close();
-      });
+    window.location.href = "addaddress.html";
   });
+  addressButtonRow.appendChild(confirmButton);
   addressButtonRow.appendChild(addAddressButton);
+  productSection.appendChild(buttonRowHR);
   productSection.appendChild(addressButtonRow);
 };
-
-function lambdaTest() {
-  fetch(
-    "https://a5w54in31c.execute-api.us-east-1.amazonaws.com/default/omarpython",
-    {
-      method: "post",
-    }
-  )
-    .then((response) => response.text())
-    .then((data) => {
-      console.log(data);
-      //use keys
-    });
-}
 
 window.addEventListener("load", () => {
   chrome.windows.getAll({ populate: true }, (windows) => {
@@ -188,23 +173,3 @@ window.addEventListener("load", () => {
     }
   });
 });
-
-////
-
-// window.addEventListener("load", () => {
-//   chrome.windows.getAll({ populate: true }, (windows) => {
-//     for (let a in windows) {
-//       for (let b in windows[a].tabs) {
-//         if (windows[a].tabs[b].url.includes("amazon.com/gp/cart")) {
-//           console.log("hi");
-//           chrome.tabs.sendMessage(
-//             windows[a].tabs[b].id,
-//             { from: "popup", subject: "needInfo" },
-//             setProductInfo
-//           );
-//           break;
-//         }
-//       }
-//     }
-//   });
-// });

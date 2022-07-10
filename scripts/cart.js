@@ -200,15 +200,6 @@
               });
             }
           );
-          // chrome.runtime
-          //   .sendMessage({
-          //     from: "cart",
-          //     subject: "createRegistrationPopup",
-          //     wallet: wallet,
-          //   })
-          //   .catch((err) => {
-          //     console.log(err);
-          //   });
         } else {
           chrome.runtime.sendMessage({
             from: "cart",
@@ -218,18 +209,6 @@
         }
       }
     );
-  }
-
-  function addRegistrationButton() {
-    let button = document.createElement("INPUT");
-    button.id = "register-button";
-    button.type = "image";
-    button.src = "https://www.metamask.io/images/metamask-logo-icon.png";
-    button.style.cssText = "height: 79px; width: 260px";
-    let add_to_cart = document.getElementById("crypto-button");
-    add_to_cart.after(button);
-    document.getElementById("gutterCartViewForm").style.marginBottom = "10px";
-    document.getElementById("sc-buy-box").style.paddingBottom = "5px";
   }
 
   function defineEvent() {
@@ -272,26 +251,8 @@
       });
   }
 
-  function defineRegistrationEvent() {
-    document
-      .getElementById("register-button")
-      .addEventListener("click", function (event) {
-        checkSignedIn().then(() => {
-          getProducts().then(() => {
-            alert("Registration button");
-            chrome.runtime.sendMessage({
-              from: "cart",
-              subject: "createRegistrationPopup",
-            });
-          });
-        });
-      });
-  }
-
   addButton();
-  addRegistrationButton();
   defineEvent();
-  defineRegistrationEvent();
   chrome.runtime.sendMessage({
     from: "cart",
     subject: "productData",

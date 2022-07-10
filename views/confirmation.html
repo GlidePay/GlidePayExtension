@@ -8,21 +8,26 @@
     <script src="/bootstrap/bootstrap-5.2.0-beta1-dist/js/bootstrap.js"></script>
     <title></title>
   </head>
-  <body class="border border-info">
-    <div class="d-flex flex-row justify-content-center border border-danger">
+  <body>
+    <div class="d-flex flex-row justify-content-center">
       <img
         src="/resources/images/Logo.png"
         alt="Logo"
         style="width: 50%; height: 50%"
+        class="mt-2"
       />
     </div>
-    <div class="row border border-danger">
+    <hr>
+    <div class="row">
       <h1 class="text-center">Confirm Order</h1>
-      <div class="col d-flex justify-content-between">
-        <p id="productInfo"></p>
+      <div class="col">
+        <p id="productInfo">
+
+        </p>
         <script src="/scripts/cartconfirmation.js"></script>
       </div>
-      <select id="addressSelect"></select>
+      <label for="addressSelect"></label>
+      <select class="form-select px-2 text-center" aria-label="Choose Address" id="addressSelect"></select>
     </div>
   </body>
 </html>
