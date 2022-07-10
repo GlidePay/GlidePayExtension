@@ -96,18 +96,20 @@ function getTransaction(body) {
     let addressid = body.addressid;
     let amount = body.amount;
     let ticker = body.ticker;
-    fetch ('https://bbeh09t5ub.execute-api.us-east-1.amazonaws.com', {
+    fetch ('https://xrl1xszvde.execute-api.us-east-1.amazonaws.com/prod/', {
         method: 'post',
         body: JSON.stringify({
-            txhash: txhash,
-            wallet: wallet,
-            userid: user,
-            retailer: retailer,
-            status: status,
-            productidsarr: productidsarr,
-            addressid: addressid,
-            amount: amount,
-            ticker: ticker
+            stateMachineArn: "arn:aws:states:us-east-1:447056388296:stateMachine:GlidePayState",
+            input: JSON.stringify({
+                txhash: txhash,
+                wallet: wallet,
+                userid: user,
+                retailer: retailer,
+                status: status,
+                productidsarr: productidsarr,
+                addressid: addressid,
+                amount: amount,
+                ticker: ticker })
         })
     }).catch(error => {
         console.log(error.stack);
