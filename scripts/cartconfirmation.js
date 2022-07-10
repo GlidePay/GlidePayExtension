@@ -20,6 +20,7 @@ function getAddresses(userid) {
       }
 
       const addressSelect = document.getElementById("addressSelect");
+      let address;
       for (let i = 0; i < responseData.length; i++) {
         const option = document.createElement("option");
         address = [
@@ -33,19 +34,19 @@ function getAddresses(userid) {
         ];
         option.setAttribute("address", address);
         const addressString =
-          responseData[i].Address_Line_1 +
-          " " +
-          responseData[i].Address_Line_2 +
-          " " +
-          responseData[i].City +
-          " " +
-          responseData[i].Province_State +
-          " " +
-          responseData[i].Zip_Postal_Code +
-          " " +
-          responseData[i].Country +
-          " " +
-          responseData[i].Phone_Number;
+            responseData[i].Address_Line_1 +
+            " " +
+            responseData[i].Address_Line_2 +
+            " " +
+            responseData[i].City +
+            " " +
+            responseData[i].Province_State +
+            " " +
+            responseData[i].Zip_Postal_Code +
+            " " +
+            responseData[i].Country +
+            " " +
+            responseData[i].Phone_Number;
         option.textContent = addressString.substring(0, 20) + "...";
         option.value = responseData[i].Address_ID;
         addressSelect.appendChild(option);
@@ -104,7 +105,7 @@ const setProductInfo = (products) => {
   confirmButton.textContent = "Confirm Order";
   confirmButton.addEventListener("click", () => {
     const addressSelect = document.getElementById("addressSelect");
-    if (addressSelect.selectedIndex == -1) {
+    if (addressSelect.selectedIndex === -1) {
       console.log("Please select an address");
       return;
     }
@@ -119,6 +120,8 @@ const setProductInfo = (products) => {
               from: "popup",
               subject: "promptTransaction",
               price: totalprice,
+              addressid: addressSelect.options[addressSelect.selectedIndex].value,
+              products: products,
             });
             break;
           }
