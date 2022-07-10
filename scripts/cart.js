@@ -193,6 +193,7 @@
               wallet: wallet,
             },
             (user) => {
+              console.log("storing user");
               chrome.runtime.sendMessage({
                 from: "cart",
                 subject: "storeUser",
@@ -234,13 +235,15 @@
               .request({ method: "eth_requestAccounts" })
               .then(() => {
                 console.log("Logged in");
-                getProducts().then(() => {
-                  chrome.runtime.sendMessage({
-                    from: "cart",
-                    subject: "createOrderPopup",
-                    screenSize: screen.width,
+                checkSignedIn().then(() => {
+                  getProducts().then(() => {
+                    chrome.runtime.sendMessage({
+                      from: "cart",
+                      subject: "createOrderPopup",
+                      screenSize: screen.width,
+                    });
+                    payWithCryptoButton.disabled = false;
                   });
-                  payWithCryptoButton.disabled = false;
                 });
               })
               .catch(() => {
