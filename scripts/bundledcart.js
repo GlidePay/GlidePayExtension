@@ -94082,8 +94082,6 @@ class EcommerceContentScript {
   createListeners() {
     chrome.runtime.onMessage.addListener((msg, sender, response) => {
       if (msg.from === "popup" && msg.subject === "needInfo") {
-        console.log("Weeee");
-        console.log(this.productDict);
         response(this.productDict);
       }
     });
@@ -94098,24 +94096,38 @@ class EcommerceContentScript {
     cryptoButton.style.cssText = "height: 79px; width: 260px";
 
     cryptoButton.addEventListener("click", () => {
-      console.log("1");
       this.checkMetamaskSignIn()
-        .then((walletID) => {
-          this.walletID = walletID;
-          console.log(this.walletID);
-          console.log("2");
-          this.getProducts().then((productDict) => {
-            this.productDict = productDict;
-            chrome.runtime.sendMessage({
-              from: "cart",
-              subject: "createOrderPopup",
-              screenSize: screen.width,
-            });
-          });
+        .catch(async () => {
+          console.log("wating for login");
+          try {
+            await provider
+              .request({ method: "eth_requestAccounts" })
+              .then(() => {
+                return this.checkMetamaskSignIn();
+              });
+          } catch {
+            this.cryptoButton.disabled = false;
+            throw Error("Metamask login already opened.");
+          }
+
+          // .catch(() => {
+
+          // });
         })
-        .catch((error) => {
-          console.log("(checkMetamaskSignIn)");
-          console.log(error);
+        .then((walletID) => {
+          this.checkAccount(walletID);
+        })
+        .then(() => {
+          return this.getProducts();
+        })
+        .then((productDict) => {
+          this.productDict = productDict;
+          chrome.runtime.sendMessage({
+            from: "cart",
+            subject: "createOrderPopup",
+            screenSize: screen.width,
+          });
+          this.cryptoButton.disabled = false;
         });
     });
     console.log(cryptoButton);
@@ -94172,9 +94184,7 @@ class EcommerceContentScript {
       let xhr = new XMLHttpRequest();
       xhr.responseType = "document";
       let url = "https://www.amazon.com/gp/cart/view.html";
-      console.log("3");
       xhr.onreadystatechange = async function () {
-        console.log("4");
         if (xhr.readyState === 4 && xhr.status === 200 /* DONE */) {
           let html = xhr.response;
           let div_list = html.querySelectorAll(
@@ -94207,7 +94217,6 @@ class EcommerceContentScript {
           resolve(productDict);
         }
       };
-      console.log("5");
       xhr.open("GET", url, true);
       xhr.send("");
     });
@@ -94423,53 +94432,51 @@ class Amazon extends EcommerceContentScript {
   //   );
   // }
 
-  // function defineEvent() {
-  //   const payWithCryptoButton = document.getElementById("crypto-button");
-  //   document
-  //     .getElementById("crypto-button")
-  //     .addEventListener("click", function (event) {
-  //       // Should check if signed in
-  //       checkSignedIn()
-  //         .then(() => {
-  //           console.log("Getting products");
-  //           getProducts().then(() => {
-  //             console.log("Creating popup");
-  //             chrome.runtime.sendMessage({
-  //               from: "cart",
-  //               subject: "createOrderPopup",
-  //               screenSize: screen.width,
-  //             });
-  //           });
-  //         })
-  //         .catch(() => {
-  //           provider
-  //             .request({ method: "eth_requestAccounts" })
-  //             .then(() => {
-  //               console.log("Logged in");
-  //               checkSignedIn().then(() => {
-  //                 getProducts().then(() => {
-  //                   chrome.runtime.sendMessage({
-  //                     from: "cart",
-  //                     subject: "createOrderPopup",
-  //                     screenSize: screen.width,
-  //                   });
-  //                   payWithCryptoButton.disabled = false;
-  //                 });
-  //               });
-  //             })
-  //             .catch(() => {
-  //               console.log("NOt logged in");
-  //               payWithCryptoButton.disabled = false;
-  //             });
-  //         });
-  //     });
-  // }
+  function defineEvent() {
+    const payWithCryptoButton = document.getElementById("crypto-button");
+    document
+      .getElementById("crypto-button")
+      .addEventListener("click", function (event) {
+        // Should check if signed in
+        checkSignedIn()
+          .then(() => {
+            console.log("Getting products");
+            getProducts().then(() => {
+              console.log("Creating popup");
+              chrome.runtime.sendMessage({
+                from: "cart",
+                subject: "createOrderPopup",
+                screenSize: screen.width,
+              });
+            });
+          })
+          .catch(() => {
+            provider
+              .request({ method: "eth_requestAccounts" })
+              .then(() => {
+                console.log("Logged in");
+                checkSignedIn().then(() => {
+                  getProducts().then(() => {
+                    chrome.runtime.sendMessage({
+                      from: "cart",
+                      subject: "createOrderPopup",
+                      screenSize: screen.width,
+                    });
+                    payWithCryptoButton.disabled = false;
+                  });
+                });
+              })
+              .catch(() => {
+                console.log("NOt logged in");
+                payWithCryptoButton.disabled = false;
+              });
+          });
+      });
+  }
 
   let amazon = new Amazon();
   amazon.createListeners();
   amazon.injectButton();
-  console.log("weeeu");
-  console.log(amazon.productDict);
   // defineEvent();
   chrome.runtime.sendMessage({
     from: "cart",
