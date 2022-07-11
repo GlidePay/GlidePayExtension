@@ -94167,12 +94167,9 @@ class EcommerceContentScript {
           }
         })
         .then((walletID) => {
-          console.log("checking account");
           this.checkAccount(walletID);
         })
-        .then(() => {
-          return this.getProducts();
-        })
+        .then(() => this.getProducts())
         .then((productDict) => {
           this.productDict = productDict;
           chrome.runtime.sendMessage({
