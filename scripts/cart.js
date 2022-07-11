@@ -6,7 +6,7 @@ class EcommerceContentScript {
   constructor() {
     this.cryptoButton = this.createButton();
     this.walletID;
-    this.productDict = 1;
+    this.productDict;
   }
 
   createListeners() {
@@ -144,6 +144,7 @@ class EcommerceContentScript {
         })
         .then((userID) => {
           if (userID == null) {
+            // TODO: Return new Userid if userID null
             return chrome.runtime
               .sendMessage({
                 from: "cart",
@@ -165,6 +166,19 @@ class EcommerceContentScript {
           });
         });
     });
+  }
+}
+
+class Amazon extends EcommerceContentScript {
+  constructor() {
+    super();
+  }
+
+  injectButton() {
+    const add_to_cart = document.getElementById("gutterCartViewForm");
+    add_to_cart.after(this.cryptoButton);
+    document.getElementById("gutterCartViewForm").style.marginBottom = "10px";
+    document.getElementById("sc-buy-box").style.paddingBottom = "5px";
   }
 
   async getProducts() {
@@ -209,19 +223,6 @@ class EcommerceContentScript {
       xhr.open("GET", url, true);
       xhr.send("");
     });
-  }
-}
-
-class Amazon extends EcommerceContentScript {
-  constructor() {
-    super();
-  }
-
-  injectButton() {
-    const add_to_cart = document.getElementById("gutterCartViewForm");
-    add_to_cart.after(this.cryptoButton);
-    document.getElementById("gutterCartViewForm").style.marginBottom = "10px";
-    document.getElementById("sc-buy-box").style.paddingBottom = "5px";
   }
 }
 

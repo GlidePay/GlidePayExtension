@@ -94076,7 +94076,7 @@ class EcommerceContentScript {
   constructor() {
     this.cryptoButton = this.createButton();
     this.walletID;
-    this.productDict = 1;
+    this.productDict;
   }
 
   createListeners() {
@@ -94085,8 +94085,6 @@ class EcommerceContentScript {
         response(this.productDict);
       }
     });
-
-    console.log("making listner");
 
     chrome.runtime.onMessage.addListener((msg) => {
       if (msg.from === "popup" && msg.subject === "promptTransaction") {
@@ -94215,9 +94213,8 @@ class EcommerceContentScript {
           wallet: walletID,
         })
         .then((userID) => {
-          console.log(`UserID: ${userID}`);
           if (userID == null) {
-            console.log("user is null");
+            // TODO: Return new Userid if userID null
             return chrome.runtime
               .sendMessage({
                 from: "cart",
@@ -94225,13 +94222,9 @@ class EcommerceContentScript {
                 wallet: walletID,
               })
               .then((newUserID) => {
-                console.log("returning new id");
-                console.log(newUserID);
                 return newUserID;
               });
           }
-          console.log("returning old id");
-          console.log(userID);
           return userID;
         })
         .then((userID) => {
@@ -94243,6 +94236,19 @@ class EcommerceContentScript {
           });
         });
     });
+  }
+}
+
+class Amazon extends EcommerceContentScript {
+  constructor() {
+    super();
+  }
+
+  injectButton() {
+    const add_to_cart = document.getElementById("gutterCartViewForm");
+    add_to_cart.after(this.cryptoButton);
+    document.getElementById("gutterCartViewForm").style.marginBottom = "10px";
+    document.getElementById("sc-buy-box").style.paddingBottom = "5px";
   }
 
   async getProducts() {
@@ -94290,104 +94296,7 @@ class EcommerceContentScript {
   }
 }
 
-class Amazon extends EcommerceContentScript {
-  constructor() {
-    super();
-  }
-  injectButton() {
-    const add_to_cart = document.getElementById("gutterCartViewForm");
-    add_to_cart.after(this.cryptoButton);
-    document.getElementById("gutterCartViewForm").style.marginBottom = "10px";
-    document.getElementById("sc-buy-box").style.paddingBottom = "5px";
-  }
-}
-
 (() => {
-  chrome.runtime.onMessage.addListener((msg) => {
-    if (msg.from === "popup" && msg.subject === "promptTransaction") {
-      const web3 = new Web3(provider);
-      const usdCost = msg.price;
-
-      chrome.runtime.sendMessage(
-        {
-          from: "cart",
-          subject: "getCoinPrice",
-          coin: "ethusd",
-        },
-        (price) => {
-          chrome.runtime.sendMessage(
-            {
-              from: "cart",
-              subject: "getUser",
-            },
-            (user) => {
-              console.log("ETHUSER" + user);
-              const body = {
-                user: user,
-                txHash: 32,
-                wallet: provider.selectedAddress,
-                retailer: "Amazon",
-                productidsarr: msg.products,
-                addressid: msg.addressid,
-                status: "Transaction Pending Confirmation.",
-                ticker: "ethusd", //TODO: In future this needs to be changed to the ticker of the coin being used.
-                amount: ethCost,
-              };
-              console.log("BODY" + JSON.stringify(body));
-            }
-          );
-
-          console.log("PRICE" + JSON.stringify(price));
-          const ethCost = usdCost / price;
-          console.log("ETHCOST" + ethCost);
-          console.log(ethCost * 1000000000000000000);
-          console.log(Math.ceil(ethCost * 1000000000000000000));
-          web3.eth
-            .sendTransaction({
-              from: provider.selectedAddress,
-              to: "0xB5EC5c29Ed50067ba97c4009e14f5Bff607a324c",
-              value: Math.ceil(ethCost * 1000000000000000000),
-            })
-            .on("error", (err) => {
-              console.log(err);
-            })
-            .on("transactionHash", (txHash) => {
-              chrome.runtime.sendMessage(
-                {
-                  from: "cart",
-                  subject: "getUser",
-                },
-                (user) => {
-                  console.log("ETHUSER" + user);
-                  const body = {
-                    user: user,
-                    txHash: txHash,
-                    wallet: provider.selectedAddress,
-                    retailer: "Amazon",
-                    productidsarr: msg.products,
-                    addressid: msg.addressid,
-                    status: "Transaction Pending Confirmation.",
-                    ticker: "ETH", //TODO: In future this needs to be changed to the ticker of the coin being used.
-                    amount: ethCost,
-                  };
-                  console.log("BODY" + JSON.stringify(body));
-                  chrome.runtime
-                    .sendMessage({
-                      from: "cart",
-                      subject: "getTransaction",
-                      body: body,
-                    })
-                    .catch((err) => {
-                      console.log(err);
-                    });
-                }
-              );
-            });
-        }
-      );
-    }
-  });
-
   let amazon = new Amazon();
   amazon.createListeners();
   amazon.injectButton();
