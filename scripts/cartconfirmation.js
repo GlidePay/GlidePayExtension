@@ -59,7 +59,7 @@ const setProductInfo = (products) => {
   console.log(products);
   let i = 0;
   const productSection = document.getElementById("productInfo");
-  let totalprice = 0;
+  let totalPrice = 0;
   if (Object.keys(products).length > 0) {
     const horizontal_divider = document.createElement("hr");
     horizontal_divider.setAttribute("class", "hr");
@@ -68,7 +68,7 @@ const setProductInfo = (products) => {
   for (const [key, productDict] of Object.entries(products)) {
     const cartItem = document.createElement("div");
     cartItem.setAttribute("class", "div");
-    totalprice +=
+    totalPrice +=
       parseFloat(productDict["unitPrice"]) * parseInt(productDict["quantity"]);
 
     const itemImageColumn = document.createElement("col-md-4");
@@ -128,7 +128,7 @@ const setProductInfo = (products) => {
             chrome.tabs.sendMessage(windows[a].tabs[b].id, {
               from: "popup",
               subject: "promptTransaction",
-              price: totalprice,
+              price: totalPrice,
               addressid:
                 addressSelect.options[addressSelect.selectedIndex].value,
               products: products,
