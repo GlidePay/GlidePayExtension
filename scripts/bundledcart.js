@@ -94210,6 +94210,7 @@ class EcommerceContentScript {
           wallet: walletID,
         })
         .then((userID) => {
+          console.log(`UserID: ${userID}`);
           if (userID == null) {
             // TODO: Return new Userid if userID null
             return chrome.runtime

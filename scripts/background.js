@@ -145,7 +145,7 @@ function getTransaction(body) {
       }),
     }),
   }).catch((error) => {
-    console.log(error.stack);
+    throw error.stack;
   });
 }
 
@@ -163,7 +163,6 @@ async function findUserByWallet(wallet) {
 }
 
 async function createUser(wallet) {
-  console.log(wallet);
   const user = await fetch(
     "https://kyr8ehszh2.execute-api.us-east-1.amazonaws.com/default/createUserRDS",
     {
@@ -173,8 +172,5 @@ async function createUser(wallet) {
       }),
     }
   );
-  let userID = JSON.parse(await user.text()).User_ID;
-  console.log("User ID background");
-  console.log(userID);
-  return userID;
+  return JSON.parse(await user.text());
 }
