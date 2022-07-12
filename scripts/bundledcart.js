@@ -94071,8 +94071,8 @@ function extend() {
 const createProvider = require("metamask-extension-provider");
 const Web3 = require("web3");
 const provider = createProvider();
-// ALL CHANGES TO THIS FILE MUST BE COMPILED WITH "npm run buildCart"
-class EcommerceContentScript {
+
+class EcommerceCart {
   constructor() {
     this.cryptoButton = this.createButton();
     this.walletID;
@@ -94152,26 +94152,22 @@ class EcommerceContentScript {
     cryptoButton.style.cssText = "height: 79px; width: 260px";
 
     cryptoButton.addEventListener("click", () => {
-      this.checkMetamaskSignIn()
-        .catch(async () => {
-          console.log("wating for login");
-          try {
-            await provider
-              .request({ method: "eth_requestAccounts" })
-              .then(() => {
-                return this.checkMetamaskSignIn();
-              });
-          } catch {
-            this.cryptoButton.disabled = false;
-            throw Error("Metamask login already opened.");
-          }
+      this.cryptoButton.disabled = true;
+      provider
+        .request({ method: "eth_requestAccounts" })
+        .catch(() => {
+          this.cryptoButton.disabled = false;
+          throw Error("Metamask login already opened.");
+        })
+        .then(() => {
+          return this.checkMetamaskSignIn();
         })
         .then((walletID) => {
           this.checkAccount(walletID);
         })
-        .then(() => this.getProducts())
-        .then((productDict) => {
-          this.productDict = productDict;
+        .then(() => {
+          this.productDict = this.getProducts();
+          console.log(this.productDict);
           chrome.runtime.sendMessage({
             from: "cart",
             subject: "createOrderPopup",
@@ -94237,7 +94233,15 @@ class EcommerceContentScript {
   }
 }
 
-class Amazon extends EcommerceContentScript {
+module.exports = {
+  EcommerceCart,
+};
+
+},{"metamask-extension-provider":360,"web3":524}],544:[function(require,module,exports){
+const ECommerceCart = require("./ECommerceCart");
+// ALL CHANGES TO THIS FILE MUST BE COMPILED WITH "npm run buildCart"
+
+class Amazon extends ECommerceCart.EcommerceCart {
   constructor() {
     super();
   }
@@ -94249,48 +94253,75 @@ class Amazon extends EcommerceContentScript {
     document.getElementById("sc-buy-box").style.paddingBottom = "5px";
   }
 
-  async getProducts() {
+  getProducts() {
     let productDict = {};
-    return new Promise((resolve, reject) => {
-      let xhr = new XMLHttpRequest();
-      xhr.responseType = "document";
-      let url = "https://www.amazon.com/gp/cart/view.html";
-      xhr.onreadystatechange = async function () {
-        if (xhr.readyState === 4 && xhr.status === 200 /* DONE */) {
-          let html = xhr.response;
-          let div_list = html.querySelectorAll(
-            "div.a-section.a-spacing-mini.sc-list-body.sc-java-remote-feature > .a-row.sc-list-item.sc-list-item-border.sc-java-remote-feature"
-          );
-          let img_list = html.querySelectorAll(
-            "div.a-section.a-spacing-mini.sc-list-body.sc-java-remote-feature > .a-row.sc-list-item.sc-list-item-border.sc-java-remote-feature > .sc-list-item-content > .a-row.a-spacing-base.a-spacing-top-base > .a-column.a-span10 > .a-fixed-left-grid > .a-fixed-left-grid-inner > .a-fixed-left-grid-col.a-float-left.sc-product-image-desktop.a-col-left > .a-link-normal.sc-product-link"
-          );
-          let div_array = [...div_list];
-          let img_array = [...img_list];
-          for (let i = 0; i < div_array.length; i++) {
-            let divHTML = new DOMParser().parseFromString(
-              div_array[i].outerHTML,
-              "text/xml"
-            );
-            let productDiv = divHTML.getElementsByClassName(
-              "a-row sc-list-item sc-list-item-border sc-java-remote-feature"
-            )[0];
-            let product_id = productDiv.getAttribute("data-asin");
-            let quantity = productDiv.getAttribute("data-quantity");
-            let price = productDiv.getAttribute("data-price");
-            let imgInnterHTML = new DOMParser().parseFromString(
-              img_array[i].innerHTML,
-              "text/xml"
-            );
-            let productImg = imgInnterHTML.getElementsByTagName("img")[0];
-            let img = productImg.getAttribute("src");
-            productDict[product_id] = [quantity, price, img, ""];
-          }
-          resolve(productDict);
-        }
+    // return new Promise((resolve, reject) => {
+    let productElements = document.querySelectorAll(
+      "#activeCartViewForm > div.a-section.a-spacing-mini.sc-list-body.sc-java-remote-feature > div.a-row.sc-list-item.sc-list-item-border.sc-java-remote-feature"
+    );
+    let productElementsList = Array.from(productElements);
+
+    productElementsList.forEach(function (part, index, theArray) {
+      const imageElement = theArray[index].querySelectorAll(
+        "div.sc-list-item-content > div > div.a-column.a-span10 > div > div > div.a-fixed-left-grid-col.a-float-left.sc-product-image-desktop.a-col-left > a > img"
+      )[0];
+
+      const ASIN = theArray[index].getAttribute("data-asin");
+      const productName = imageElement.getAttribute("alt");
+      const unitPrice = theArray[index].getAttribute("data-price");
+      const quantity = theArray[index].getAttribute("data-quantity");
+      const productImage = imageElement.getAttribute("src");
+
+      productDict[ASIN] = {
+        productName: productName,
+        unitPrice: unitPrice,
+        quantity: quantity,
+        productImage: productImage,
       };
-      xhr.open("GET", url, true);
-      xhr.send("");
     });
+    return productDict;
+
+    // console.log(productDict);
+
+    // let xhr = new XMLHttpRequest();
+    // xhr.responseType = "document";
+    // let url = "https://www.amazon.com/gp/cart/view.html";
+    // xhr.onreadystatechange = async function () {
+    //   if (xhr.readyState === 4 && xhr.status === 200 /* DONE */) {
+    //     let html = xhr.response;
+    //     let div_list = html.querySelectorAll(
+    //       "div.a-section.a-spacing-mini.sc-list-body.sc-java-remote-feature > .a-row.sc-list-item.sc-list-item-border.sc-java-remote-feature"
+    //     );
+    //     let img_list = html.querySelectorAll(
+    //       "div.a-section.a-spacing-mini.sc-list-body.sc-java-remote-feature > .a-row.sc-list-item.sc-list-item-border.sc-java-remote-feature > .sc-list-item-content > .a-row.a-spacing-base.a-spacing-top-base > .a-column.a-span10 > .a-fixed-left-grid > .a-fixed-left-grid-inner > .a-fixed-left-grid-col.a-float-left.sc-product-image-desktop.a-col-left > .a-link-normal.sc-product-link"
+    //     );
+    //     let div_array = [...div_list];
+    //     let img_array = [...img_list];
+    //     for (let i = 0; i < div_array.length; i++) {
+    //       let divHTML = new DOMParser().parseFromString(
+    //         div_array[i].outerHTML,
+    //         "text/xml"
+    //       );
+    //       let productDiv = divHTML.getElementsByClassName(
+    //         "a-row sc-list-item sc-list-item-border sc-java-remote-feature"
+    //       )[0];
+    //       let product_id = productDiv.getAttribute("data-asin");
+    //       let quantity = productDiv.getAttribute("data-quantity");
+    //       let price = productDiv.getAttribute("data-price");
+    //       let imgInnterHTML = new DOMParser().parseFromString(
+    //         img_array[i].innerHTML,
+    //         "text/xml"
+    //       );
+    //       let productImg = imgInnterHTML.getElementsByTagName("img")[0];
+    //       let img = productImg.getAttribute("src");
+    //       productDict[product_id] = [quantity, price, img, ""];
+    //     }
+    //     resolve(productDict);
+    //   }
+    // };
+    // xhr.open("GET", url, true);
+    // xhr.send("");
+    // });
   }
 }
 
@@ -94304,4 +94335,4 @@ class Amazon extends EcommerceContentScript {
   });
 })();
 
-},{"metamask-extension-provider":360,"web3":524}]},{},[543]);
+},{"./ECommerceCart":543}]},{},[544]);

@@ -55,27 +55,26 @@ function getAddresses(userid) {
 }
 
 const setProductInfo = (products) => {
-  console.log(JSON.stringify(products));
+  console.log("products");
+  console.log(products);
   let i = 0;
   const productSection = document.getElementById("productInfo");
   let totalprice = 0;
-  console.log(typeof products);
-  console.log(products);
-  console.log(Object.keys(products));
   if (Object.keys(products).length > 0) {
     const horizontal_divider = document.createElement("hr");
     horizontal_divider.setAttribute("class", "hr");
     productSection.appendChild(horizontal_divider);
   }
-  for (let value in products) {
+  for (const [key, productDict] of Object.entries(products)) {
     const cartItem = document.createElement("div");
     cartItem.setAttribute("class", "div");
-    totalprice += parseFloat(products[value][1]) * parseInt(products[value][0]);
+    totalprice +=
+      parseFloat(productDict["unitPrice"]) * parseInt(productDict["quantity"]);
 
     const itemImageColumn = document.createElement("col-md-4");
     itemImageColumn.setAttribute("class", "col-md-4 px-4 py-2");
     const itemImage = document.createElement("img");
-    itemImage.src = products[value][2];
+    itemImage.src = productDict["productImage"];
     itemImage.setAttribute("height", "100px");
     itemImage.setAttribute("width", "100px");
     itemImageColumn.appendChild(itemImage);
@@ -83,7 +82,12 @@ const setProductInfo = (products) => {
     const itemPrice = document.createElement("h2");
     itemPrice.setAttribute("class", "p pr-2");
     itemPrice.textContent =
-      products[value][0] + " " + "x" + " " + "$" + products[value][1];
+      productDict["quantity"] +
+      " " +
+      "x" +
+      " " +
+      "$" +
+      productDict["unitPrice"];
 
     const itemPriceColumn = document.createElement("col-md-4");
     itemPriceColumn.setAttribute(
@@ -94,7 +98,7 @@ const setProductInfo = (products) => {
 
     const itemQuantity = document.createElement("p");
     itemQuantity.setAttribute("class", "text-center");
-    itemQuantity.textContent = `${products[value][0]}`;
+    itemQuantity.textContent = `${productDict["quantity"]}`;
 
     const cellRow1 = document.createElement("div");
     cellRow1.setAttribute("class", "d-flex justify-content-between");

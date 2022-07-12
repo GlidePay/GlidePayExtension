@@ -1,36 +1,34 @@
 {
-    "manifest_version": 3,
-    "name": "Glide Pay",
-    "version": "1.0.0",
-    "description": "Enables Web 2 payments with Cryptocurrency",
-    "background": {
-        "service_worker": "scripts/background.js"
-    },
-    "content_scripts": [
-        {
-            "matches": ["*://www.amazon.com/gp/cart*"],
-            "js": ["scripts/bundledcart.js"]
-        }
-    ],
-    "permissions": [
-        "webRequest",
-        "cookies",
-        "contentSettings",
-        "tabs",
-        "activeTab",
-        "scripting",
-        "notifications",
-        "storage",
-        "history",
-        "windows",
-        "webNavigation"
-    ],
-    "host_permissions": [
-        "https://www.amazon.com/*"
-    ],
-    "action": {
-        "default_popup": "views/popup.html",
-        "default_title": "Glide Pay"
-    },
-    "options_page": "views/options.html"
+  "manifest_version": 3,
+  "name": "Glide Pay",
+  "version": "1.0.0",
+  "description": "Enables Web 2 payments with Cryptocurrency",
+  "background": {
+    "service_worker": "scripts/background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://www.amazon.com/gp/cart*"],
+      "js": ["scripts/ECommerceCart.js", "scripts/bundledcart.js"]
+    }
+  ],
+  "permissions": [
+    "webRequest",
+    "cookies",
+    "contentSettings",
+    "tabs",
+    "activeTab",
+    "scripting",
+    "notifications",
+    "storage",
+    "history",
+    "windows",
+    "webNavigation"
+  ],
+  "host_permissions": ["https://www.amazon.com/*"],
+  "action": {
+    "default_popup": "views/popup.html",
+    "default_title": "Glide Pay"
+  },
+  "options_page": "views/options.html"
 }
