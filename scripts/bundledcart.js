@@ -94097,45 +94097,46 @@ class EcommerceCart {
             subject: "getCoinPrice",
             coin: "ethusd",
           })
-          .then(() => {});
-        const ethCost = usdCost / price;
-        web3.eth
-          .sendTransaction({
-            from: provider.selectedAddress,
-            to: "0xB5EC5c29Ed50067ba97c4009e14f5Bff607a324c",
-            value: Math.ceil(ethCost * 1000000000000000000),
-          })
-          .on("error", (err) => {
-            console.log(err);
-          })
-          .on("transactionHash", (txHash) => {
-            chrome.runtime
-              .sendMessage({
-                from: "cart",
-                subject: "getUser",
+          .then((price) => {
+            const ethCost = usdCost / price;
+            web3.eth
+              .sendTransaction({
+                from: provider.selectedAddress,
+                to: "0xB5EC5c29Ed50067ba97c4009e14f5Bff607a324c",
+                value: Math.ceil(ethCost * 1000000000000000000),
               })
-              .then((user) => {
-                console.log("ETHUSER" + user);
-                const body = {
-                  user: user,
-                  txHash: txHash,
-                  wallet: provider.selectedAddress,
-                  retailer: "Amazon",
-                  productidsarr: msg.products,
-                  addressid: msg.addressid,
-                  status: "Transaction Pending Confirmation.",
-                  ticker: "ETH", //TODO: In future this needs to be changed to the ticker of the coin being used.
-                  amount: ethCost,
-                };
-                console.log("BODY" + JSON.stringify(body));
+              .on("error", (err) => {
+                console.log(err);
+              })
+              .on("transactionHash", (txHash) => {
                 chrome.runtime
                   .sendMessage({
                     from: "cart",
-                    subject: "getTransaction",
-                    body: body,
+                    subject: "getUser",
                   })
-                  .catch((err) => {
-                    console.log(err);
+                  .then((user) => {
+                    console.log("ETHUSER" + user);
+                    const body = {
+                      user: user,
+                      txHash: txHash,
+                      wallet: provider.selectedAddress,
+                      retailer: "Amazon",
+                      productidsarr: msg.products,
+                      addressid: msg.addressid,
+                      status: "Transaction Pending Confirmation.",
+                      ticker: "ETH", //TODO: In future this needs to be changed to the ticker of the coin being used.
+                      amount: ethCost,
+                    };
+                    console.log("BODY" + JSON.stringify(body));
+                    chrome.runtime
+                      .sendMessage({
+                        from: "cart",
+                        subject: "getTransaction",
+                        body: body,
+                      })
+                      .catch((err) => {
+                        console.log(err);
+                      });
                   });
               });
           });
@@ -94163,9 +94164,10 @@ class EcommerceCart {
           return this.checkMetamaskSignIn();
         })
         .then((walletID) => {
-          this.checkAccount(walletID);
+          return this.checkAccount(walletID);
         })
         .then(() => {
+          console.log("Passing user`");
           this.productDict = this.getProducts();
           console.log(this.productDict);
           chrome.runtime.sendMessage({
@@ -94219,15 +94221,22 @@ class EcommerceCart {
                 return newUserID;
               });
           }
+          console.log("Returing userID here");
           return userID;
         })
         .then((userID) => {
+          console.log(`Uzers: ${userID}`);
           console.log(`Storing user: ${userID}`);
-          chrome.runtime.sendMessage({
-            from: "cart",
-            subject: "storeUser",
-            userid: userID,
-          });
+          chrome.runtime
+            .sendMessage({
+              from: "cart",
+              subject: "storeUser",
+              userid: userID,
+            })
+            .then(() => {
+              console.log("User is set");
+              resolve();
+            });
         });
     });
   }
@@ -94255,7 +94264,6 @@ class Amazon extends ECommerceCart.EcommerceCart {
 
   getProducts() {
     let productDict = {};
-    // return new Promise((resolve, reject) => {
     let productElements = document.querySelectorAll(
       "#activeCartViewForm > div.a-section.a-spacing-mini.sc-list-body.sc-java-remote-feature > div.a-row.sc-list-item.sc-list-item-border.sc-java-remote-feature"
     );
@@ -94280,48 +94288,6 @@ class Amazon extends ECommerceCart.EcommerceCart {
       };
     });
     return productDict;
-
-    // console.log(productDict);
-
-    // let xhr = new XMLHttpRequest();
-    // xhr.responseType = "document";
-    // let url = "https://www.amazon.com/gp/cart/view.html";
-    // xhr.onreadystatechange = async function () {
-    //   if (xhr.readyState === 4 && xhr.status === 200 /* DONE */) {
-    //     let html = xhr.response;
-    //     let div_list = html.querySelectorAll(
-    //       "div.a-section.a-spacing-mini.sc-list-body.sc-java-remote-feature > .a-row.sc-list-item.sc-list-item-border.sc-java-remote-feature"
-    //     );
-    //     let img_list = html.querySelectorAll(
-    //       "div.a-section.a-spacing-mini.sc-list-body.sc-java-remote-feature > .a-row.sc-list-item.sc-list-item-border.sc-java-remote-feature > .sc-list-item-content > .a-row.a-spacing-base.a-spacing-top-base > .a-column.a-span10 > .a-fixed-left-grid > .a-fixed-left-grid-inner > .a-fixed-left-grid-col.a-float-left.sc-product-image-desktop.a-col-left > .a-link-normal.sc-product-link"
-    //     );
-    //     let div_array = [...div_list];
-    //     let img_array = [...img_list];
-    //     for (let i = 0; i < div_array.length; i++) {
-    //       let divHTML = new DOMParser().parseFromString(
-    //         div_array[i].outerHTML,
-    //         "text/xml"
-    //       );
-    //       let productDiv = divHTML.getElementsByClassName(
-    //         "a-row sc-list-item sc-list-item-border sc-java-remote-feature"
-    //       )[0];
-    //       let product_id = productDiv.getAttribute("data-asin");
-    //       let quantity = productDiv.getAttribute("data-quantity");
-    //       let price = productDiv.getAttribute("data-price");
-    //       let imgInnterHTML = new DOMParser().parseFromString(
-    //         img_array[i].innerHTML,
-    //         "text/xml"
-    //       );
-    //       let productImg = imgInnterHTML.getElementsByTagName("img")[0];
-    //       let img = productImg.getAttribute("src");
-    //       productDict[product_id] = [quantity, price, img, ""];
-    //     }
-    //     resolve(productDict);
-    //   }
-    // };
-    // xhr.open("GET", url, true);
-    // xhr.send("");
-    // });
   }
 }
 

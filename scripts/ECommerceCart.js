@@ -27,45 +27,46 @@ class EcommerceCart {
             subject: "getCoinPrice",
             coin: "ethusd",
           })
-          .then(() => {});
-        const ethCost = usdCost / price;
-        web3.eth
-          .sendTransaction({
-            from: provider.selectedAddress,
-            to: "0xB5EC5c29Ed50067ba97c4009e14f5Bff607a324c",
-            value: Math.ceil(ethCost * 1000000000000000000),
-          })
-          .on("error", (err) => {
-            console.log(err);
-          })
-          .on("transactionHash", (txHash) => {
-            chrome.runtime
-              .sendMessage({
-                from: "cart",
-                subject: "getUser",
+          .then((price) => {
+            const ethCost = usdCost / price;
+            web3.eth
+              .sendTransaction({
+                from: provider.selectedAddress,
+                to: "0xB5EC5c29Ed50067ba97c4009e14f5Bff607a324c",
+                value: Math.ceil(ethCost * 1000000000000000000),
               })
-              .then((user) => {
-                console.log("ETHUSER" + user);
-                const body = {
-                  user: user,
-                  txHash: txHash,
-                  wallet: provider.selectedAddress,
-                  retailer: "Amazon",
-                  productidsarr: msg.products,
-                  addressid: msg.addressid,
-                  status: "Transaction Pending Confirmation.",
-                  ticker: "ETH", //TODO: In future this needs to be changed to the ticker of the coin being used.
-                  amount: ethCost,
-                };
-                console.log("BODY" + JSON.stringify(body));
+              .on("error", (err) => {
+                console.log(err);
+              })
+              .on("transactionHash", (txHash) => {
                 chrome.runtime
                   .sendMessage({
                     from: "cart",
-                    subject: "getTransaction",
-                    body: body,
+                    subject: "getUser",
                   })
-                  .catch((err) => {
-                    console.log(err);
+                  .then((user) => {
+                    console.log("ETHUSER" + user);
+                    const body = {
+                      user: user,
+                      txHash: txHash,
+                      wallet: provider.selectedAddress,
+                      retailer: "Amazon",
+                      productidsarr: msg.products,
+                      addressid: msg.addressid,
+                      status: "Transaction Pending Confirmation.",
+                      ticker: "ETH", //TODO: In future this needs to be changed to the ticker of the coin being used.
+                      amount: ethCost,
+                    };
+                    console.log("BODY" + JSON.stringify(body));
+                    chrome.runtime
+                      .sendMessage({
+                        from: "cart",
+                        subject: "getTransaction",
+                        body: body,
+                      })
+                      .catch((err) => {
+                        console.log(err);
+                      });
                   });
               });
           });
@@ -93,9 +94,10 @@ class EcommerceCart {
           return this.checkMetamaskSignIn();
         })
         .then((walletID) => {
-          this.checkAccount(walletID);
+          return this.checkAccount(walletID);
         })
         .then(() => {
+          console.log("Passing user`");
           this.productDict = this.getProducts();
           console.log(this.productDict);
           chrome.runtime.sendMessage({
@@ -149,15 +151,22 @@ class EcommerceCart {
                 return newUserID;
               });
           }
+          console.log("Returing userID here");
           return userID;
         })
         .then((userID) => {
+          console.log(`Uzers: ${userID}`);
           console.log(`Storing user: ${userID}`);
-          chrome.runtime.sendMessage({
-            from: "cart",
-            subject: "storeUser",
-            userid: userID,
-          });
+          chrome.runtime
+            .sendMessage({
+              from: "cart",
+              subject: "storeUser",
+              userid: userID,
+            })
+            .then(() => {
+              console.log("User is set");
+              resolve();
+            });
         });
     });
   }
