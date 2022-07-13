@@ -173,10 +173,19 @@ const setProductInfo = (products) => {
 };
 
 window.addEventListener("load", () => {
+  let senderTabID;
+  chrome.runtime.sendMessage({
+    from: "confirmation",
+    subject: "getTabID",
+    }, (response) => {
+    console.log("RESPONSE" + response);
+    senderTabID = response;
+  });
   chrome.windows.getAll({ populate: true }, (windows) => {
     for (let a in windows) {
       for (let b in windows[a].tabs) {
-        if (windows[a].tabs[b].url.includes("amazon.com/gp/cart")) {
+        if (windows[a].tabs[b].id === senderTabID) {
+          console.log(senderTabID + "TABID");
           chrome.tabs.sendMessage(
             windows[a].tabs[b].id,
             { from: "popup", subject: "needInfo" },

@@ -138,7 +138,7 @@ class EcommerceCart {
         if (error != null) {
           this.cryptoButton.disabled = false;
           reject(error);
-        } else if (accounts.length == 0) {
+        } else if (accounts.length === 0) {
           reject("No Accounts Found");
         } else {
           resolve(accounts[0]);

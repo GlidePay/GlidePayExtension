@@ -23,7 +23,17 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
               width: 360,
               height: 620,
             },
-            (window) => {}
+            () => {
+              let senderID = sender.tab.id;
+              console.log("senderID being sent" + senderID);
+              chrome.runtime.onMessage.addListener((msg) => {
+                if (msg.from === "confirmation" && msg.subject === "getTabID") {
+                  console.log("Msg received");
+                  console.log(senderID);
+                  sendResponse(senderID);
+                }
+              });
+            }
           );
         }
         break;
