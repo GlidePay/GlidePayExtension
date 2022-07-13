@@ -139,11 +139,20 @@ const setProductInfo = (products) => {
       }
     });
   });
-  chrome.storage.session.get("userid", function (result) {
-    console.log(result["userid"]);
-    console.log("GOTUSERID");
-    getAddresses(result["userid"]);
-  });
+  chrome.runtime
+    .sendMessage({
+      from: "cart",
+      subject: "getUser",
+    })
+    .then((userID) => {
+      console.log(`UserId: ${userID}`);
+      getAddresses(userID);
+    });
+  // chrome.storage.session.get("userid", function (result) {
+  //   console.log(result["userid"]);
+  //   console.log("GOTUSERID");
+  //   getAddresses(result["userid"]);
+  // });
 
   const addressLabel = document.createElement("h2");
   addressLabel.textContent = "Address";
