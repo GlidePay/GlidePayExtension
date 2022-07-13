@@ -2,11 +2,21 @@ const ECommerceCart = require("./ECommerceCart");
 // ALL CHANGES TO THIS FILE MUST BE COMPILED WITH "npm run buildCart"
 
 class Amazon extends ECommerceCart.EcommerceCart {
+  /**
+   * Defines methods and handles the flow specific to Amazon's website.
+   * See the following link (Amazon handles Amazon Flow).
+   * https://lucid.app/lucidchart/86202d2d-3c46-49a6-89d9-a9164dd5f1ad/edit?invitationId=inv_d5751113-87f0-4abf-a8c3-6a076808331f&page=0_0#?referringapp=slack&login=slack
+   */
   constructor() {
     super();
   }
 
   injectButton() {
+    /**
+     * Injects the pay with crypto button into Amazon's checkout page.
+     * @function injectButton
+
+     */
     const add_to_cart = document.getElementById("gutterCartViewForm");
     add_to_cart.after(this.cryptoButton);
     document.getElementById("gutterCartViewForm").style.marginBottom = "10px";
@@ -14,6 +24,11 @@ class Amazon extends ECommerceCart.EcommerceCart {
   }
 
   getProducts() {
+    /**
+     * Parses Amazon's checkout page for the user's selected products.
+     * @function getProducts
+     * @return  {Object} Contains the products selected by the user.
+     */
     let productDict = {};
     let productElements = document.querySelectorAll(
       "#activeCartViewForm > div.a-section.a-spacing-mini.sc-list-body.sc-java-remote-feature > div.a-row.sc-list-item.sc-list-item-border.sc-java-remote-feature"
@@ -43,7 +58,11 @@ class Amazon extends ECommerceCart.EcommerceCart {
   }
 }
 
-(() => {
+function main() {
+  /**
+   * Main runner function.
+   * @function main
+   */
   let amazon = new Amazon();
   amazon.createListeners();
   amazon.injectButton();
@@ -51,4 +70,5 @@ class Amazon extends ECommerceCart.EcommerceCart {
     from: "cart",
     subject: "productData",
   });
-})();
+}
+main();

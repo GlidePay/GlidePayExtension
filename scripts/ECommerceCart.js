@@ -3,19 +3,37 @@ const Web3 = require("web3");
 const provider = createProvider();
 
 class EcommerceCart {
+  /*
+  Defines methods and handles the flow generic to Ecommerce websites.
+  See the following link (EcommerceCart handles Generic Login Flow)
+  https://lucid.app/lucidchart/86202d2d-3c46-49a6-89d9-a9164dd5f1ad/edit?invitationId=inv_d5751113-87f0-4abf-a8c3-6a076808331f&page=0_0#?referringapp=slack&login=slack
+  */
   constructor() {
+    /**
+     * Initializes instance attributes of EcommerceCart.
+     * @param  {HTMLElement} cryptoButton Pay with cryto button.
+     * @param  {String} walletID Wallet ID of users crypto wallet.
+     * @param  {Object} productDict Contains the products selected by the user.
+     */
     this.cryptoButton = this.createButton();
     this.walletID;
     this.productDict;
   }
 
   createListeners() {
+    /**
+     * Initializes message listeners.
+     * @function createListeners
+     */
+
+    // Sends productDict when requested by cartConfirmation popup
     chrome.runtime.onMessage.addListener((msg, sender, response) => {
       if (msg.from === "popup" && msg.subject === "needInfo") {
         response(this.productDict);
       }
     });
 
+    // Prompts metamask transaction.
     chrome.runtime.onMessage.addListener((msg) => {
       if (msg.from === "popup" && msg.subject === "promptTransaction") {
         const web3 = new Web3(provider);
@@ -27,45 +45,46 @@ class EcommerceCart {
             subject: "getCoinPrice",
             coin: "ethusd",
           })
-          .then(() => {});
-        const ethCost = usdCost / price;
-        web3.eth
-          .sendTransaction({
-            from: provider.selectedAddress,
-            to: "0xB5EC5c29Ed50067ba97c4009e14f5Bff607a324c",
-            value: Math.ceil(ethCost * 1000000000000000000),
-          })
-          .on("error", (err) => {
-            console.log(err);
-          })
-          .on("transactionHash", (txHash) => {
-            chrome.runtime
-              .sendMessage({
-                from: "cart",
-                subject: "getUser",
+          .then((price) => {
+            const ethCost = usdCost / price;
+            web3.eth
+              .sendTransaction({
+                from: provider.selectedAddress,
+                to: "0xB5EC5c29Ed50067ba97c4009e14f5Bff607a324c",
+                value: Math.ceil(ethCost * 1000000000000000000),
               })
-              .then((user) => {
-                console.log("ETHUSER" + user);
-                const body = {
-                  user: user,
-                  txHash: txHash,
-                  wallet: provider.selectedAddress,
-                  retailer: "Amazon",
-                  productidsarr: msg.products,
-                  addressid: msg.addressid,
-                  status: "Transaction Pending Confirmation.",
-                  ticker: "ETH", //TODO: In future this needs to be changed to the ticker of the coin being used.
-                  amount: ethCost,
-                };
-                console.log("BODY" + JSON.stringify(body));
+              .on("error", (err) => {
+                console.log(err);
+              })
+              .on("transactionHash", (txHash) => {
                 chrome.runtime
                   .sendMessage({
                     from: "cart",
-                    subject: "getTransaction",
-                    body: body,
+                    subject: "getUser",
                   })
-                  .catch((err) => {
-                    console.log(err);
+                  .then((user) => {
+                    console.log("ETHUSER" + user);
+                    const body = {
+                      user: user,
+                      txHash: txHash,
+                      wallet: provider.selectedAddress,
+                      retailer: "Amazon",
+                      productidsarr: msg.products,
+                      addressid: msg.addressid,
+                      status: "Transaction Pending Confirmation.",
+                      ticker: "ETH", //TODO: In future this needs to be changed to the ticker of the coin being used.
+                      amount: ethCost,
+                    };
+                    console.log("BODY" + JSON.stringify(body));
+                    chrome.runtime
+                      .sendMessage({
+                        from: "cart",
+                        subject: "getTransaction",
+                        body: body,
+                      })
+                      .catch((err) => {
+                        console.log(err);
+                      });
                   });
               });
           });
@@ -93,9 +112,10 @@ class EcommerceCart {
           return this.checkMetamaskSignIn();
         })
         .then((walletID) => {
-          this.checkAccount(walletID);
+          return this.checkAccount(walletID);
         })
         .then(() => {
+          console.log("Passing user`");
           this.productDict = this.getProducts();
           console.log(this.productDict);
           chrome.runtime.sendMessage({
@@ -118,7 +138,7 @@ class EcommerceCart {
         if (error != null) {
           this.cryptoButton.disabled = false;
           reject(error);
-        } else if (accounts.length == 0) {
+        } else if (accounts.length === 0) {
           reject("No Accounts Found");
         } else {
           resolve(accounts[0]);
@@ -149,15 +169,22 @@ class EcommerceCart {
                 return newUserID;
               });
           }
+          console.log("Returing userID here");
           return userID;
         })
         .then((userID) => {
+          console.log(`Uzers: ${userID}`);
           console.log(`Storing user: ${userID}`);
-          chrome.runtime.sendMessage({
-            from: "cart",
-            subject: "storeUser",
-            userid: userID,
-          });
+          chrome.runtime
+            .sendMessage({
+              from: "cart",
+              subject: "storeUser",
+              userid: userID,
+            })
+            .then(() => {
+              console.log("User is set");
+              resolve();
+            });
         });
     });
   }

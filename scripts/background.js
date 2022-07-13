@@ -23,7 +23,17 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
               width: 360,
               height: 620,
             },
-            (window) => {}
+            () => {
+              let senderID = sender.tab.id;
+              console.log("senderID being sent" + senderID);
+              chrome.runtime.onMessage.addListener((msg) => {
+                if (msg.from === "confirmation" && msg.subject === "getTabID") {
+                  console.log("Msg received");
+                  console.log(senderID);
+                  sendResponse(senderID);
+                }
+              });
+            }
           );
         }
         break;
@@ -51,13 +61,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         break;
       case "storeUser":
         {
-          console.log("User being stored");
           storeSession("userid", message.userid);
         }
         break;
       case "getUser": {
         chrome.storage.session.get("userid", function (result) {
-          console.log("USER IS" + result["userid"]);
           sendResponse(result["userid"]);
         });
         return true;
@@ -74,14 +82,12 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         }
         break;
       case "findUserByWallet": {
-        console.log("Finding a user by walletID");
         findUserByWallet(message.wallet).then((uid) => {
           sendResponse(uid);
         });
         return true;
       }
       case "createUserByWallet": {
-        console.log("Creating a new user");
         createUser(message.wallet).then((uid) => {
           sendResponse(uid);
         });
@@ -93,14 +99,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
 // Store a variable in chrome session storage.
 function storeSession(key, value) {
-  chrome.storage.session.set(
-    {
-      [key]: value,
-    },
-    function () {
-      console.log("Value is set to " + value);
-    }
-  );
+  chrome.storage.session.set({
+    [key]: value,
+  });
 }
 
 async function getCoinPrice(coin) {
@@ -159,7 +160,7 @@ async function findUserByWallet(wallet) {
       }),
     }
   );
-  return JSON.parse(await user.text()).User_ID;
+  return JSON.parse(await user.text());
 }
 
 async function createUser(wallet) {
@@ -173,6 +174,5 @@ async function createUser(wallet) {
     }
   );
   let userID = JSON.parse(await user.text());
-  console.log(userID);
   return userID;
 }
