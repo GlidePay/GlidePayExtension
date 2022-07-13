@@ -31,7 +31,8 @@ class Amazon extends ECommerceCart.EcommerceCart {
       const quantity = theArray[index].getAttribute("data-quantity");
       const productImage = imageElement.getAttribute("src");
 
-      productDict[ASIN] = {
+      productDict[index] = {
+        productID: ASIN,
         productName: productName,
         unitPrice: unitPrice,
         quantity: quantity,
