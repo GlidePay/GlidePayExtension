@@ -3,19 +3,37 @@ const Web3 = require("web3");
 const provider = createProvider();
 
 class EcommerceCart {
+  /*
+  Defines methods and handles the flow generic to Ecommerce websites.
+  See the following link (EcommerceCart handles Generic Login Flow)
+  https://lucid.app/lucidchart/86202d2d-3c46-49a6-89d9-a9164dd5f1ad/edit?invitationId=inv_d5751113-87f0-4abf-a8c3-6a076808331f&page=0_0#?referringapp=slack&login=slack
+  */
   constructor() {
+    /**
+     * Initializes instance attributes of EcommerceCart.
+     * @param  {HTMLElement} cryptoButton Pay with cryto button.
+     * @param  {String} walletID Wallet ID of users crypto wallet.
+     * @param  {Object} productDict Contains the products selected by the user.
+     */
     this.cryptoButton = this.createButton();
     this.walletID;
     this.productDict;
   }
 
   createListeners() {
+    /**
+     * Initializes message listeners.
+     * @function createListeners
+     */
+
+    // Sends productDict when requested by cartConfirmation popup
     chrome.runtime.onMessage.addListener((msg, sender, response) => {
       if (msg.from === "popup" && msg.subject === "needInfo") {
         response(this.productDict);
       }
     });
 
+    // Prompts metamask transaction.
     chrome.runtime.onMessage.addListener((msg) => {
       if (msg.from === "popup" && msg.subject === "promptTransaction") {
         const web3 = new Web3(provider);

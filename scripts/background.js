@@ -150,7 +150,7 @@ async function findUserByWallet(wallet) {
       }),
     }
   );
-  return JSON.parse(await user.text()).User_ID;
+  return JSON.parse(await user.text());
 }
 
 async function createUser(wallet) {

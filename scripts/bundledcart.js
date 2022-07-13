@@ -94073,19 +94073,37 @@ const Web3 = require("web3");
 const provider = createProvider();
 
 class EcommerceCart {
+  /*
+  Defines methods and handles the flow generic to Ecommerce websites.
+  See the following link (EcommerceCart handles Generic Login Flow)
+  https://lucid.app/lucidchart/86202d2d-3c46-49a6-89d9-a9164dd5f1ad/edit?invitationId=inv_d5751113-87f0-4abf-a8c3-6a076808331f&page=0_0#?referringapp=slack&login=slack
+  */
   constructor() {
+    /**
+     * Initializes instance attributes of EcommerceCart.
+     * @param  {HTMLElement} cryptoButton Pay with cryto button.
+     * @param  {String} walletID Wallet ID of users crypto wallet.
+     * @param  {Object} productDict Contains the products selected by the user.
+     */
     this.cryptoButton = this.createButton();
     this.walletID;
     this.productDict;
   }
 
   createListeners() {
+    /**
+     * Initializes message listeners.
+     * @function createListeners
+     */
+
+    // Sends productDict when requested by cartConfirmation popup
     chrome.runtime.onMessage.addListener((msg, sender, response) => {
       if (msg.from === "popup" && msg.subject === "needInfo") {
         response(this.productDict);
       }
     });
 
+    // Prompts metamask transaction.
     chrome.runtime.onMessage.addListener((msg) => {
       if (msg.from === "popup" && msg.subject === "promptTransaction") {
         const web3 = new Web3(provider);
@@ -94251,11 +94269,21 @@ const ECommerceCart = require("./ECommerceCart");
 // ALL CHANGES TO THIS FILE MUST BE COMPILED WITH "npm run buildCart"
 
 class Amazon extends ECommerceCart.EcommerceCart {
+  /**
+   * Defines methods and handles the flow specific to Amazon's website.
+   * See the following link (Amazon handles Amazon Flow).
+   * https://lucid.app/lucidchart/86202d2d-3c46-49a6-89d9-a9164dd5f1ad/edit?invitationId=inv_d5751113-87f0-4abf-a8c3-6a076808331f&page=0_0#?referringapp=slack&login=slack
+   */
   constructor() {
     super();
   }
 
   injectButton() {
+    /**
+     * Injects the pay with crypto button into Amazon's checkout page.
+     * @function injectButton
+
+     */
     const add_to_cart = document.getElementById("gutterCartViewForm");
     add_to_cart.after(this.cryptoButton);
     document.getElementById("gutterCartViewForm").style.marginBottom = "10px";
@@ -94263,6 +94291,11 @@ class Amazon extends ECommerceCart.EcommerceCart {
   }
 
   getProducts() {
+    /**
+     * Parses Amazon's checkout page for the user's selected products.
+     * @function getProducts
+     * @return  {Object} Contains the products selected by the user.
+     */
     let productDict = {};
     let productElements = document.querySelectorAll(
       "#activeCartViewForm > div.a-section.a-spacing-mini.sc-list-body.sc-java-remote-feature > div.a-row.sc-list-item.sc-list-item-border.sc-java-remote-feature"
@@ -94291,7 +94324,11 @@ class Amazon extends ECommerceCart.EcommerceCart {
   }
 }
 
-(() => {
+function main() {
+  /**
+   * Main runner function.
+   * @function main
+   */
   let amazon = new Amazon();
   amazon.createListeners();
   amazon.injectButton();
@@ -94299,6 +94336,7 @@ class Amazon extends ECommerceCart.EcommerceCart {
     from: "cart",
     subject: "productData",
   });
-})();
+}
+main();
 
 },{"./ECommerceCart":543}]},{},[544]);
