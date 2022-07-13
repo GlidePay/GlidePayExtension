@@ -26,7 +26,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             () => {
               let senderID = sender.tab.id;
               console.log("senderID being sent" + senderID);
-              chrome.runtime.onMessage.addListener((msg) => {
+              chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
                 if (msg.from === "confirmation" && msg.subject === "getTabID") {
                   console.log("Msg received");
                   console.log(senderID);
