@@ -9,7 +9,7 @@
   "content_scripts": [
     {
       "matches": ["*://www.amazon.com/gp/cart*"],
-      "js": ["scripts/ECommerceCart.js", "scripts/bundledcart.js"]
+      "js": ["scripts/bundledcart.js"]
     }
   ],
   "permissions": [

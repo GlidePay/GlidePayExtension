@@ -183,8 +183,6 @@ window.addEventListener("load", () => {
     chrome.windows.getAll({ populate: true }, (windows) => {
       for (let a in windows) {
         for (let b in windows[a].tabs) {
-          console.log(windows[a].tabs[b].id + "TABID123");
-          console.log(senderTabID + "SENDERTABID");
           if (windows[a].tabs[b].id === senderTabID) {
             console.log(senderTabID + "TABID");
             chrome.tabs.sendMessage(
