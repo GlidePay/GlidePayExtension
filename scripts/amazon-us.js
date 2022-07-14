@@ -56,44 +56,6 @@ class Amazon extends ECommerceCart.EcommerceCart {
         });
         return productDict;
     }
-
-    addGutterListener() {
-        console.log("addGutterListener");
-        const checkoutBox = document.querySelector('#sc-subtotal-amount-buybox > span');
-        console.log("HEY CHECKOUT BOX BELOW!");
-        console.log(checkoutBox);
-        const config = { attributes: true, childList: true, subtree: true, characterData: true };
-        const callback = function (mutationsList, observer) {
-            console.log("CALLED BACK!!!");
-            for (let mutation of mutationsList) {
-                console.log("MUTATION!!!" + mutation);
-            }
-        }
-        const observer = new MutationObserver(callback);
-        console.log("OBSERVER BELOW!");
-        console.log(observer);
-        observer.observe(checkoutBox, config);
-    }
-}
-function newRunner() {
-    /**
-     * Main runner function.
-     * @function main
-     */
-    let amazon = new Amazon();
-    amazon.createListeners();
-    amazon.injectButton();
-    amazon.addGutterListener();
-    chrome.runtime.sendMessage({
-        from: "cart",
-        subject: "productData",
-    });
-    var observer = new MutationObserver(function(mutations) {
-        newRunner();
-    })
-    var container = document.getElementById("sc-active-cart");
-    var config = { attributes: true, childList: true, characterData: true };
-    observer.observe(container, config);
 }
 
 function main() {
@@ -104,16 +66,15 @@ function main() {
     let amazon = new Amazon();
     amazon.createListeners();
     amazon.injectButton();
-    amazon.addGutterListener();
     chrome.runtime.sendMessage({
         from: "cart",
         subject: "productData",
     });
     var observer = new MutationObserver(function(mutations) {
-        newRunner();
+        amazon.injectButton();
     })
     var container = document.getElementById("sc-active-cart");
-    var config = { attributes: true, childList: true, characterData: true };
+    let config = { attributes: true, childList: true, subtree: true, characterData: true };
     observer.observe(container, config);
 }
 
