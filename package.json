@@ -14,6 +14,6 @@
   },
   "scripts": {
     "buildMask": "browserify scripts/metamask-controller.js -o scripts/metamaskbundled.js",
-    "buildCart": "browserify scripts/cart.js -o scripts/bundledcart.js"
+    "buildAmazon": "browserify scripts/amazon-us.js -o scripts/bundledamazon.js"
   }
 }
