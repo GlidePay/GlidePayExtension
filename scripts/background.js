@@ -1,4 +1,5 @@
 let senderID;
+
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.from === "cart") {
     switch (message.subject) {

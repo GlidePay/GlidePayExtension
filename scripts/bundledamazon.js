@@ -90927,6 +90927,26 @@ class Amazon extends ECommerceCart.EcommerceCart {
         observer.observe(checkoutBox, config);
     }
 }
+function newRunner() {
+    /**
+     * Main runner function.
+     * @function main
+     */
+    let amazon = new Amazon();
+    amazon.createListeners();
+    amazon.injectButton();
+    amazon.addGutterListener();
+    chrome.runtime.sendMessage({
+        from: "cart",
+        subject: "productData",
+    });
+    var observer = new MutationObserver(function(mutations) {
+        newRunner();
+    })
+    var container = document.getElementById("sc-active-cart");
+    var config = { attributes: true, childList: true, characterData: true };
+    observer.observe(container, config);
+}
 
 function main() {
     /**
@@ -90941,6 +90961,13 @@ function main() {
         from: "cart",
         subject: "productData",
     });
+    var observer = new MutationObserver(function(mutations) {
+        newRunner();
+    })
+    var container = document.getElementById("sc-active-cart");
+    var config = { attributes: true, childList: true, characterData: true };
+    observer.observe(container, config);
 }
+
 main();
 },{"./ECommerceCart":543}]},{},[544]);
