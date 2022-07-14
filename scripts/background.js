@@ -1,3 +1,4 @@
+let senderID;
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.from === "cart") {
     switch (message.subject) {
@@ -24,15 +25,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
               height: 620,
             },
             () => {
-              let senderID = sender.tab.id;
+              senderID = sender.tab.id;
               console.log("senderID being sent" + senderID);
-              chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
-                if (msg.from === "confirmation" && msg.subject === "getTabID") {
-                  console.log("Msg received");
-                  console.log(senderID);
-                  sendResponse(senderID);
-                }
-              });
             }
           );
         }
@@ -94,6 +88,14 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         return true;
       }
     }
+  }
+});
+
+chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+  if (msg.from === "confirmation" && msg.subject === "getTabID") {
+    console.log("Msg received");
+    console.log("senderID " + senderID);
+    sendResponse(senderID);
   }
 });
 
