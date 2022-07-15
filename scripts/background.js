@@ -176,6 +176,5 @@ async function createUser(wallet) {
       }),
     }
   );
-  let userID = JSON.parse(await user.text());
-  return userID;
+  return JSON.parse(await user.text());
 }

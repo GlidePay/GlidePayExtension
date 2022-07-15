@@ -157,7 +157,7 @@ class EcommerceCart {
         })
         .then((userID) => {
           console.log(`UserID: ${userID}`);
-          if (userID == null) {
+          if (userID === -1) {
             // TODO: Return new Userid if userID null
             return chrome.runtime
               .sendMessage({
