@@ -14,6 +14,7 @@
   },
   "scripts": {
     "buildMask": "browserify scripts/metamask-controller.js -o scripts/metamaskbundled.js",
-    "buildAmazon": "browserify scripts/amazon-us.js -o scripts/bundledamazon.js"
+    "buildAmazon": "browserify scripts/amazon-us.js -o scripts/bundledamazon.js",
+    "buildWalmart": "browserify scripts/walmart-us.js -o scripts/bundledwalmart.js"
   }
 }

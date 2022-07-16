@@ -10,6 +10,10 @@
     {
       "matches": ["*://www.amazon.com/gp/cart*"],
       "js": ["scripts/bundledamazon.js"]
+    },
+    {
+      "matches": ["*://www.walmart.com/cart*"],
+      "js": ["scripts/bundledwalmart.js"]
     }
   ],
   "permissions": [
