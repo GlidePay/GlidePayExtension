@@ -14,6 +14,10 @@
     {
       "matches": ["*://www.walmart.com/cart*"],
       "js": ["scripts/bundledwalmart.js"]
+    },
+    {
+      "matches": ["*://www.aliexpress.com/p/shoppingcart*"],
+      "js": ["scripts/bundledaliexpress.js"]
     }
   ],
   "permissions": [
