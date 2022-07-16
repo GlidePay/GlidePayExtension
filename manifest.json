@@ -18,6 +18,10 @@
     {
       "matches": ["*://www.aliexpress.com/p/shoppingcart*"],
       "js": ["scripts/bundledaliexpress.js"]
+    },
+    {
+      "matches": ["*://www.costco.com/CheckoutCartDisplayView*"],
+        "js": ["scripts/bundledcostco.js"]
     }
   ],
   "permissions": [
