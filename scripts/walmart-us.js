@@ -15,6 +15,7 @@ class Walmart extends ECommerceCart.EcommerceCart {
          * @function injectButton
 
          */
+            // Loads in button and aligns it.
         const buttonBox = document.querySelector("#maincontent > div > div > div > div:nth-child(2) > div.flex.w-third.flex-column.ml3 > div > div > div:nth-child(1)");
         buttonBox.style.alignItems = "center";
         buttonLocation.after(this.cryptoButton);
@@ -28,6 +29,8 @@ class Walmart extends ECommerceCart.EcommerceCart {
          * @function getProducts
          * @return  {Object} Contains the products selected by the user.
          */
+
+        // Fucking disgusting ass code lol
         let productDict = {};
         let productIndex = 0;
         let productElements = document.querySelector(
@@ -95,6 +98,7 @@ function main() {
         from: "cart",
         subject: "productData",
     });
+    // Waits for page to fully load before injecting the button.
     const loadObserver = new MutationObserver(function(mutations) {
         mutations.forEach(function(mutation) {
             if (mutation.addedNodes.length > 0) {
@@ -110,7 +114,6 @@ function main() {
         });
     });
     const container = document.querySelector("#__next")
-    console.log(container);
     let config = { attributes: true, childList: true, subtree: true, characterData: true };
     loadObserver.observe(container, config);
 }
