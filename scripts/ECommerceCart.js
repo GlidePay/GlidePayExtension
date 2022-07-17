@@ -1,6 +1,7 @@
 const createProvider = require("metamask-extension-provider");
 const Web3 = require("web3");
 const provider = createProvider();
+const { LogError, UserError } = require("./CustomError");
 
 class EcommerceCart {
   /*
@@ -104,15 +105,26 @@ class EcommerceCart {
       this.cryptoButton.disabled = true;
       provider
         .request({ method: "eth_requestAccounts" })
-        .catch(() => {
+        .catch((err) => {
+          if (err instanceof LogError) {
+            throw err;
+          }
           this.cryptoButton.disabled = false;
-          throw Error("Metamask login already opened.");
+          throw new UserError("Metamask login already opened.", () => {
+            alert("Metamask login already open.");
+          });
         })
         .then(() => {
           return this.checkMetamaskSignIn();
         })
+        .catch((err) => {
+          throw err;
+        })
         .then((walletID) => {
           return this.checkAccount(walletID);
+        })
+        .catch((err) => {
+          throw err;
         })
         .then(() => {
           console.log("Passing user`");
@@ -124,6 +136,15 @@ class EcommerceCart {
             screenSize: screen.width,
           });
           this.cryptoButton.disabled = false;
+        })
+        .catch((err) => {
+          console.log(err);
+          if (err instanceof UserError) {
+            err.handle();
+          } else if (err instanceof LogError) {
+            console.log(err);
+            err.handle();
+          }
         });
     });
     console.log(cryptoButton);
@@ -136,10 +157,25 @@ class EcommerceCart {
       const web3 = new Web3(provider);
       web3.eth.getAccounts((error, accounts) => {
         if (error != null) {
+          console.log("rejecting");
           this.cryptoButton.disabled = false;
-          reject(error);
+          reject(
+            new LogError(
+              error,
+              "Web3 get accounts failed to fetch accounts",
+              () => {
+                alert("A problem occured with Metamask.");
+                this.cryptoButton.disabled = false;
+              }
+            )
+          );
         } else if (accounts.length === 0) {
-          reject("No Accounts Found");
+          reject(
+            new UserError("User has no wallets.", () => {
+              alert("Please create a wallet in Metamask.");
+              this.cryptoButton.disabled = false;
+            })
+          );
         } else {
           resolve(accounts[0]);
         }
