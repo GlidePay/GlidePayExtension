@@ -8,7 +8,7 @@
   },
   "content_scripts": [
     {
-      "matches": ["*://www.amazon.com/gp/cart*"],
+      "matches": ["*://www.amazon.com.mx/gp/cart/*", "*://www.amazon.com/gp/cart/*", "*://www.amazon.ca/gp/cart/*", "*://www.amazon.de/*/gp/cart/*", "*://www.amazon.de/gp/cart/*", "*://www.amazon.co.uk/gp/cart/*"],
       "js": ["scripts/bundledamazon.js"]
     },
     {

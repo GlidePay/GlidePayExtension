@@ -39,7 +39,8 @@ class Amazon extends ECommerceCart.EcommerceCart {
             const imageElement = theArray[index].querySelectorAll(
                 "div.sc-list-item-content > div > div.a-column.a-span10 > div > div > div.a-fixed-left-grid-col.a-float-left.sc-product-image-desktop.a-col-left > a > img"
             )[0];
-
+            const currency = JSON.parse(part.getAttribute("data-subtotal")).subtotal.code
+            console.log(currency)
             const ASIN = theArray[index].getAttribute("data-asin");
             const productName = imageElement.getAttribute("alt");
             const unitPrice = theArray[index].getAttribute("data-price");
