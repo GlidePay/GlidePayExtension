@@ -38,11 +38,35 @@ class Costco extends ECommerceCart.EcommerceCart {
         let productElements = document.querySelector(
             "#order-items-regular"
         );
+        let groceryElements = document.querySelector(
+            "#order-items-grocery"
+        );
         let productElementsList = Array.from(productElements.children);
+        let groceryElementsList = Array.from(groceryElements.children);
         let index = 0;
         productElementsList.forEach(function (part) {
             if (part.tagName === "DIV") {
                 const product = part.querySelector('div > div:nth-child(1)');
+                console.log(product);
+                const productID = product.getAttribute("data-orderitemnumber");
+                const productName = product.querySelector('div:nth-child(1) > div:nth-child(2) > h3 > a').innerText;
+                const unitPrice = product.querySelector('div:nth-child(1) > div:nth-child(2) > div:nth-child(6) > div > div > div:nth-child(1) > span');
+                const quantity = product.querySelector('div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > input').value;
+                const productImage = product.querySelector('div:nth-child(1) > div:nth-child(1) > a > img').getAttribute("src");
+                productDict[index] = {
+                    productID: productID,
+                    productName: productName,
+                    unitPrice: unitPrice,
+                    quantity: quantity,
+                    productImage: productImage,
+                };
+                index++;
+            }
+        });
+        groceryElementsList.forEach(function (part) {
+            if (part.tagName === "DIV") {
+                const product = part.querySelector('div > div:nth-child(1)');
+                console.log(product);
                 const productID = product.getAttribute("data-orderitemnumber");
                 const productName = product.querySelector('div:nth-child(1) > div:nth-child(2) > h3 > a').innerText;
                 const unitPrice = product.querySelector('div:nth-child(1) > div:nth-child(2) > div:nth-child(6) > div > div > div:nth-child(1) > span').innerText;

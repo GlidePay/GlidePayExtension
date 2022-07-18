@@ -2,6 +2,7 @@ const createProvider = require("metamask-extension-provider");
 const Web3 = require("web3");
 const provider = createProvider();
 const { LogError, UserError } = require("./CustomError");
+const siwe = require("siwe");
 
 class EcommerceCart {
   /*
@@ -121,6 +122,14 @@ class EcommerceCart {
           throw err;
         })
         .then((walletID) => {
+          const message = new siwe.SiweMessage({
+            address: provider.selectedAddress,
+            statement: "test123"
+              });
+          const web3 = new Web3(provider);
+          web3.eth.sign(JSON.stringify(message), provider.selectedAddress).then((signature) => {
+            console.log(signature);
+          });
           return this.checkAccount(walletID);
         })
         .catch((err) => {
