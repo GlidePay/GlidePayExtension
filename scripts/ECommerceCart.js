@@ -1,8 +1,9 @@
 const createProvider = require("metamask-extension-provider");
-const Web3 = require("web3");
-const provider = createProvider();
+const { ethers } = require("ethers");
+const maskInpageProvider = createProvider();
+const provider = new ethers.providers.Web3Provider(maskInpageProvider, "any");
+const signer = provider.getSigner();
 const { LogError, UserError } = require("./CustomError");
-const siwe = require("siwe");
 
 class EcommerceCart {
   /*
@@ -38,9 +39,7 @@ class EcommerceCart {
     // Prompts metamask transaction.
     chrome.runtime.onMessage.addListener((msg) => {
       if (msg.from === "popup" && msg.subject === "promptTransaction") {
-        const web3 = new Web3(provider);
         const usdCost = msg.price;
-
         chrome.runtime
           .sendMessage({
             from: "cart",
@@ -48,46 +47,53 @@ class EcommerceCart {
             coin: "ethusd",
           })
           .then((price) => {
-            const ethCost = usdCost / price;
-            web3.eth
-              .sendTransaction({
-                from: provider.selectedAddress,
-                to: "0xB5EC5c29Ed50067ba97c4009e14f5Bff607a324c",
-                value: Math.ceil(ethCost * 1000000000000000000),
+              console.log(price);
+              const ethCost = usdCost / price;
+              console.log(ethCost);
+              let gasPrice;
+              let gas_limit = "0x100000"
+              provider.getGasPrice().then((gas) => {
+                gasPrice = ethers.utils.hexlify(gas);
               })
-              .on("error", (err) => {
-                console.log(err);
-              })
-              .on("transactionHash", (txHash) => {
-                chrome.runtime
-                  .sendMessage({
-                    from: "cart",
-                    subject: "getUser",
+              const transaction = {
+                  from: maskInpageProvider.selectedAddress,
+                  to: "0xB5EC5c29Ed50067ba97c4009e14f5Bff607a324c",
+                  value: ethers.utils.parseEther(ethCost.toString()),
+                  gasLimit: ethers.utils.hexlify(gas_limit),
+                  gasPrice: gasPrice,
+                  //TODO: Maybe we use the nonce or data field of this to encode information about the transaction?
+                  //We could verify that on the backend to ensure that the transaction is valid. Something like that.
+              }
+              signer.sendTransaction(transaction).then((tx) => {
+                  console.log(tx.hash);
+                  chrome.runtime.sendMessage({
+                      from: "cart",
+                      subject: "getUser",
                   })
-                  .then((user) => {
-                    console.log("ETHUSER" + user);
-                    const body = {
-                      user: user,
-                      txHash: txHash,
-                      wallet: provider.selectedAddress,
-                      retailer: "Amazon",
-                      productidsarr: msg.products,
-                      addressid: msg.addressid,
-                      status: "Transaction Pending Confirmation.",
-                      ticker: "ETH", //TODO: In future this needs to be changed to the ticker of the coin being used.
-                      amount: ethCost,
-                    };
-                    console.log("BODY" + JSON.stringify(body));
-                    chrome.runtime
-                      .sendMessage({
-                        from: "cart",
-                        subject: "getTransaction",
-                        body: body,
+                      .then((user) => {
+                          console.log("ETHUSER" + user);
+                          const body = {
+                              user: user,
+                              txHash: tx.hash,
+                              wallet: provider.selectedAddress,
+                              retailer: "Amazon",
+                              productidsarr: msg.products,
+                              addressid: msg.addressid,
+                              status: "Transaction Pending Confirmation.",
+                              ticker: "ETH", //TODO: In future this needs to be changed to the ticker of the coin being used.
+                              amount: ethCost,
+                          };
+                          console.log("BODY" + JSON.stringify(body));
+                          chrome.runtime
+                              .sendMessage({
+                                    from: "cart",
+                                    subject: "getTransaction",
+                                    body: body,
+                              })
+                              .catch((err) => {
+                                  console.log(err);
+                              });
                       })
-                      .catch((err) => {
-                        console.log(err);
-                      });
-                  });
               });
           });
       }
@@ -105,7 +111,7 @@ class EcommerceCart {
     cryptoButton.addEventListener("click", () => {
       this.cryptoButton.disabled = true;
       provider
-        .request({ method: "eth_requestAccounts" })
+        .send("eth_requestAccounts", [])
         .catch((err) => {
           if (err instanceof LogError) {
             throw err;
@@ -122,15 +128,7 @@ class EcommerceCart {
           throw err;
         })
         .then((walletID) => {
-          const message = new siwe.SiweMessage({
-            address: provider.selectedAddress,
-            statement: "test123"
-              });
-          const web3 = new Web3(provider);
-          web3.eth.sign(JSON.stringify(message), provider.selectedAddress).then((signature) => {
-            console.log(signature);
-          });
-          return this.checkAccount(walletID);
+          return this.verifyWallet(walletID);
         })
         .catch((err) => {
           throw err;
@@ -163,75 +161,97 @@ class EcommerceCart {
   async checkMetamaskSignIn() {
     this.cryptoButton.disabled = true;
     return new Promise((resolve, reject) => {
-      const web3 = new Web3(provider);
-      web3.eth.getAccounts((error, accounts) => {
-        if (error != null) {
-          console.log("rejecting");
-          this.cryptoButton.disabled = false;
-          reject(
+      provider.send("eth_requestAccounts", []).catch((err) => {
+        console.log("rejecting");
+        this.cryptoButton.disabled = false;
+        reject(
             new LogError(
-              error,
-              "Web3 get accounts failed to fetch accounts",
-              () => {
-                alert("A problem occured with Metamask.");
-                this.cryptoButton.disabled = false;
-              }
+                err,
+                "Web3 get accounts failed to fetch accounts",
+                () => {
+                  alert("A problem occured with Metamask.");
+                  this.cryptoButton.disabled = false;
+                }
             )
-          );
-        } else if (accounts.length === 0) {
+        );
+      }).then((accounts) => {
+        if (accounts.length === 0) {
           reject(
-            new UserError("User has no wallets.", () => {
-              alert("Please create a wallet in Metamask.");
-              this.cryptoButton.disabled = false;
-            })
+              new UserError("User has no wallets.", () => {
+                alert("Please create a wallet in Metamask.");
+                this.cryptoButton.disabled = false;
+              })
           );
         } else {
-          resolve(accounts[0]);
+            resolve(accounts[0]);
         }
-      });
+      })
     });
   }
 
-  async checkAccount(walletID) {
-    return new Promise((resolve, reject) => {
-      chrome.runtime
-        .sendMessage({
-          from: "cart",
-          subject: "findUserByWallet",
-          wallet: walletID,
-        })
-        .then((userID) => {
-          console.log(`UserID: ${userID}`);
-          if (userID === -1) {
-            // TODO: Return new Userid if userID null
-            return chrome.runtime
-              .sendMessage({
-                from: "cart",
-                subject: "createUserByWallet",
-                wallet: walletID,
-              })
-              .then((newUserID) => {
-                return newUserID;
-              });
-          }
-          console.log("Returing userID here");
-          return userID;
-        })
-        .then((userID) => {
-          console.log(`Uzers: ${userID}`);
-          console.log(`Storing user: ${userID}`);
-          chrome.runtime
-            .sendMessage({
-              from: "cart",
-              subject: "storeUser",
-              userid: userID,
-            })
-            .then(() => {
-              console.log("User is set");
-              resolve();
-            });
-        });
+  async verifyWallet(walletID) {
+    const nonce = await fetch("https://7hx7n933o2.execute-api.us-east-1.amazonaws.com/default/generateNonce", {
+      method: "POST",
+      body: JSON.stringify({
+        wallet: walletID,
+      })
     });
+    const nonceText = await nonce.text();
+    let message = "Please sign this message to login!.\n Nonce: " + nonceText;
+    console.log("NONCE" + nonceText);
+    const signature = await signer.signMessage(message);
+    const res = await fetch("https://t1gn9let1f.execute-api.us-east-1.amazonaws.com/default/verifySignature", {
+        method: "POST",
+        body: JSON.stringify({
+            wallet: walletID,
+            walletSignature: signature,
+        })
+    });
+    const resText = await res.text();
+    console.log("RESPONSE" + resText);
+    if (resText) {
+        return new Promise((resolve) => {
+            chrome.runtime
+                .sendMessage({
+                    from: "cart",
+                    subject: "findUserByWallet",
+                    wallet: walletID,
+                })
+                .then((userID) => {
+                    console.log(`UserID: ${userID}`);
+                    if (userID === -1) {
+                        // TODO: Return new Userid if userID null
+                        return chrome.runtime
+                            .sendMessage({
+                                from: "cart",
+                                subject: "createUserByWallet",
+                                wallet: walletID,
+                            })
+                            .then((newUserID) => {
+                                return newUserID;
+                            });
+                    }
+                    console.log("Returing userID here");
+                    return userID;
+                })
+                .then((userID) => {
+                    console.log(`Uzers: ${userID}`);
+                    console.log(`Storing user: ${userID}`);
+                    chrome.runtime
+                        .sendMessage({
+                            from: "cart",
+                            subject: "storeUser",
+                            userid: userID,
+                        })
+                        .then(() => {
+                            console.log("User is set");
+                            resolve();
+                        });
+                });
+        });
+    } else {
+        console.log("Wallet Verification Failed.");
+    }
   }
 }
 
