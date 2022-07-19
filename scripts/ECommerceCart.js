@@ -189,6 +189,19 @@ class EcommerceCart {
     });
   }
 
+  async getExistingToken() {
+      return new Promise((resolve, reject) => {
+          chrome.storage.local.get("glidePayJWT", (result) => {
+              if (result.glidePayJWT) {
+                  console.log("JWT found");
+                  resolve(result.glidePayJWT);
+              } else {
+                  reject();
+              }
+          });
+      });
+  }
+
   async verifyWallet(walletID) {
     const nonce = await fetch("https://7hx7n933o2.execute-api.us-east-1.amazonaws.com/default/generateNonce", {
       method: "POST",
@@ -200,16 +213,21 @@ class EcommerceCart {
     let message = "Please sign this message to login!.\n Nonce: " + nonceText;
     console.log("NONCE" + nonceText);
     const signature = await signer.signMessage(message);
+    const existingToken = await this.getExistingToken();
     const res = await fetch("https://t1gn9let1f.execute-api.us-east-1.amazonaws.com/default/verifySignature", {
         method: "POST",
         body: JSON.stringify({
             wallet: walletID,
             walletSignature: signature,
-        })
+            existingToken: existingToken,
+        }),
     });
     const resText = await res.text();
-    console.log("RESPONSE" + resText);
-    if (resText) {
+    const JWT = JSON.parse(resText).token;
+    await chrome.storage.local.set({
+        glidePayJWT: JWT,
+    });
+    if (res.status === 200) {
         return new Promise((resolve) => {
             chrome.runtime
                 .sendMessage({
