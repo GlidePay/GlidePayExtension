@@ -134,7 +134,6 @@ class EcommerceCart {
           throw err;
         })
         .then(() => {
-          console.log("Passing user`");
           this.productDict = this.getProducts();
           console.log(this.productDict);
           chrome.runtime.sendMessage({
@@ -196,7 +195,7 @@ class EcommerceCart {
                   console.log("JWT found");
                   resolve(result.glidePayJWT);
               } else {
-                  reject();
+                  reject(undefined);
               }
           });
       });
@@ -227,48 +226,8 @@ class EcommerceCart {
     await chrome.storage.local.set({
         glidePayJWT: JWT,
     });
-    if (res.status === 200) {
-        return new Promise((resolve) => {
-            chrome.runtime
-                .sendMessage({
-                    from: "cart",
-                    subject: "findUserByWallet",
-                    wallet: walletID,
-                })
-                .then((userID) => {
-                    console.log(`UserID: ${userID}`);
-                    if (userID === -1) {
-                        // TODO: Return new Userid if userID null
-                        return chrome.runtime
-                            .sendMessage({
-                                from: "cart",
-                                subject: "createUserByWallet",
-                                wallet: walletID,
-                            })
-                            .then((newUserID) => {
-                                return newUserID;
-                            });
-                    }
-                    console.log("Returing userID here");
-                    return userID;
-                })
-                .then((userID) => {
-                    console.log(`Uzers: ${userID}`);
-                    console.log(`Storing user: ${userID}`);
-                    chrome.runtime
-                        .sendMessage({
-                            from: "cart",
-                            subject: "storeUser",
-                            userid: userID,
-                        })
-                        .then(() => {
-                            console.log("User is set");
-                            resolve();
-                        });
-                });
-        });
-    } else {
-        console.log("Wallet Verification Failed.");
+    if (res.status !== 200) {
+        alert("Wallet Verification Failed.");
     }
   }
 }

@@ -54,17 +54,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
           );
         }
         break;
-      case "storeUser":
-        {
-          storeSession("userid", message.userid);
-        }
-        break;
-      case "getUser": {
-        chrome.storage.session.get("userid", function (result) {
-          sendResponse(result["userid"]);
-        });
-        return true;
-      }
       case "getCoinPrice": {
         getCoinPrice(message.coin).then((price) => {
           sendResponse(price);
@@ -76,18 +65,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
           getTransaction(message.body);
         }
         break;
-      case "findUserByWallet": {
-        findUserByWallet(message.wallet).then((uid) => {
-          sendResponse(uid);
-        });
-        return true;
-      }
-      case "createUserByWallet": {
-        createUser(message.wallet).then((uid) => {
-          sendResponse(uid);
-        });
-        return true;
-      }
     }
   }
 });
@@ -99,13 +76,6 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     sendResponse(senderID);
   }
 });
-
-// Store a variable in chrome session storage.
-function storeSession(key, value) {
-  chrome.storage.session.set({
-    [key]: value,
-  });
-}
 
 async function getCoinPrice(coin) {
   //coin must be in the form of "xxxusd" IE "ethusd"
@@ -122,59 +92,33 @@ async function getCoinPrice(coin) {
 }
 
 function getTransaction(body) {
-  let user = body.user;
-  let txhash = body.txHash;
-  let wallet = body.wallet;
-  let retailer = body.retailer;
-  let status = body.status;
-  let productidsarr = body.productidsarr;
-  let addressid = body.addressid;
-  let amount = body.amount;
-  let ticker = body.ticker;
-  fetch("https://xrl1xszvde.execute-api.us-east-1.amazonaws.com/prod/", {
-    method: "post",
-    body: JSON.stringify({
-      stateMachineArn:
-        "arn:aws:states:us-east-1:447056388296:stateMachine:GlidePayState",
-      input: JSON.stringify({
-        txhash: txhash,
-        wallet: wallet,
-        userid: user,
-        retailer: retailer,
-        status: status,
-        productidsarr: productidsarr,
-        addressid: addressid,
-        amount: amount,
-        ticker: ticker,
-      }),
-    }),
-  }).catch((error) => {
-    throw error.stack;
-  });
-}
-
-async function findUserByWallet(wallet) {
-  const user = await fetch(
-    "https://de1tn2srhk.execute-api.us-east-1.amazonaws.com/default/findUserByWalletRDS",
-    {
+  chrome.storage.local.get("glidePayJWT", (result) => {
+    let jwt = result.glidePayJWT;
+    let txhash = body.txHash;
+    let retailer = body.retailer;
+    let status = body.status;
+    let productidsarr = body.productidsarr;
+    let addressid = body.addressid;
+    let amount = body.amount;
+    let ticker = body.ticker;
+    fetch("https://xrl1xszvde.execute-api.us-east-1.amazonaws.com/prod/", {
       method: "post",
       body: JSON.stringify({
-        wallet: wallet,
+        stateMachineArn:
+            "arn:aws:states:us-east-1:447056388296:stateMachine:GlidePayState",
+        input: JSON.stringify({
+          txhash: txhash,
+          token: jwt,
+          retailer: retailer,
+          status: status,
+          productidsarr: productidsarr,
+          addressid: addressid,
+          amount: amount,
+          ticker: ticker,
+        }),
       }),
-    }
-  );
-  return JSON.parse(await user.text());
-}
-
-async function createUser(wallet) {
-  const user = await fetch(
-    "https://kyr8ehszh2.execute-api.us-east-1.amazonaws.com/default/createUserRDS",
-    {
-      method: "POST",
-      body: JSON.stringify({
-        wallet: wallet,
-      }),
-    }
-  );
-  return JSON.parse(await user.text());
+    }).catch((error) => {
+      throw error.stack;
+    });
+  });
 }

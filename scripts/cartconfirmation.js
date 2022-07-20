@@ -1,57 +1,60 @@
 //TODO: Load in all saved addresses and display them as selectable options
 //TODO: Think about how we should handle it if someone tries to order to an address the product doesnt ship to
-function getAddresses(userid) {
-  fetch(
-    "https://vshqd3sv2c.execute-api.us-east-1.amazonaws.com/default/getAddressesRDS",
-    {
-      method: "post",
-      body: JSON.stringify({ userid: userid }),
-    }
-  )
-    .then((response) => response.json())
-    .then((responseData) => {
-      console.log(responseData);
+function getAddresses() {
+  chrome.storage.local.get("glidePayJWT", (result) => {
+    const jwt = result.glidePayJWT;
+    fetch(
+        "https://vshqd3sv2c.execute-api.us-east-1.amazonaws.com/default/getAddressesRDS",
+        {
+          method: "post",
+          body: JSON.stringify({ token: jwt }),
+        }
+    )
+        .then((response) => response.json())
+        .then((responseData) => {
+          console.log(responseData);
 
-      const tempAddress = sessionStorage.getItem("tempAddress");
-      if (tempAddress == null) {
-        console.log("no temp address");
-      } else {
-        responseData.push(JSON.parse(tempAddress));
-      }
+          const tempAddress = sessionStorage.getItem("tempAddress");
+          if (tempAddress == null) {
+            console.log("no temp address");
+          } else {
+            responseData.push(JSON.parse(tempAddress));
+          }
 
-      const addressSelect = document.getElementById("addressSelect");
-      let address;
-      for (let i = 0; i < responseData.length; i++) {
-        const option = document.createElement("option");
-        address = [
-          responseData[i].Address_Line_1,
-          responseData[i].Address_Line_2,
-          responseData[i].City,
-          responseData[i].Province_State,
-          responseData[i].Zip_Postal_Code,
-          responseData[i].Country,
-          responseData[i].Phone_Number,
-        ];
-        option.setAttribute("address", address);
-        const addressString =
-          responseData[i].Address_Line_1 +
-          " " +
-          responseData[i].Address_Line_2 +
-          " " +
-          responseData[i].City +
-          " " +
-          responseData[i].Province_State +
-          " " +
-          responseData[i].Zip_Postal_Code +
-          " " +
-          responseData[i].Country +
-          " " +
-          responseData[i].Phone_Number;
-        option.textContent = addressString.substring(0, 20) + "...";
-        option.value = responseData[i].Address_ID;
-        addressSelect.appendChild(option);
-      }
-    });
+          const addressSelect = document.getElementById("addressSelect");
+          let address;
+          for (let i = 0; i < responseData.length; i++) {
+            const option = document.createElement("option");
+            address = [
+              responseData[i].Address_Line_1,
+              responseData[i].Address_Line_2,
+              responseData[i].City,
+              responseData[i].Province_State,
+              responseData[i].Zip_Postal_Code,
+              responseData[i].Country,
+              responseData[i].Phone_Number,
+            ];
+            option.setAttribute("address", address);
+            const addressString =
+                responseData[i].Address_Line_1 +
+                " " +
+                responseData[i].Address_Line_2 +
+                " " +
+                responseData[i].City +
+                " " +
+                responseData[i].Province_State +
+                " " +
+                responseData[i].Zip_Postal_Code +
+                " " +
+                responseData[i].Country +
+                " " +
+                responseData[i].Phone_Number;
+            option.textContent = addressString.substring(0, 20) + "...";
+            option.value = responseData[i].Address_ID;
+            addressSelect.appendChild(option);
+          }
+        });
+  });
 }
 
 const setProductInfo = (products) => {
@@ -139,15 +142,8 @@ const setProductInfo = (products) => {
       }
     });
   });
-  chrome.runtime
-    .sendMessage({
-      from: "cart",
-      subject: "getUser",
-    })
-    .then((userID) => {
-      console.log(`UserId: ${userID}`);
-      getAddresses(userID);
-    });
+
+  getAddresses();
 
   const addressLabel = document.createElement("h2");
   addressLabel.textContent = "Address";

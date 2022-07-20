@@ -42,23 +42,24 @@
     });
   });
 
-  async function createAddress(userid, address) {
-    console.log("user" + userid);
-    const data = {
-      userid: userid,
-      address: address,
-    };
+  async function createAddress(address) {
+    chrome.storage.local.get("glidePayJWT", (result) => {
+      const data = {
+        token: result.glidePayJWT,
+        address: address,
+      };
 
-    return fetch(
-      "https://6zfr42udog.execute-api.us-east-1.amazonaws.com/default/createAddressRDS",
-      {
-        method: "post",
-        body: JSON.stringify(data),
-      }
-    )
-      .then((response) => response.text())
-      .then((responseData) => {
-        console.log(JSON.parse(responseData));
-      });
+      return fetch(
+          "https://6zfr42udog.execute-api.us-east-1.amazonaws.com/default/createAddressRDS",
+          {
+            method: "post",
+            body: JSON.stringify(data),
+          }
+      )
+          .then((response) => response.text())
+          .then((responseData) => {
+            console.log(JSON.parse(responseData));
+          });
+    });
   }
 })();
