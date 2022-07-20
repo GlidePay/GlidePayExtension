@@ -96,7 +96,7 @@ function getTransaction(body) {
     let jwt = result.glidePayJWT;
     let txhash = body.txHash;
     let retailer = body.retailer;
-    let status = body.status;
+    let status = body.orderStatus;
     let productidsarr = body.productidsarr;
     let addressid = body.addressid;
     let amount = body.amount;
@@ -110,7 +110,7 @@ function getTransaction(body) {
           txhash: txhash,
           token: jwt,
           retailer: retailer,
-          status: status,
+          orderStatus: status,
           productidsarr: productidsarr,
           addressid: addressid,
           amount: amount,

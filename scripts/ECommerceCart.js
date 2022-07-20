@@ -66,34 +66,25 @@ class EcommerceCart {
               }
               signer.sendTransaction(transaction).then((tx) => {
                   console.log(tx.hash);
-                  chrome.runtime.sendMessage({
-                      from: "cart",
-                      subject: "getUser",
-                  })
-                      .then((user) => {
-                          console.log("ETHUSER" + user);
-                          const body = {
-                              user: user,
-                              txHash: tx.hash,
-                              wallet: provider.selectedAddress,
-                              retailer: "Amazon",
-                              productidsarr: msg.products,
-                              addressid: msg.addressid,
-                              status: "Transaction Pending Confirmation.",
-                              ticker: "ETH", //TODO: In future this needs to be changed to the ticker of the coin being used.
-                              amount: ethCost,
-                          };
-                          console.log("BODY" + JSON.stringify(body));
-                          chrome.runtime
-                              .sendMessage({
-                                    from: "cart",
-                                    subject: "getTransaction",
-                                    body: body,
-                              })
-                              .catch((err) => {
-                                  console.log(err);
-                              });
+                  const body = {
+                      txHash: tx.hash,
+                      retailer: "Amazon",
+                      productidsarr: msg.products,
+                      addressid: msg.addressid,
+                      orderStatus: "Transaction Pending Confirmation.",
+                      ticker: "ETH", //TODO: In future this needs to be changed to the ticker of the coin being used.
+                      amount: ethCost,
+                  };
+                  console.log("BODY" + JSON.stringify(body));
+                  chrome.runtime
+                      .sendMessage({
+                            from: "cart",
+                            subject: "getTransaction",
+                            body: body,
                       })
+                      .catch((err) => {
+                          console.log(err);
+                      });
               });
           });
       }
@@ -127,21 +118,17 @@ class EcommerceCart {
         .catch((err) => {
           throw err;
         })
-        .then((walletID) => {
-          return this.verifyWallet(walletID);
-        })
-        .catch((err) => {
-          throw err;
-        })
-        .then(() => {
-          this.productDict = this.getProducts();
-          console.log(this.productDict);
-          chrome.runtime.sendMessage({
-            from: "cart",
-            subject: "createOrderPopup",
-            screenSize: screen.width,
-          });
-          this.cryptoButton.disabled = false;
+        .then(async (walletID) => {
+            this.verifyWallet(walletID).then(() => {
+                this.productDict = this.getProducts();
+                console.log(this.productDict);
+                chrome.runtime.sendMessage({
+                    from: "cart",
+                    subject: "createOrderPopup",
+                    screenSize: screen.width,
+                });
+                this.cryptoButton.disabled = false;
+            });
         })
         .catch((err) => {
           console.log(err);
@@ -155,6 +142,17 @@ class EcommerceCart {
     });
     console.log(cryptoButton);
     return cryptoButton;
+  }
+
+  async verifyToken(token, wallet) {
+      const response = await fetch('https://wv4gqvqqi1.execute-api.us-east-1.amazonaws.com/default/verifyToken', {
+          method: 'POST',
+          body: JSON.stringify({
+              token: token,
+              wallet: wallet,
+          })
+      });
+      return response.status === 200;
   }
 
   async checkMetamaskSignIn() {
@@ -188,47 +186,43 @@ class EcommerceCart {
     });
   }
 
-  async getExistingToken() {
-      return new Promise((resolve, reject) => {
-          chrome.storage.local.get("glidePayJWT", (result) => {
-              if (result.glidePayJWT) {
-                  console.log("JWT found");
-                  resolve(result.glidePayJWT);
-              } else {
-                  reject(undefined);
-              }
-          });
-      });
-  }
-
   async verifyWallet(walletID) {
-    const nonce = await fetch("https://7hx7n933o2.execute-api.us-east-1.amazonaws.com/default/generateNonce", {
-      method: "POST",
-      body: JSON.stringify({
-        wallet: walletID,
-      })
-    });
-    const nonceText = await nonce.text();
-    let message = "Please sign this message to login!.\n Nonce: " + nonceText;
-    console.log("NONCE" + nonceText);
-    const signature = await signer.signMessage(message);
-    const existingToken = await this.getExistingToken();
-    const res = await fetch("https://t1gn9let1f.execute-api.us-east-1.amazonaws.com/default/verifySignature", {
-        method: "POST",
-        body: JSON.stringify({
-            wallet: walletID,
-            walletSignature: signature,
-            existingToken: existingToken,
-        }),
-    });
-    const resText = await res.text();
-    const JWT = JSON.parse(resText).token;
-    await chrome.storage.local.set({
-        glidePayJWT: JWT,
-    });
-    if (res.status !== 200) {
-        alert("Wallet Verification Failed.");
-    }
+      chrome.storage.local.get('glidePayJWT', async (result) => {
+          console.log("JWT found");
+          console.log(result.glidePayJWT);
+          if (await this.verifyToken(result.glidePayJWT, walletID)) {
+              console.log("JWT verified");
+          } else {
+              const nonce = await fetch("https://7hx7n933o2.execute-api.us-east-1.amazonaws.com/default/generateNonce", {
+                  method: "POST",
+                  body: JSON.stringify({
+                      wallet: walletID,
+                  })
+              });
+              const nonceText = await nonce.text();
+              let message = "Please sign this message to login!.\n Nonce: " + nonceText;
+              console.log("NONCE" + nonceText);
+              const signature = await signer.signMessage(message);
+              console.log("SIGNATURE" + signature);
+              const res = await fetch("https://t1gn9let1f.execute-api.us-east-1.amazonaws.com/default/verifySignature", {
+                  method: "POST",
+                  body: JSON.stringify({
+                      wallet: walletID,
+                      walletSignature: signature,
+                      existingToken: result.glidePayJWT,
+                  }),
+              });
+              const resText = await res.text();
+              const JWT = JSON.parse(resText).token;
+              console.log("JWT" + JWT);
+              await chrome.storage.local.set({
+                  glidePayJWT: JWT,
+              });
+              if (res.status !== 200) {
+                  alert("Wallet Verification Failed.");
+              }
+          }
+      });
   }
 }
 
