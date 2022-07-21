@@ -35,10 +35,10 @@
             "form-check-input me-2"
         )[0];
 
-        chrome.storage.session.get("userid", function (result) {
-            console.log("USERID" + result["userid"]);
+        chrome.storage.local.get("glidePayJWT", async (result) => {
+            console.log("JWTTOKEN" + result["glidePayJWT"]);
             if (saveAddressButton.checked) {
-                createAddress(result["userid"], address).then(() => {
+                createAddress(result["glidePayJWT"], address).then(() => {
                     window.location.href = "/views/confirmation.html";
                 });
             } else {
@@ -48,18 +48,15 @@
         });
     });
 
-    async function createAddress(userid, address) {
-        console.log("user" + userid);
-        const data = {
-            userid: userid,
-            address: address,
-        };
-
+    async function createAddress(token, address) {
         return fetch(
             "https://6zfr42udog.execute-api.us-east-1.amazonaws.com/default/createAddressRDS",
             {
                 method: "post",
-                body: JSON.stringify(data),
+                body: JSON.stringify({
+                    token: token,
+                    address: address,
+                })
             }
         )
             .then((response) => response.text())
