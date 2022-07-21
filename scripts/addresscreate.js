@@ -1,5 +1,11 @@
 (function () {
   let confirmButton = document.getElementById("submit-button");
+  let backbutton = document.getElementById("back-button");
+
+  backbutton.addEventListener("click", function (event) {
+    window.location.href = "confirmation.html";
+  });
+
   confirmButton.addEventListener("click", () => {
     //TODO: Checks if fully filled out and address is valid
     //TODO: Check if address already exists
@@ -29,10 +35,10 @@
       "form-check-input me-2"
     )[0];
 
-    chrome.storage.session.get("userid", function (result) {
-      console.log("USERID" + result["userid"]);
+    chrome.storage.local.get("glidePayJWT", async (result) => {
+      console.log("JWTTOKEN" + result["glidePayJWT"]);
       if (saveAddressButton.checked) {
-        createAddress(result["userid"], address).then(() => {
+        createAddress(result["glidePayJWT"], address).then(() => {
           window.location.href = "/views/confirmation.html";
         });
       } else {
@@ -42,24 +48,20 @@
     });
   });
 
-  async function createAddress(address) {
-    chrome.storage.local.get("glidePayJWT", (result) => {
-      const data = {
-        token: result.glidePayJWT,
-        address: address,
-      };
-
-      return fetch(
-          "https://6zfr42udog.execute-api.us-east-1.amazonaws.com/default/createAddressRDS",
-          {
-            method: "post",
-            body: JSON.stringify(data),
-          }
-      )
-          .then((response) => response.text())
-          .then((responseData) => {
-            console.log(JSON.parse(responseData));
-          });
-    });
+  async function createAddress(token, address) {
+    return fetch(
+      "https://6zfr42udog.execute-api.us-east-1.amazonaws.com/default/createAddressRDS",
+      {
+        method: "post",
+        body: JSON.stringify({
+          token: token,
+          address: address,
+        }),
+      }
+    )
+      .then((response) => response.text())
+      .then((responseData) => {
+        console.log(JSON.parse(responseData));
+      });
   }
 })();

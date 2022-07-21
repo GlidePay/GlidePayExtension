@@ -55,16 +55,72 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         }
         break;
       case "getCoinPrice": {
-        getCoinPrice(message.coin).then((price) => {
+        getCoinPrice(message.body).then((price) => {
           sendResponse(price);
         });
         return true;
       }
       case "getTransaction":
         {
-          getTransaction(message.body);
+          getTransaction(message.body).then((result) => {
+            if (result instanceof Error) {
+              sendResponse({ error: result.stack });
+            } else {
+              sendResponse({ data: result });
+            }
+          });
         }
         break;
+      case "getNonce": {
+        getNonce(message.body).then((result) => {
+          if (result instanceof Error) {
+            sendResponse({ error: result.stack });
+          } else {
+            sendResponse({ data: result });
+          }
+        });
+        return true;
+      }
+      case "setToken": {
+        setToken(message.body).then((result) => {
+          if (result instanceof Error) {
+            sendResponse({ error: result.stack });
+          } else {
+            sendResponse({ data: result });
+          }
+        });
+        return true;
+      }
+      case "getToken": {
+        getToken().then((result) => {
+          if (result instanceof Error) {
+            sendResponse({ error: result.stack });
+          } else {
+            sendResponse({ data: result });
+          }
+        });
+        return true;
+      }
+      case "verifyToken": {
+        verifyToken(message.body).then((result) => {
+          if (result instanceof Error) {
+            sendResponse({ error: result.stack });
+          } else {
+            sendResponse({ data: result });
+          }
+        });
+        return true;
+      }
+      case "verifySignature": {
+        verifySignature(message.body).then((result) => {
+          if (result instanceof Error) {
+            sendResponse({ error: result.stack });
+          } else {
+            sendResponse({ data: result });
+          }
+        });
+        return true;
+      }
     }
   }
 });
@@ -77,22 +133,25 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   }
 });
 
-async function getCoinPrice(coin) {
+async function getCoinPrice(payload) {
   //coin must be in the form of "xxxusd" IE "ethusd"
-  const price = await fetch(
-    "https://okmf73layh.execute-api.us-east-1.amazonaws.com/default/getCoinPriceGemini",
-    {
-      method: "post",
-      body: JSON.stringify({
-        ticker: coin,
-      }),
-    }
-  );
-  return JSON.parse(await price.text());
+  try {
+    let response = await fetch(
+      "https://okmf73layh.execute-api.us-east-1.amazonaws.com/default/getCoinPriceGemini",
+      {
+        method: "post",
+        body: JSON.stringify(payload),
+      }
+    );
+    return await response.text();
+  } catch (err) {
+    return err;
+  }
 }
 
-function getTransaction(body) {
-  chrome.storage.local.get("glidePayJWT", (result) => {
+async function getTransaction(body) {
+  try {
+    result = await chrome.storage.local.get("glidePayJWT");
     let jwt = result.glidePayJWT;
     let txhash = body.txHash;
     let retailer = body.retailer;
@@ -101,24 +160,91 @@ function getTransaction(body) {
     let addressid = body.addressid;
     let amount = body.amount;
     let ticker = body.ticker;
-    fetch("https://xrl1xszvde.execute-api.us-east-1.amazonaws.com/prod/", {
-      method: "post",
-      body: JSON.stringify({
-        stateMachineArn:
+    response = await fetch(
+      "https://xrl1xszvde.execute-api.us-east-1.amazonaws.com/prod/",
+      {
+        method: "post",
+        body: JSON.stringify({
+          stateMachineArn:
             "arn:aws:states:us-east-1:447056388296:stateMachine:GlidePayState",
-        input: JSON.stringify({
-          txhash: txhash,
-          token: jwt,
-          retailer: retailer,
-          orderStatus: status,
-          productidsarr: productidsarr,
-          addressid: addressid,
-          amount: amount,
-          ticker: ticker,
+          input: JSON.stringify({
+            txhash: txhash,
+            token: jwt,
+            retailer: retailer,
+            orderStatus: status,
+            productidsarr: productidsarr,
+            addressid: addressid,
+            amount: amount,
+            ticker: ticker,
+          }),
         }),
-      }),
-    }).catch((error) => {
-      throw error.stack;
+      }
+    );
+    return true;
+  } catch (err) {
+    return err;
+  }
+}
+
+async function getNonce(payload) {
+  try {
+    let response = await fetch(
+      "https://7hx7n933o2.execute-api.us-east-1.amazonaws.com/default/generateNonce",
+      {
+        method: "POST",
+        body: JSON.stringify(payload),
+      }
+    );
+    return await response.text();
+  } catch (err) {
+    console.log(err);
+    return err;
+  }
+}
+
+async function setToken(data) {
+  try {
+    await chrome.storage.local.set({
+      glidePayJWT: data,
     });
-  });
+    return true;
+  } catch (err) {
+    console.log(err);
+    return err;
+  }
+}
+
+async function getToken() {
+  const result = await chrome.storage.local.get("glidePayJWT");
+  return result.glidePayJWT;
+}
+
+async function verifyToken(payload) {
+  try {
+    const response = await fetch(
+      "https://wv4gqvqqi1.execute-api.us-east-1.amazonaws.com/default/verifyToken",
+      {
+        method: "POST",
+        body: JSON.stringify(payload),
+      }
+    );
+    return response.status === 200;
+  } catch (err) {
+    return err;
+  }
+}
+
+async function verifySignature(payload) {
+  try {
+    let response = await fetch(
+      "https://t1gn9let1f.execute-api.us-east-1.amazonaws.com/default/verifySignature",
+      {
+        method: "POST",
+        body: JSON.stringify(payload),
+      }
+    );
+    return JSON.parse(await response.text()).token;
+  } catch (err) {
+    return err;
+  }
 }

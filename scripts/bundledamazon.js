@@ -36569,7 +36569,6 @@ function stringifyReplacer(_, value) {
     }
     return value;
 }
-
 },{"fast-safe-stringify":188}],178:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -36662,7 +36661,6 @@ exports.errorValues = {
         message: 'The provider is disconnected from the specified chain.',
     },
 };
-
 },{}],179:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -36802,7 +36800,6 @@ function parseOpts(arg) {
     }
     return [];
 }
-
 },{"./classes":177,"./error-constants":178,"./utils":181}],180:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -36817,7 +36814,6 @@ const errors_1 = require("./errors");
 Object.defineProperty(exports, "ethErrors", { enumerable: true, get: function () { return errors_1.ethErrors; } });
 const error_constants_1 = require("./error-constants");
 Object.defineProperty(exports, "errorCodes", { enumerable: true, get: function () { return error_constants_1.errorCodes; } });
-
 },{"./classes":177,"./error-constants":178,"./errors":179,"./utils":181}],181:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -36929,7 +36925,6 @@ function assignOriginalError(error) {
 function hasKey(obj, key) {
     return Object.prototype.hasOwnProperty.call(obj, key);
 }
-
 },{"./classes":177,"./error-constants":178}],182:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -40397,7 +40392,6 @@ exports.JsonRpcEngine = JsonRpcEngine;
 function jsonify(request) {
     return JSON.stringify(request, null, 2);
 }
-
 },{"@metamask/safe-event-emitter":150,"eth-rpc-errors":180}],208:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -40464,7 +40458,6 @@ function createAsyncMiddleware(asyncMiddleware) {
     };
 }
 exports.createAsyncMiddleware = createAsyncMiddleware;
-
 },{}],209:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -40486,7 +40479,6 @@ function createScaffoldMiddleware(handlers) {
     };
 }
 exports.createScaffoldMiddleware = createScaffoldMiddleware;
-
 },{}],210:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -40500,7 +40492,6 @@ function getUniqueId() {
     return idCounter;
 }
 exports.getUniqueId = getUniqueId;
-
 },{}],211:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -40520,7 +40511,6 @@ function createIdRemapMiddleware() {
     };
 }
 exports.createIdRemapMiddleware = createIdRemapMiddleware;
-
 },{"./getUniqueId":210}],212:[function(require,module,exports){
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
@@ -40540,7 +40530,6 @@ __exportStar(require("./createScaffoldMiddleware"), exports);
 __exportStar(require("./getUniqueId"), exports);
 __exportStar(require("./JsonRpcEngine"), exports);
 __exportStar(require("./mergeMiddleware"), exports);
-
 },{"./JsonRpcEngine":207,"./createAsyncMiddleware":208,"./createScaffoldMiddleware":209,"./getUniqueId":210,"./idRemapMiddleware":211,"./mergeMiddleware":213}],213:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -40552,7 +40541,6 @@ function mergeMiddleware(middlewareStack) {
     return engine.asMiddleware();
 }
 exports.mergeMiddleware = mergeMiddleware;
-
 },{"./JsonRpcEngine":207}],214:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -45154,34 +45142,12 @@ function wrappy (fn, cb) {
 }
 
 },{}],257:[function(require,module,exports){
-class LogError {
-  constructor(generic, message, states, handle) {
-    this.generic = generic;
-    this.message = message;
-    this.states = states;
-    this.handle = handle;
-  }
-}
-
-class UserError {
-  constructor(message, handle) {
-    this.message = message;
-    this.handle = handle;
-  }
-}
-
-module.exports = {
-  LogError,
-  UserError,
-};
-
-},{}],258:[function(require,module,exports){
 const createProvider = require("metamask-extension-provider");
 const { ethers } = require("ethers");
 const maskInpageProvider = createProvider();
 const provider = new ethers.providers.Web3Provider(maskInpageProvider, "any");
 const signer = provider.getSigner();
-const { LogError, UserError } = require("./CustomError");
+const { LogError } = require("./LogError");
 
 class EcommerceCart {
   /*
@@ -45217,55 +45183,61 @@ class EcommerceCart {
     // Prompts metamask transaction.
     chrome.runtime.onMessage.addListener((msg) => {
       if (msg.from === "popup" && msg.subject === "promptTransaction") {
-        const usdCost = msg.price;
-        chrome.runtime
-          .sendMessage({
-            from: "cart",
-            subject: "getCoinPrice",
-            coin: "ethusd",
-          })
-          .then((price) => {
-              console.log(price);
-              const ethCost = usdCost / price;
-              console.log(ethCost);
-              let gasPrice;
-              let gas_limit = "0x100000"
-              provider.getGasPrice().then((gas) => {
-                gasPrice = ethers.utils.hexlify(gas);
-              })
-              const transaction = {
-                  from: maskInpageProvider.selectedAddress,
-                  to: "0xB5EC5c29Ed50067ba97c4009e14f5Bff607a324c",
-                  value: ethers.utils.parseEther(ethCost.toString()),
-                  gasLimit: ethers.utils.hexlify(gas_limit),
-                  gasPrice: gasPrice,
-                  //TODO: Maybe we use the nonce or data field of this to encode information about the transaction?
-                  //We could verify that on the backend to ensure that the transaction is valid. Something like that.
-              }
-              signer.sendTransaction(transaction).then((tx) => {
-                  console.log(tx.hash);
-                  const body = {
-                      txHash: tx.hash,
-                      retailer: "Amazon",
-                      productidsarr: msg.products,
-                      addressid: msg.addressid,
-                      orderStatus: "Transaction Pending Confirmation.",
-                      ticker: "ETH", //TODO: In future this needs to be changed to the ticker of the coin being used.
-                      amount: ethCost,
-                  };
-                  console.log("BODY" + JSON.stringify(body));
-                  chrome.runtime
-                      .sendMessage({
-                            from: "cart",
-                            subject: "getTransaction",
-                            body: body,
-                      })
-                      .catch((err) => {
-                          console.log(err);
-                      });
-              });
-          });
+        try {
+          this.handleTransaction(msg);
+        } catch (err) {
+          console.log("Transaction Error");
+          console.log(err);
+          err.logError();
+        }
       }
+    });
+  }
+
+  async handleTransaction(msg) {
+    const costUSD = msg.price;
+
+    const coinPriceUSD = await chrome.runtime.sendMessage({
+      from: "cart",
+      subject: "getCoinPrice",
+      body: { ticker: "ethusd" },
+    });
+
+    const ethCost = costUSD / coinPriceUSD;
+    console.log(`Price in Eth: ${ethCost}`);
+
+    const gas_limit = "0x100000";
+    const gas = await provider.getGasPrice();
+    const gasPrice = ethers.utils.hexlify(gas);
+
+    const transaction = {
+      from: maskInpageProvider.selectedAddress,
+      to: "0xB5EC5c29Ed50067ba97c4009e14f5Bff607a324c",
+      value: ethers.utils.parseEther(ethCost.toString()),
+      gasLimit: ethers.utils.hexlify(gas_limit),
+      gasPrice: gasPrice,
+      //TODO: Maybe we use the nonce or data field of this to encode information about the transaction?
+      //We could verify that on the backend to ensure that the transaction is valid. Something like that.
+    };
+
+    const tx = await signer.sendTransaction(transaction);
+    console.log(`txHASH: ${tx.hash}`);
+
+    const body = {
+      txHash: tx.hash,
+      retailer: "Amazon",
+      productidsarr: msg.products,
+      addressid: msg.addressid,
+      orderStatus: "Transaction Pending Confirmation.",
+      ticker: "ETH", //TODO: In future this needs to be changed to the ticker of the coin being used.
+      amount: ethCost,
+    };
+    console.log("BODY" + JSON.stringify(body));
+
+    chrome.runtime.sendMessage({
+      from: "cart",
+      subject: "getTransaction",
+      body: body,
     });
   }
 
@@ -45279,128 +45251,170 @@ class EcommerceCart {
 
     cryptoButton.addEventListener("click", () => {
       this.cryptoButton.disabled = true;
-      provider
-        .send("eth_requestAccounts", [])
-        .catch((err) => {
-          if (err instanceof LogError) {
-            throw err;
-          }
-          this.cryptoButton.disabled = false;
-          throw new UserError("Metamask login already opened.", () => {
-            alert("Metamask login already open.");
-          });
-        })
-        .then(() => {
-          return this.checkMetamaskSignIn();
-        })
-        .catch((err) => {
-          throw err;
-        })
-        .then(async (walletID) => {
-            this.verifyWallet(walletID).then(() => {
-                this.productDict = this.getProducts();
-                console.log(this.productDict);
-                chrome.runtime.sendMessage({
-                    from: "cart",
-                    subject: "createOrderPopup",
-                    screenSize: screen.width,
-                });
-                this.cryptoButton.disabled = false;
-            });
-        })
-        .catch((err) => {
-          console.log(err);
-          if (err instanceof UserError) {
-            err.handle();
-          } else if (err instanceof LogError) {
-            console.log(err);
-            err.handle();
-          }
-        });
+      this.cryptoButtonPressed();
     });
-    console.log(cryptoButton);
     return cryptoButton;
   }
 
-  async verifyToken(token, wallet) {
-      const response = await fetch('https://wv4gqvqqi1.execute-api.us-east-1.amazonaws.com/default/verifyToken', {
-          method: 'POST',
-          body: JSON.stringify({
-              token: token,
-              wallet: wallet,
-          })
+  async cryptoButtonPressed() {
+    try {
+      let walletID = await this.checkMetamaskSignIn();
+      await this.verifyWallet(walletID);
+      this.productDict = this.getProducts();
+      await chrome.runtime.sendMessage({
+        from: "cart",
+        subject: "createOrderPopup",
+        screenSize: screen.width,
       });
-      return response.status === 200;
+      this.cryptoButton.disabled = false;
+    } catch (err) {
+      console.log("Error Crypto Button Flow");
+      console.log(err);
+      err.logError();
+    }
   }
 
   async checkMetamaskSignIn() {
-    this.cryptoButton.disabled = true;
-    return new Promise((resolve, reject) => {
-      provider.send("eth_requestAccounts", []).catch((err) => {
-        console.log("rejecting");
-        this.cryptoButton.disabled = false;
-        reject(
-            new LogError(
-                err,
-                "Web3 get accounts failed to fetch accounts",
-                () => {
-                  alert("A problem occured with Metamask.");
-                  this.cryptoButton.disabled = false;
-                }
-            )
-        );
-      }).then((accounts) => {
-        if (accounts.length === 0) {
-          reject(
-              new UserError("User has no wallets.", () => {
-                alert("Please create a wallet in Metamask.");
-                this.cryptoButton.disabled = false;
-              })
-          );
-        } else {
-            resolve(accounts[0]);
+    let accounts = await provider
+      .send("eth_requestAccounts", [])
+      .catch((err) => {
+        throw LogError(err, "Metamask already open", {}, () => {
+          alert("Extension Error");
+        });
+      });
+
+    if (accounts.length === 0) {
+      throw LogError(
+        err,
+        "No Metamask accounts available",
+        { accounts: accounts },
+        () => {
+          this.cryptoButton.disabled = false;
+          alert("Extension Error");
         }
-      })
-    });
+      );
+    } else {
+      return accounts[0];
+    }
   }
 
   async verifyWallet(walletID) {
-      chrome.storage.local.get('glidePayJWT', async (result) => {
-          console.log("JWT found");
-          console.log(result.glidePayJWT);
-          if (await this.verifyToken(result.glidePayJWT, walletID)) {
-              console.log("JWT verified");
-          } else {
-              const nonce = await fetch("https://7hx7n933o2.execute-api.us-east-1.amazonaws.com/default/generateNonce", {
-                  method: "POST",
-                  body: JSON.stringify({
-                      wallet: walletID,
-                  })
-              });
-              const nonceText = await nonce.text();
-              let message = "Please sign this message to login!.\n Nonce: " + nonceText;
-              console.log("NONCE" + nonceText);
-              const signature = await signer.signMessage(message);
-              console.log("SIGNATURE" + signature);
-              const res = await fetch("https://t1gn9let1f.execute-api.us-east-1.amazonaws.com/default/verifySignature", {
-                  method: "POST",
-                  body: JSON.stringify({
-                      wallet: walletID,
-                      walletSignature: signature,
-                      existingToken: result.glidePayJWT,
-                  }),
-              });
-              const resText = await res.text();
-              const JWT = JSON.parse(resText).token;
-              console.log("JWT" + JWT);
-              await chrome.storage.local.set({
-                  glidePayJWT: JWT,
-              });
-              if (res.status !== 200) {
-                  alert("Wallet Verification Failed.");
-              }
-          }
-      });
+    const existingTokenResponse = await chrome.runtime.sendMessage({
+      from: "cart",
+      subject: "getToken",
+    });
+
+    const existingToken = existingTokenResponse.data;
+    console.log("Existing Token");
+    console.log(existingToken);
+    if (existingToken == {}) {
+      await this.createJWTToken(walletID, existingToken);
+      return;
+    }
+
+    if (!(await this.verifyToken(walletID, existingToken))) {
+      await this.createJWTToken(walletID, existingToken);
+      return;
+    }
+    return;
+  }
+
+  async createJWTToken(walletID, token) {
+    let nonceResponse = await chrome.runtime.sendMessage({
+      from: "cart",
+      subject: "getNonce",
+      body: {
+        wallet: walletID,
+      },
+    });
+    if (nonceResponse.hasOwnProperty("error")) {
+      throw new LogError(
+        nonceResponse.error,
+        "Failed to fetch nonce",
+        { walletID: walletID, token: token },
+        () => {
+          this.cryptoButton.disabled = false;
+          alert("Server Error");
+        }
+      );
+    }
+    const nonce = nonceResponse.data;
+    let signatureResponse = await chrome.runtime.sendMessage({
+      from: "cart",
+      subject: "verifySignature",
+      body: {
+        wallet: walletID,
+        walletSignature: signature,
+        existingToken: token,
+      },
+    });
+    if (signatureResponse.hasOwnProperty("error")) {
+      throw new LogError(
+        signatureResponse.error,
+        "Failed to verify signature",
+        {
+          walletID: walletID,
+          token: token,
+          nonce: nonce,
+          message: message,
+          signature: signature,
+        },
+        () => {
+          this.cryptoButton.disabled = false;
+          alert("Server Error");
+        }
+      );
+    }
+    const newToken = signatureResponse.data;
+    let setTokenResponse = chrome.runtime.sendMessage({
+      from: "cart",
+      subject: "setToken",
+      body: newToken,
+    });
+    if (setTokenResponse.hasOwnProperty("error")) {
+      throw new LogError(
+        setTokenResponse.error,
+        "Failed to set token",
+        {
+          walletID: walletID,
+          token: token,
+          nonce: nonce,
+          message: message,
+          signature: signature,
+        },
+        () => {
+          this.cryptoButton.disabled = false;
+          alert("Server Error");
+        }
+      );
+    }
+    console.log("Wallet Verified and Set");
+  }
+
+  async verifyToken(walletID, token) {
+    let verifyTokenResponse = await chrome.runtime.sendMessage({
+      from: "cart",
+      subject: "verifyToken",
+      body: {
+        token: token,
+        wallet: walletID,
+      },
+    });
+    if (verifyTokenResponse.hasOwnProperty("error")) {
+      throw new LogError(
+        verifyTokenResponse.error,
+        "Invalid Token",
+        {
+          walletID: walletID,
+          token: token,
+        },
+        () => {
+          this.cryptoButton.disabled = false;
+          alert("Invalid Token");
+        }
+      );
+    }
+    return verifyTokenResponse.data;
   }
 }
 
@@ -45408,8 +45422,28 @@ module.exports = {
   EcommerceCart,
 };
 
-},{"./CustomError":257,"ethers":184,"metamask-extension-provider":229}],259:[function(require,module,exports){
-const CustomError = require("./CustomError").CustomError;
+},{"./LogError":258,"ethers":184,"metamask-extension-provider":229}],258:[function(require,module,exports){
+class LogError {
+  constructor(error, customMsg, states, handle) {
+    this.error = error;
+    this.customMsg = customMsg;
+    this.states = states;
+    this.timestamp = Date.now();
+    this.handle = handle();
+    this.logError();
+  }
+
+  logError() {
+    // TODO: Logs error to database
+  }
+}
+
+module.exports = {
+  LogError,
+};
+
+},{}],259:[function(require,module,exports){
+const { LogError } = require("./LogError");
 const ECommerceCart = require("./ECommerceCart");
 // ALL CHANGES TO THIS FILE MUST BE COMPILED WITH "npm run buildAmazon"
 
@@ -45447,17 +45481,18 @@ class Amazon extends ECommerceCart.EcommerceCart {
     );
     let productElementsList = Array.from(productElements);
 
-        productElementsList.forEach(function (part, index, theArray) {
-            const imageElement = theArray[index].querySelectorAll(
-                "div.sc-list-item-content > div > div.a-column.a-span10 > div > div > div.a-fixed-left-grid-col.a-float-left.sc-product-image-desktop.a-col-left > a > img"
-            )[0];
-            const currency = JSON.parse(part.getAttribute("data-subtotal")).subtotal.code
-            console.log(currency)
-            const ASIN = theArray[index].getAttribute("data-asin");
-            const productName = imageElement.getAttribute("alt");
-            const unitPrice = theArray[index].getAttribute("data-price");
-            const quantity = theArray[index].getAttribute("data-quantity");
-            const productImage = imageElement.getAttribute("src");
+    productElementsList.forEach(function (part, index, theArray) {
+      const imageElement = theArray[index].querySelectorAll(
+        "div.sc-list-item-content > div > div.a-column.a-span10 > div > div > div.a-fixed-left-grid-col.a-float-left.sc-product-image-desktop.a-col-left > a > img"
+      )[0];
+      const currency = JSON.parse(part.getAttribute("data-subtotal")).subtotal
+        .code;
+      console.log(currency);
+      const ASIN = theArray[index].getAttribute("data-asin");
+      const productName = imageElement.getAttribute("alt");
+      const unitPrice = theArray[index].getAttribute("data-price");
+      const quantity = theArray[index].getAttribute("data-quantity");
+      const productImage = imageElement.getAttribute("src");
       productDict[index] = {
         productID: ASIN,
         productName: productName,
@@ -45498,4 +45533,4 @@ function main() {
 
 main();
 
-},{"./CustomError":257,"./ECommerceCart":258}]},{},[259]);
+},{"./ECommerceCart":257,"./LogError":258}]},{},[259]);

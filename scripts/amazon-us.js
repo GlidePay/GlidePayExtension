@@ -1,4 +1,4 @@
-const CustomError = require("./CustomError").CustomError;
+const { LogError } = require("./LogError");
 const ECommerceCart = require("./ECommerceCart");
 // ALL CHANGES TO THIS FILE MUST BE COMPILED WITH "npm run buildAmazon"
 
@@ -36,17 +36,18 @@ class Amazon extends ECommerceCart.EcommerceCart {
     );
     let productElementsList = Array.from(productElements);
 
-        productElementsList.forEach(function (part, index, theArray) {
-            const imageElement = theArray[index].querySelectorAll(
-                "div.sc-list-item-content > div > div.a-column.a-span10 > div > div > div.a-fixed-left-grid-col.a-float-left.sc-product-image-desktop.a-col-left > a > img"
-            )[0];
-            const currency = JSON.parse(part.getAttribute("data-subtotal")).subtotal.code
-            console.log(currency)
-            const ASIN = theArray[index].getAttribute("data-asin");
-            const productName = imageElement.getAttribute("alt");
-            const unitPrice = theArray[index].getAttribute("data-price");
-            const quantity = theArray[index].getAttribute("data-quantity");
-            const productImage = imageElement.getAttribute("src");
+    productElementsList.forEach(function (part, index, theArray) {
+      const imageElement = theArray[index].querySelectorAll(
+        "div.sc-list-item-content > div > div.a-column.a-span10 > div > div > div.a-fixed-left-grid-col.a-float-left.sc-product-image-desktop.a-col-left > a > img"
+      )[0];
+      const currency = JSON.parse(part.getAttribute("data-subtotal")).subtotal
+        .code;
+      console.log(currency);
+      const ASIN = theArray[index].getAttribute("data-asin");
+      const productName = imageElement.getAttribute("alt");
+      const unitPrice = theArray[index].getAttribute("data-price");
+      const quantity = theArray[index].getAttribute("data-quantity");
+      const productImage = imageElement.getAttribute("src");
       productDict[index] = {
         productID: ASIN,
         productName: productName,
