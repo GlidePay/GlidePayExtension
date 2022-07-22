@@ -1,10 +1,10 @@
 class LogError {
-  constructor(error, customMsg, states, errorOrigin, nonce, handle) {
+  constructor(error, customMsg, states, errorOrigin, errorID, handle) {
     this.error = error;
     this.customMsg = customMsg;
     this.states = states;
     this.errorOrigin = errorOrigin;
-    this.nonce = nonce;
+    this.errorID = errorID;
     this.timestamp = this.getDate();
     this.handle = handle();
     this.logError();

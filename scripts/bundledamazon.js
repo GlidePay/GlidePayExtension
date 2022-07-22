@@ -45212,7 +45212,7 @@ class EcommerceCart {
         "Failed to fetch",
         {},
         getCoinPriceResponse.errorOrigin,
-        getCoinPriceResponse.nonce,
+        getCoinPriceResponse.errorID,
         () => {
           this.cryptoButton.disabled = false;
           alert("Server Error");
@@ -45339,16 +45339,20 @@ class EcommerceCart {
   async createJWTToken(walletID, token) {
     let nonceResponse = await chrome.runtime.sendMessage({
       from: "cart",
-      subject: "getNonce",
+      subject: "generateNonce",
       body: {
         wallet: walletID,
       },
     });
+    console.log(nonceResponse);
     if (nonceResponse.hasOwnProperty("error")) {
+      console.log("help");
       throw new LogError(
         nonceResponse.error,
         "Failed to fetch nonce",
         { walletID: walletID, token: token },
+        nonceResponse.errorOrigin,
+        nonceResponse.errorID,
         () => {
           this.cryptoButton.disabled = false;
           alert("Server Error");
@@ -45357,7 +45361,7 @@ class EcommerceCart {
     }
     const nonce = nonceResponse.data;
     let message = "Please sign this message to login!.\n Nonce: " + nonce;
-    console.log("NONCE" + nonce);
+    console.log("NONCE: " + nonce);
     const signature = await signer.signMessage(message);
     let signatureResponse = await chrome.runtime.sendMessage({
       from: "cart",
@@ -45425,12 +45429,12 @@ module.exports = {
 
 },{"./LogError":258,"ethers":184,"metamask-extension-provider":229}],258:[function(require,module,exports){
 class LogError {
-  constructor(error, customMsg, states, errorOrigin, nonce, handle) {
+  constructor(error, customMsg, states, errorOrigin, errorID, handle) {
     this.error = error;
     this.customMsg = customMsg;
     this.states = states;
     this.errorOrigin = errorOrigin;
-    this.nonce = nonce;
+    this.errorID = errorID;
     this.timestamp = this.getDate();
     this.handle = handle();
     this.logError();
