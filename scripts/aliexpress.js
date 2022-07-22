@@ -57,6 +57,9 @@ class aliExpress extends ECommerceCart.EcommerceCart {
         });
         return productDict;
     }
+    getRetailer() {
+        return 'aliexpress'
+    }
 }
 
 function main() {

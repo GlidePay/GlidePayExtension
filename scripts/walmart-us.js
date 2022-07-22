@@ -85,6 +85,10 @@ class Walmart extends ECommerceCart.EcommerceCart {
         console.log(productElements);
         return productDict;
     }
+
+    getRetailer() {
+        return 'walmart'
+    }
 }
 
 function main() {

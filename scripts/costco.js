@@ -84,6 +84,10 @@ class Costco extends ECommerceCart.EcommerceCart {
         });
         return productDict;
     }
+
+    getRetailer() {
+        return 'costco'
+    }
 }
 
 function main() {

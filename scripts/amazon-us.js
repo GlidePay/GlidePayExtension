@@ -58,7 +58,23 @@ class Amazon extends ECommerceCart.EcommerceCart {
     });
     return productDict;
   }
+
+  getRetailer() {
+    let url = window.location.href
+    if (url.includes('amazon.com.mx')) {
+      return 'amazon_mx'
+    }else if (url.includes('www.amazon.ca')){
+      return 'amazon_ca'
+    }else if (url.includes('www.amazon.de')){
+      return 'amazon_de'
+    } else if (url.includes('www.amazon.co.uk')){
+      return 'amazon_uk'
+    } else {
+    return 'amazon'
+    }
+  }
 }
+
 
 function main() {
   /**

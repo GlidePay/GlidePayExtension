@@ -21,6 +21,7 @@ class EcommerceCart {
     this.cryptoButton = this.createButton();
     this.walletID;
     this.productDict;
+    this.retailer;
   }
 
   createListeners() {
@@ -81,7 +82,7 @@ class EcommerceCart {
 
     const body = {
       txHash: tx.hash,
-      retailer: "Amazon",
+      retailer: this.retailer,
       productidsarr: msg.products,
       addressid: msg.addressid,
       orderStatus: "Transaction Pending Confirmation.",
@@ -117,6 +118,7 @@ class EcommerceCart {
       let walletID = await this.checkMetamaskSignIn();
       await this.verifyWallet(walletID);
       this.productDict = this.getProducts();
+      this.retailer = this.getRetailer();
       await chrome.runtime.sendMessage({
         from: "cart",
         subject: "createOrderPopup",
