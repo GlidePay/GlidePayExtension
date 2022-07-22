@@ -79,7 +79,7 @@ class EcommerceCart {
 
     const tx = await signer.sendTransaction(transaction);
     console.log(`txHASH: ${tx.hash}`);
-
+    console.log(this.retailer)
     const body = {
       txHash: tx.hash,
       retailer: this.retailer,
@@ -119,6 +119,7 @@ class EcommerceCart {
       await this.verifyWallet(walletID);
       this.productDict = this.getProducts();
       this.retailer = this.getRetailer();
+      console.log(this.retailer)
       await chrome.runtime.sendMessage({
         from: "cart",
         subject: "createOrderPopup",
