@@ -45,7 +45,9 @@ class EcommerceCart {
         } catch (err) {
           console.log("Transaction Error");
           console.log(err);
-          err.logError();
+          if (err instanceof LogError) {
+            err.logError();
+          }
         }
       }
     });
@@ -79,7 +81,7 @@ class EcommerceCart {
 
     const tx = await signer.sendTransaction(transaction);
     console.log(`txHASH: ${tx.hash}`);
-    console.log(this.retailer)
+    console.log(this.retailer);
     const body = {
       txHash: tx.hash,
       retailer: this.retailer,
@@ -119,7 +121,7 @@ class EcommerceCart {
       await this.verifyWallet(walletID);
       this.productDict = this.getProducts();
       this.retailer = this.getRetailer();
-      console.log(this.retailer)
+      console.log(this.retailer);
       await chrome.runtime.sendMessage({
         from: "cart",
         subject: "createOrderPopup",
@@ -129,7 +131,9 @@ class EcommerceCart {
     } catch (err) {
       console.log("Error Crypto Button Flow");
       console.log(err);
-      err.logError();
+      if (err instanceof LogError) {
+        err.logError();
+      }
     }
   }
 
@@ -158,12 +162,8 @@ class EcommerceCart {
   }
 
   async verifyWallet(walletID) {
-    const existingTokenResponse = await chrome.runtime.sendMessage({
-      from: "cart",
-      subject: "getToken",
-    });
-
-    const existingToken = existingTokenResponse.data;
+    let existingToken = await chrome.storage.local.get("glidePayJWT");
+    existingToken = existingToken.glidePayJWT;
     if (existingToken == {}) {
       await this.createJWTToken(walletID, existingToken);
       return;
@@ -196,6 +196,9 @@ class EcommerceCart {
       );
     }
     const nonce = nonceResponse.data;
+    let message = "Please sign this message to login!.\n Nonce: " + nonce;
+    console.log("NONCE" + nonce);
+    const signature = await signer.signMessage(message);
     let signatureResponse = await chrome.runtime.sendMessage({
       from: "cart",
       subject: "verifySignature",
@@ -223,28 +226,9 @@ class EcommerceCart {
       );
     }
     const newToken = signatureResponse.data;
-    let setTokenResponse = chrome.runtime.sendMessage({
-      from: "cart",
-      subject: "setToken",
-      body: newToken,
+    await chrome.storage.local.set({
+      glidePayJWT: newToken,
     });
-    if (setTokenResponse.hasOwnProperty("error")) {
-      throw new LogError(
-        setTokenResponse.error,
-        "Failed to set token",
-        {
-          walletID: walletID,
-          token: token,
-          nonce: nonce,
-          message: message,
-          signature: signature,
-        },
-        () => {
-          this.cryptoButton.disabled = false;
-          alert("Server Error");
-        }
-      );
-    }
     console.log("Wallet Verified and Set");
   }
 

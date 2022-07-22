@@ -81,26 +81,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         });
         return true;
       }
-      case "setToken": {
-        setToken(message.body).then((result) => {
-          if (result instanceof Error) {
-            sendResponse({ error: result.stack });
-          } else {
-            sendResponse({ data: result });
-          }
-        });
-        return true;
-      }
-      case "getToken": {
-        getToken().then((result) => {
-          if (result instanceof Error) {
-            sendResponse({ error: result.stack });
-          } else {
-            sendResponse({ data: result });
-          }
-        });
-        return true;
-      }
       case "verifyToken": {
         verifyToken(message.body).then((result) => {
           if (result instanceof Error) {
@@ -113,6 +93,16 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       }
       case "verifySignature": {
         verifySignature(message.body).then((result) => {
+          if (result instanceof Error) {
+            sendResponse({ error: result.stack });
+          } else {
+            sendResponse({ data: result });
+          }
+        });
+        return true;
+      }
+      case "createAddress": {
+        createAddress(message.body).then((result) => {
           if (result instanceof Error) {
             sendResponse({ error: result.stack });
           } else {
@@ -202,23 +192,6 @@ async function getNonce(payload) {
   }
 }
 
-async function setToken(data) {
-  try {
-    await chrome.storage.local.set({
-      glidePayJWT: data,
-    });
-    return true;
-  } catch (err) {
-    console.log(err);
-    return err;
-  }
-}
-
-async function getToken() {
-  const result = await chrome.storage.local.get("glidePayJWT");
-  return result.glidePayJWT;
-}
-
 async function verifyToken(payload) {
   try {
     const response = await fetch(
@@ -244,6 +217,21 @@ async function verifySignature(payload) {
       }
     );
     return JSON.parse(await response.text()).token;
+  } catch (err) {
+    return err;
+  }
+}
+
+async function createAddress(payload) {
+  try {
+    let response = await fetch(
+      "https://6zfr42udog.execute-api.us-east-1.amazonaws.com/default/createAddressRDS",
+      {
+        method: "POST",
+        body: JSON.stringify(payload),
+      }
+    );
+    return true;
   } catch (err) {
     return err;
   }
