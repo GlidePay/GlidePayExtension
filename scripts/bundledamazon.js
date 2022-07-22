@@ -45285,13 +45285,13 @@ class EcommerceCart {
     let accounts = await provider
       .send("eth_requestAccounts", [])
       .catch((err) => {
-        throw LogError(err, "Metamask already open", {}, () => {
+        throw new LogError(err, "Metamask already open", {}, () => {
           alert("Extension Error");
         });
       });
 
     if (accounts.length === 0) {
-      throw LogError(
+      throw new LogError(
         err,
         "No Metamask accounts available",
         { accounts: accounts },
