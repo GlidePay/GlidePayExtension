@@ -55,8 +55,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         }
         break;
       case "getCoinPrice": {
-        getCoinPrice(message.body).then((price) => {
-          sendResponse(price);
+        getCoinPrice(message.body).then((result) => {
+          sendResponse(result);
         });
         return true;
       }
@@ -126,16 +126,28 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 async function getCoinPrice(payload) {
   //coin must be in the form of "xxxusd" IE "ethusd"
   try {
-    let response = await fetch(
+    console.log("ffsd");
+    const response = await fetch(
       "https://okmf73layh.execute-api.us-east-1.amazonaws.com/default/getCoinPriceGemini",
       {
         method: "post",
         body: JSON.stringify(payload),
       }
     );
-    return await response.text();
+    const jsonData = await response.text();
+
+    if (response.status === 200) {
+      console.log("d");
+      return JSON.parse(jsonData);
+    }
+    if (response.status !== 200) {
+      console.log("err");
+      return JSON.parse(jsonData);
+    }
+
+    return JSON.parse(jsonData);
   } catch (err) {
-    return err;
+    return { error: err.stack, nonce: Date.now(), errorOrigin: "Extension" };
   }
 }
 

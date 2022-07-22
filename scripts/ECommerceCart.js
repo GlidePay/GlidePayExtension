@@ -56,11 +56,27 @@ class EcommerceCart {
   async handleTransaction(msg) {
     const costUSD = msg.price;
 
-    const coinPriceUSD = await chrome.runtime.sendMessage({
+    const getCoinPriceResponse = await chrome.runtime.sendMessage({
       from: "cart",
       subject: "getCoinPrice",
       body: { ticker: "ethusd" },
     });
+
+    if (getCoinPriceResponse.hasOwnProperty("error")) {
+      throw new LogError(
+        getCoinPriceResponse.error,
+        "Failed to fetch",
+        {},
+        getCoinPriceResponse.errorOrigin,
+        getCoinPriceResponse.nonce,
+        () => {
+          this.cryptoButton.disabled = false;
+          alert("Server Error");
+        }
+      );
+    }
+
+    const coinPriceUSD = getCoinPriceResponse.data;
 
     const ethCost = costUSD / coinPriceUSD;
     console.log(`Price in Eth: ${ethCost}`);
