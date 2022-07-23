@@ -180,12 +180,19 @@ class EcommerceCart {
   async verifyWallet(walletID) {
     let existingToken = await chrome.storage.local.get("glidePayJWT");
     existingToken = existingToken.glidePayJWT;
-    if (existingToken == {}) {
+    console.log(existingToken);
+    console.log("erm");
+    if (existingToken == {} || existingToken.hasOwnProperty("message")) {
+      existingToken = {};
+      console.log("1");
       await this.createJWTToken(walletID, existingToken);
       return;
     }
+    console.log("2");
 
     if (!(await this.verifyToken(walletID, existingToken))) {
+      console.log("3");
+
       await this.createJWTToken(walletID, existingToken);
       return;
     }
@@ -204,10 +211,9 @@ class EcommerceCart {
     if (nonceResponse.hasOwnProperty("error")) {
       console.log("help");
       throw new LogError(
+        nonceResponse.customMsg,
         nonceResponse.error,
-        "Failed to fetch nonce",
         { walletID: walletID, token: token },
-        nonceResponse.errorOrigin,
         nonceResponse.errorID,
         () => {
           this.cryptoButton.disabled = false;
@@ -228,10 +234,13 @@ class EcommerceCart {
         existingToken: token,
       },
     });
+
     if (signatureResponse.hasOwnProperty("error")) {
+      const signatureResponseError = signatureResponse.error;
+      console.log("Throwing signature error");
       throw new LogError(
-        signatureResponse.error,
-        "Failed to verify signature",
+        signatureResponseError.customMsg,
+        signatureResponseError.error,
         {
           walletID: walletID,
           token: token,
@@ -239,6 +248,7 @@ class EcommerceCart {
           message: message,
           signature: signature,
         },
+        signatureResponseError.errorID,
         () => {
           this.cryptoButton.disabled = false;
           alert("Server Error");

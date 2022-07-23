@@ -73,7 +73,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         break;
       case "generateNonce": {
         generateNonce(message.body).then((result) => {
-          sendResponse(result);
+          if (result.hasOwnProperty("error")) {
+            sendResponse({ error: result });
+          } else {
+            sendResponse({ data: result });
+          }
         });
         return true;
       }
@@ -89,8 +93,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       }
       case "verifySignature": {
         verifySignature(message.body).then((result) => {
-          if (result instanceof Error) {
-            sendResponse({ error: result.stack });
+          if (result.hasOwnProperty("error")) {
+            sendResponse({ error: result });
           } else {
             sendResponse({ data: result });
           }
@@ -194,16 +198,20 @@ async function generateNonce(payload) {
     console.log(jsonData);
 
     if (response.status === 200) {
-      return JSON.parse(jsonData);
+      return JSON.parse(jsonData).data;
     }
     if (response.status !== 200) {
-      console.log("THrowing error");
-      return JSON.parse(jsonData);
+      console.log("Throwing error");
+      return JSON.parse(jsonData).error;
     }
 
     return JSON.parse(jsonData);
   } catch (err) {
-    return { error: err.stack, errorOrigin: "Extension", errorID: Date.now() };
+    return {
+      customMsg: "Generate Nonce Failed",
+      error: err.stack,
+      errorID: Date.now(),
+    };
   }
 }
 
@@ -231,9 +239,23 @@ async function verifySignature(payload) {
         body: JSON.stringify(payload),
       }
     );
-    return JSON.parse(await response.text()).token;
+    const jsonData = await response.text();
+    console.log(jsonData);
+
+    if (response.status === 200) {
+      return JSON.parse(jsonData).data;
+    }
+    if (response.status !== 200) {
+      return JSON.parse(jsonData).error;
+    }
+
+    return JSON.parse(jsonData);
   } catch (err) {
-    return err;
+    return {
+      customMsg: "Verify Signature Failed",
+      error: err.stack,
+      errorID: Date.now(),
+    };
   }
 }
 
