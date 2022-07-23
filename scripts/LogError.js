@@ -1,8 +1,9 @@
 class LogError {
-  constructor(customMsg, error, states, errorID, handle) {
+  constructor(customMsg, error, states, uiMsg, errorID, handle) {
     this.customMsg = customMsg;
     this.error = error;
     this.states = states;
+    this.uiMsg = uiMsg;
     this.errorID = errorID;
     this.errorOrigin = "Extension";
     this.timestamp = this.getDate();

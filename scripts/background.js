@@ -83,8 +83,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       }
       case "verifyToken": {
         verifyToken(message.body).then((result) => {
-          if (result instanceof Error) {
-            sendResponse({ error: result.stack });
+          if (result.hasOwnProperty("error")) {
+            sendResponse({ error: result });
           } else {
             sendResponse({ data: result });
           }
@@ -141,8 +141,6 @@ async function getCoinPrice(payload) {
     if (response.status !== 200) {
       return JSON.parse(jsonData);
     }
-
-    return JSON.parse(jsonData);
   } catch (err) {
     return { error: err.stack, errorOrigin: "Extension", errorID: Date.now() };
   }
@@ -195,17 +193,13 @@ async function generateNonce(payload) {
       }
     );
     const jsonData = await response.text();
-    console.log(jsonData);
 
     if (response.status === 200) {
       return JSON.parse(jsonData).data;
     }
     if (response.status !== 200) {
-      console.log("Throwing error");
       return JSON.parse(jsonData).error;
     }
-
-    return JSON.parse(jsonData);
   } catch (err) {
     return {
       customMsg: "Generate Nonce Failed",
@@ -224,9 +218,24 @@ async function verifyToken(payload) {
         body: JSON.stringify(payload),
       }
     );
-    return response.status === 200;
+    const jsonData = await response.text();
+
+    if (response.status === 200) {
+      return JSON.parse(jsonData).data;
+    }
+    if (response.status === 400) {
+      return false;
+    }
+
+    if (response.status !== 200) {
+      return JSON.parse(jsonData).error;
+    }
   } catch (err) {
-    return err;
+    return {
+      customMsg: "Verify Signature Failed",
+      error: err.stack,
+      errorID: Date.now(),
+    };
   }
 }
 
@@ -240,16 +249,14 @@ async function verifySignature(payload) {
       }
     );
     const jsonData = await response.text();
-    console.log(jsonData);
 
     if (response.status === 200) {
       return JSON.parse(jsonData).data;
     }
+
     if (response.status !== 200) {
       return JSON.parse(jsonData).error;
     }
-
-    return JSON.parse(jsonData);
   } catch (err) {
     return {
       customMsg: "Verify Signature Failed",
