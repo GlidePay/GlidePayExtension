@@ -104,9 +104,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       case "createAddress": {
         createAddress(message.body).then((result) => {
           if (result instanceof Error) {
-            sendResponse({ error: result.stack });
+            sendResponse(result);
           } else {
-            sendResponse({ data: result });
+            sendResponse(result);
           }
         });
         return true;
@@ -284,8 +284,20 @@ async function createAddress(payload) {
         body: JSON.stringify(payload),
       }
     );
-    return true;
+    const jsonData = await response.text();
+
+    if (response.status === 200) {
+      return JSON.parse(jsonData);
+    }
+
+    if (response.status !== 200) {
+      return JSON.parse(jsonData);
+    }
   } catch (err) {
-    return err;
+    return {
+      customMsg: "Verify Signature Failed",
+      error: err.stack,
+      errorID: Date.now(),
+    };
   }
 }
