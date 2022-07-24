@@ -64,9 +64,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         {
           getTransaction(message.body).then((result) => {
             if (result instanceof Error) {
-              sendResponse({ error: result.stack });
+              sendResponse(result);
             } else {
-              sendResponse({ data: result });
+              sendResponse(result);
             }
           });
         }
@@ -74,9 +74,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       case "generateNonce": {
         generateNonce(message.body).then((result) => {
           if (result.hasOwnProperty("error")) {
-            sendResponse({ error: result });
+            sendResponse(result);
           } else {
-            sendResponse({ data: result });
+            sendResponse(result);
           }
         });
         return true;
@@ -84,9 +84,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       case "verifyToken": {
         verifyToken(message.body).then((result) => {
           if (result.hasOwnProperty("error")) {
-            sendResponse({ error: result });
+            sendResponse(result);
           } else {
-            sendResponse({ data: result });
+            sendResponse(result);
           }
         });
         return true;
@@ -94,9 +94,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       case "verifySignature": {
         verifySignature(message.body).then((result) => {
           if (result.hasOwnProperty("error")) {
-            sendResponse({ error: result });
+            sendResponse(result);
           } else {
-            sendResponse({ data: result });
+            sendResponse(result);
           }
         });
         return true;
@@ -177,9 +177,18 @@ async function getTransaction(body) {
         }),
       }
     );
-    return true;
+    if (response.status === 200) {
+      return { data: true };
+    }
+    if (response.status !== 200) {
+      return JSON.parse(jsonData);
+    }
   } catch (err) {
-    return err;
+    return {
+      customMsg: "Get transaction Failed",
+      error: err.stack,
+      errorID: Date.now(),
+    };
   }
 }
 
@@ -195,10 +204,10 @@ async function generateNonce(payload) {
     const jsonData = await response.text();
 
     if (response.status === 200) {
-      return JSON.parse(jsonData).data;
+      return JSON.parse(jsonData);
     }
     if (response.status !== 200) {
-      return JSON.parse(jsonData).error;
+      return JSON.parse(jsonData);
     }
   } catch (err) {
     return {
@@ -221,18 +230,18 @@ async function verifyToken(payload) {
     const jsonData = await response.text();
 
     if (response.status === 200) {
-      return JSON.parse(jsonData).data;
+      return JSON.parse(jsonData);
     }
     if (response.status === 400) {
       return false;
     }
 
     if (response.status !== 200) {
-      return JSON.parse(jsonData).error;
+      return JSON.parse(jsonData);
     }
   } catch (err) {
     return {
-      customMsg: "Verify Signature Failed",
+      customMsg: "Verify Token Failed",
       error: err.stack,
       errorID: Date.now(),
     };
@@ -251,11 +260,11 @@ async function verifySignature(payload) {
     const jsonData = await response.text();
 
     if (response.status === 200) {
-      return JSON.parse(jsonData).data;
+      return JSON.parse(jsonData);
     }
 
     if (response.status !== 200) {
-      return JSON.parse(jsonData).error;
+      return JSON.parse(jsonData);
     }
   } catch (err) {
     return {
