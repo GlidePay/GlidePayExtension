@@ -36569,7 +36569,6 @@ function stringifyReplacer(_, value) {
     }
     return value;
 }
-
 },{"fast-safe-stringify":188}],178:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -36662,7 +36661,6 @@ exports.errorValues = {
         message: 'The provider is disconnected from the specified chain.',
     },
 };
-
 },{}],179:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -36802,7 +36800,6 @@ function parseOpts(arg) {
     }
     return [];
 }
-
 },{"./classes":177,"./error-constants":178,"./utils":181}],180:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -36817,7 +36814,6 @@ const errors_1 = require("./errors");
 Object.defineProperty(exports, "ethErrors", { enumerable: true, get: function () { return errors_1.ethErrors; } });
 const error_constants_1 = require("./error-constants");
 Object.defineProperty(exports, "errorCodes", { enumerable: true, get: function () { return error_constants_1.errorCodes; } });
-
 },{"./classes":177,"./error-constants":178,"./errors":179,"./utils":181}],181:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -36929,7 +36925,6 @@ function assignOriginalError(error) {
 function hasKey(obj, key) {
     return Object.prototype.hasOwnProperty.call(obj, key);
 }
-
 },{"./classes":177,"./error-constants":178}],182:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -40397,7 +40392,6 @@ exports.JsonRpcEngine = JsonRpcEngine;
 function jsonify(request) {
     return JSON.stringify(request, null, 2);
 }
-
 },{"@metamask/safe-event-emitter":150,"eth-rpc-errors":180}],208:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -40464,7 +40458,6 @@ function createAsyncMiddleware(asyncMiddleware) {
     };
 }
 exports.createAsyncMiddleware = createAsyncMiddleware;
-
 },{}],209:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -40486,7 +40479,6 @@ function createScaffoldMiddleware(handlers) {
     };
 }
 exports.createScaffoldMiddleware = createScaffoldMiddleware;
-
 },{}],210:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -40500,7 +40492,6 @@ function getUniqueId() {
     return idCounter;
 }
 exports.getUniqueId = getUniqueId;
-
 },{}],211:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -40520,7 +40511,6 @@ function createIdRemapMiddleware() {
     };
 }
 exports.createIdRemapMiddleware = createIdRemapMiddleware;
-
 },{"./getUniqueId":210}],212:[function(require,module,exports){
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
@@ -40540,7 +40530,6 @@ __exportStar(require("./createScaffoldMiddleware"), exports);
 __exportStar(require("./getUniqueId"), exports);
 __exportStar(require("./JsonRpcEngine"), exports);
 __exportStar(require("./mergeMiddleware"), exports);
-
 },{"./JsonRpcEngine":207,"./createAsyncMiddleware":208,"./createScaffoldMiddleware":209,"./getUniqueId":210,"./idRemapMiddleware":211,"./mergeMiddleware":213}],213:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -40552,7 +40541,6 @@ function mergeMiddleware(middlewareStack) {
     return engine.asMiddleware();
 }
 exports.mergeMiddleware = mergeMiddleware;
-
 },{"./JsonRpcEngine":207}],214:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -45335,14 +45323,17 @@ class EcommerceCart {
 
   async verifyWallet(walletID) {
     let existingToken = await chrome.storage.local.get("glidePayJWT");
-    if (JSON.stringify(existingToken) == '{}' || existingToken.hasOwnProperty("message")) {
+    if (
+      JSON.stringify(existingToken) == "{}" ||
+      existingToken.hasOwnProperty("message")
+    ) {
       existingToken = {};
       await this.createJWTToken(walletID, existingToken.glidePayJWT);
       return;
     }
 
-    if (!(await this.verifyToken(walletID, existingToken))) {
-      await this.createJWTToken(walletID, existingToken);
+    if (!(await this.verifyToken(walletID, existingToken.glidePayJWT))) {
+      await this.createJWTToken(walletID, existingToken.glidePayJWT);
       return;
     }
     return;
