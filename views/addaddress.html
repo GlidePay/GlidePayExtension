@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html style="height: 620px; width: 360px">
+<html>
 <head>
     <link
             rel="stylesheet"
@@ -8,86 +8,104 @@
     <script src="/bootstrap/bootstrap-5.2.0-beta1-dist/js/bootstrap.js"></script>
 </head>
 <body>
-<div class="col-md-8 mb-4" id="formbody">
+<nav class="navbar position-relative" style="padding-top: 1.5rem;">
+    <div class="container-fluid mb-0">
+        <button id="back-button" class="position-absolute">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                 class="bi bi-arrow-return-left" viewBox="0 0 16 16">
+                <path fill-rule="evenodd"
+                      d="M14.5 1.5a.5.5 0 0 1 .5.5v4.8a2.5 2.5 0 0 1-2.5 2.5H2.707l3.347 3.346a.5.5 0 0 1-.708.708l-4.2-4.2a.5.5 0 0 1 0-.708l4-4a.5.5 0 1 1 .708.708L2.707 8.3H12.5A1.5 1.5 0 0 0 14 6.8V2a.5.5 0 0 1 .5-.5z"/>
+            </svg>
+        </button>
+        <img class="navbar-brand ml-auto m-auto" src="/resources/images/Logo.png" alt="GlidePay" style="width: 32%; height: 32%">
+    </div>
+</nav><div class="col-md-8 mb-4" id="formbody">
     <div class="card mb-4">
-        <div class="card-header py-3">
-            <button id="back-button" href="/views/confirmation.html" class="position-absolute">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-return-left" viewBox="0 0 16 16">
-                    <path fill-rule="evenodd" d="M14.5 1.5a.5.5 0 0 1 .5.5v4.8a2.5 2.5 0 0 1-2.5 2.5H2.707l3.347 3.346a.5.5 0 0 1-.708.708l-4.2-4.2a.5.5 0 0 1 0-.708l4-4a.5.5 0 1 1 .708.708L2.707 8.3H12.5A1.5 1.5 0 0 0 14 6.8V2a.5.5 0 0 1 .5-.5z"/>
-                </svg>
-            </button>
-            <h5 class="mb-0 text-center">Shipping Address</h5>
-        </div>
         <div class="card-body">
+            <h5 class="mb-0 text-center" style="padding-bottom: 1rem">Shipping Address</h5>
             <form>
                 <!-- 2 column grid layout with text inputs for the first and last names -->
                 <div class="row">
                     <div class="col">
                         <div class="form-outline">
-                            <input type="text" id="firstname" class="form-control" />
                             <label class="form-label" for="firstname">First name</label>
+                            <input type="text" id="firstname" class="form-control" />
                         </div>
                     </div>
                     <div class="col">
                         <div class="form-outline">
-                            <input type="text" id="lastname" class="form-control" />
                             <label class="form-label" for="lastname">Last name</label>
+                            <input type="text" id="lastname" class="form-control" />
                         </div>
                     </div>
                 </div>
 
                 <!-- Text input -->
                 <div class="form-outline">
-                    <input type="text" id="address1" class="form-control" />
                     <label class="form-label" for="address1">Address Line 1</label>
+                    <input type="text" id="address1" class="form-control" />
                 </div>
 
                 <!-- Text input -->
                 <div class="form-outline">
+                    <label class="form-label" for="address2">Address Line 2 (optional)</label>
                     <input type="text" id="address2" class="form-control" />
-                    <label class="form-label" for="address2">Address Line 2</label>
                 </div>
 
                 <div class="row">
                     <div class="col">
                         <div class="form-outline">
-                            <input type="text" id="zip" class="form-control" />
                             <label class="form-label" for="zip">Zip/Postal Code</label>
+                            <input type="text" id="zip" class="form-control" />
                         </div>
                     </div>
                     <div class="col">
                         <div class="form-outline">
-                            <input type="text" id="city" class="form-control" />
                             <label class="form-label" for="city">City</label>
+                            <input type="text" id="city" class="form-control" />
                         </div>
                     </div>
                 </div>
 
                 <!-- Text input -->
                 <div class="form-outline">
+                    <label class="form-label" for="stateprovince">State/Province</label>
                     <input type="text" id="stateprovince" class="form-control" />
-                    <label class="form-label" for="stateprovince"
-                    >State/Province</label
-                    >
                 </div>
 
                 <!-- Text input -->
                 <div class="form-outline">
-                    <input type="text" id="country" class="form-control" />
                     <label class="form-label" for="country">Country</label>
+                    <input type="text" id="country" class="form-control" />
                 </div>
 
                 <!-- Number input -->
                 <div class="form-outline">
+                    <label class="form-label" for="phone">Phone</label>
                     <input
                             type="text"
                             id="phone"
                             class="form-control"
                             pattern="[0-9]{10}"
                     />
-                    <label class="form-label" for="phone">Phone</label>
                 </div>
 
+                <!-- Text input -->
+                <div class="form-outline">
+                    <label class="form-label" for="email">Email (optional)</label>
+                    <input type="text" id="email" class="form-control" />
+                </div>
+
+                <div class="col text-center">
+                    <button
+                            type="button"
+                            class="btn btn-primary btn-lg btn-block"
+                            id="submit-button"
+                            style="margin-top: 1rem; margin-bottom: 1rem">
+                        Add Address
+                    </button>
+                    <script src="/scripts/addaddress.js"></script>
+                </div>
                 <!-- Checkbox -->
                 <div class="form-check d-flex justify-content-center mb-2">
                     <input
@@ -100,15 +118,6 @@
                     <label class="form-check-label" for="form7Example8">
                         Save address?
                     </label>
-                </div>
-                <div class="col text-center">
-                    <button
-                            type="button"
-                            class="btn btn-primary btn-lg btn-block"
-                            id="submit-button">
-                        Add Address
-                    </button>
-                    <script src="/scripts/addaddress.js"></script>
                 </div>
             </form>
         </div>

@@ -23,20 +23,19 @@
     {
       "matches": ["*://www.costco.com/CheckoutCartDisplayView*"],
         "js": ["scripts/bundledcostco.js"]
+    },
+    {
+      "matches": ["http://localhost/*", "https://localhost/*"],
+      "js": ["scripts/localtest.js"]
     }
   ],
   "permissions": [
-    "webRequest",
     "cookies",
-    "contentSettings",
     "tabs",
     "activeTab",
-    "scripting",
     "notifications",
     "storage",
-    "history",
-    "windows",
-    "webNavigation"
+    "windows"
   ],
   "host_permissions": ["https://www.amazon.com/*"],
   "action": {

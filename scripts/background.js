@@ -112,6 +112,15 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         return true;
       }
     }
+  } else if (message.from === "site") {
+    switch (message.subject) {
+      case "getToken": {
+        chrome.storage.local.get("glidePayJWT", (result) => {
+          sendResponse(result.glidePayJWT);
+        });
+        return true;
+      }
+    }
   }
 });
 
@@ -150,7 +159,7 @@ async function getCoinPrice(payload) {
 
 async function getTransaction(body) {
   try {
-    result = await chrome.storage.local.get("glidePayJWT");
+    let result = await chrome.storage.local.get("glidePayJWT");
     let jwt = result.glidePayJWT;
     let txhash = body.txHash;
     let retailer = body.retailer;
@@ -159,7 +168,7 @@ async function getTransaction(body) {
     let addressid = body.addressid;
     let amount = body.amount;
     let ticker = body.ticker;
-    response = await fetch(
+    await fetch(
       "https://xrl1xszvde.execute-api.us-east-1.amazonaws.com/prod/",
       {
         method: "post",

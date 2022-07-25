@@ -182,7 +182,7 @@ class EcommerceCart {
     existingToken = existingToken.glidePayJWT;
     console.log(existingToken);
     console.log("erm");
-    if (existingToken == {} || existingToken.hasOwnProperty("message")) {
+    if (existingToken === {} || existingToken.hasOwnProperty("message")) {
       existingToken = {};
       console.log("1");
       await this.createJWTToken(walletID, existingToken);

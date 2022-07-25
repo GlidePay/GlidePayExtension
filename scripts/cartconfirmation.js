@@ -61,64 +61,45 @@ const setProductInfo = (products) => {
   console.log("products");
   console.log(products);
   let i = 0;
-  const productSection = document.getElementById("productInfo");
+  const productSection = document.getElementById("cartTable");
   let totalPrice = 0;
-  if (Object.keys(products).length > 0) {
-    const horizontal_divider = document.createElement("hr");
-    horizontal_divider.setAttribute("class", "hr");
-    productSection.appendChild(horizontal_divider);
-  }
   for (const [key, productDict] of Object.entries(products)) {
-    const cartItem = document.createElement("div");
-    cartItem.setAttribute("class", "div");
+    const cartItem = document.createElement("tbody");
+    const itemRow = document.createElement("tr");
+    const itemImgEntry = document.createElement("td");
+    itemImgEntry.setAttribute("class", "ps-4");
     totalPrice +=
       parseFloat(productDict["unitPrice"]) * parseInt(productDict["quantity"]);
 
-    const itemImageColumn = document.createElement("col-md-4");
-    itemImageColumn.setAttribute("class", "col-md-4 px-4 py-2");
     const itemImage = document.createElement("img");
     itemImage.src = productDict["productImage"];
     itemImage.setAttribute("height", "100px");
     itemImage.setAttribute("width", "100px");
-    itemImageColumn.appendChild(itemImage);
+    itemImgEntry.appendChild(itemImage);
+    itemRow.appendChild(itemImgEntry);
+    cartItem.appendChild(itemRow);
 
-    const itemPrice = document.createElement("h2");
-    itemPrice.setAttribute("class", "p pr-2");
-    itemPrice.textContent =
-      productDict["quantity"] +
-      " " +
-      "x" +
-      " " +
+    const itemQuantityEntry = document.createElement("td");
+    itemQuantityEntry.textContent = productDict["quantity"];
+    itemQuantityEntry.setAttribute("class", "align-middle text-center");
+    itemRow.appendChild(itemQuantityEntry);
+
+    const itemPriceEntry = document.createElement("td");
+    itemPriceEntry.setAttribute("class", "align-middle text-center");
+    itemPriceEntry.textContent =
       "$" +
       productDict["unitPrice"];
+    itemRow.appendChild(itemPriceEntry);
 
-    const itemPriceColumn = document.createElement("col-md-4");
-    itemPriceColumn.setAttribute(
-      "class",
-      "col-md-4 my-auto mr-4 px-4 text-center"
-    );
-    itemPriceColumn.appendChild(itemPrice);
-
-    const itemQuantity = document.createElement("p");
-    itemQuantity.setAttribute("class", "text-center");
-    itemQuantity.textContent = `${productDict["quantity"]}`;
-
-    const cellRow1 = document.createElement("div");
-    cellRow1.setAttribute("class", "d-flex justify-content-between");
-    cellRow1.appendChild(itemImageColumn);
-    cellRow1.appendChild(itemPriceColumn);
-    cartItem.appendChild(cellRow1);
     productSection.appendChild(cartItem);
     i++;
   }
 
-  const confirmButton = document.createElement("button");
-  confirmButton.setId;
-  confirmButton.setAttribute("class", "btn btn-primary mx-4");
-  confirmButton.textContent = "Confirm Order";
+  const confirmButton = document.getElementById("submit-button");
   confirmButton.addEventListener("click", () => {
     const addressSelect = document.getElementById("addressSelect");
     if (addressSelect.selectedIndex === -1) {
+      //TODO: Add text or popup or something that says this
       console.log("Please select an address");
       return;
     }
@@ -150,16 +131,6 @@ const setProductInfo = (products) => {
 
   const addressButtonRow = document.createElement("div");
   addressButtonRow.setAttribute("class", "d-flex justify-content-between");
-  const buttonRowHR = document.createElement("hr");
-  const addAddressButton = document.createElement("button");
-  addAddressButton.textContent = "Add Address";
-  addAddressButton.setAttribute("class", "btn btn-primary mx-4");
-  addAddressButton.addEventListener("click", () => {
-    window.location.href = "addaddress.html";
-  });
-  addressButtonRow.appendChild(confirmButton);
-  addressButtonRow.appendChild(addAddressButton);
-  productSection.appendChild(buttonRowHR);
   productSection.appendChild(addressButtonRow);
 };
 
