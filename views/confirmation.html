@@ -1,33 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <link
-      rel="stylesheet"
-      href="/bootstrap/bootstrap-5.2.0-beta1-dist/css/bootstrap.css"
-    />
-    <script src="/bootstrap/bootstrap-5.2.0-beta1-dist/js/bootstrap.js"></script>
-    <title></title>
-  </head>
-  <body>
-    <div class="d-flex flex-row justify-content-center">
-      <img
-        src="/resources/images/Logo.png"
-        alt="Logo"
-        style="width: 50%; height: 50%"
-        class="mt-2"
-      />
-    </div>
-    <hr>
-    <div class="row">
-      <h1 class="text-center">Confirm Order</h1>
-      <div class="col">
-        <p id="productInfo">
-
-        </p>
-        <script src="/scripts/cartconfirmation.js"></script>
-      </div>
-      <label for="addressSelect"></label>
-      <select class="form-select px-2 text-center" aria-label="Choose Address" id="addressSelect"></select>
-    </div>
-  </body>
+<head>
+  <link
+          rel="stylesheet"
+          href="/bootstrap/bootstrap-5.2.0-beta1-dist/css/bootstrap.css"
+  />
+  <script src="/bootstrap/bootstrap-5.2.0-beta1-dist/js/bootstrap.js"></script>
+  <title></title>
+</head>
+<body style="max-width: 100%; overflow-x: hidden">
+<div class="d-flex flex-row justify-content-center" style="padding-top: 1.5rem">
+  <img src="/resources/images/Logo.png" alt="GlidePay" style="width: 32%; height: 32%">
+</div>
+<div class="row d-flex justify-content-center align-items-center">
+  <script src="/scripts/cartconfirmation.js"></script>
+  <h5 class="text-center my-1" style="padding-top: 1rem; padding-bottom: 0.5rem">Confirm Order</h5>
+  <div class="col">
+    <table class="table m-0 mb-3" id="cartTable">
+      <thead>
+      <tr>
+        <th class="ps-5">Item</th>
+        <th class="text-center">Qty</th>
+        <th class="text-center">Price</th>
+      </tr>
+      </thead>
+    </table>
+  </div>
+  <h7 class="text-center mb-2">Select a shipping address</h7>
+  <label for="addressSelect"></label>
+  <select class="form-select px-2 text-center" aria-label="Choose Address" id="addressSelect"></select>
+  <a class="text-center" href="addaddress.html" style="color:blue;">Add a new address</a>
+</div>
+<div class="col text-center">
+  <button
+          type="button"
+          class="btn btn-primary btn-lg btn-block"
+          id="submit-button"
+          style="margin-top: 1rem; margin-bottom: 1rem">
+    Confirm Order
+  </button>
+  <script src="/scripts/addaddress.js"></script>
+</div>
+</div>
+</body>
 </html>
