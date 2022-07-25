@@ -179,10 +179,9 @@ class EcommerceCart {
 
   async verifyWallet(walletID) {
     let existingToken = await chrome.storage.local.get("glidePayJWT");
-    existingToken = existingToken.glidePayJWT;
-    if (existingToken == {} || existingToken.hasOwnProperty("message")) {
+    if (JSON.stringify(existingToken) == '{}' || existingToken.hasOwnProperty("message")) {
       existingToken = {};
-      await this.createJWTToken(walletID, existingToken);
+      await this.createJWTToken(walletID, existingToken.glidePayJWT);
       return;
     }
 
