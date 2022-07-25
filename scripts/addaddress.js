@@ -53,12 +53,10 @@ async function addAddressButtonClicked() {
     });
     if (createAddressResponse.hasOwnProperty("error")) {
       throw new LogError(
+        createAddressResponse.customMsg,
         createAddressResponse.error,
-        "Create address failed",
-        {
-          token: token,
-          address: address,
-        },
+        { address: address, token: token },
+        createAddressResponse.errorID,
         () => {
           alert("Server Error");
         }

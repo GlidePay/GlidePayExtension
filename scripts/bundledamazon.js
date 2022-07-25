@@ -45324,19 +45324,13 @@ class EcommerceCart {
   async verifyWallet(walletID) {
     let existingToken = await chrome.storage.local.get("glidePayJWT");
     existingToken = existingToken.glidePayJWT;
-    console.log(existingToken);
-    console.log("erm");
     if (existingToken == {} || existingToken.hasOwnProperty("message")) {
       existingToken = {};
-      console.log("1");
       await this.createJWTToken(walletID, existingToken);
       return;
     }
-    console.log("2");
 
     if (!(await this.verifyToken(walletID, existingToken))) {
-      console.log("3");
-
       await this.createJWTToken(walletID, existingToken);
       return;
     }
@@ -45351,9 +45345,7 @@ class EcommerceCart {
         wallet: walletID,
       },
     });
-    console.log(nonceResponse);
     if (nonceResponse.hasOwnProperty("error")) {
-      console.log("help");
       throw new LogError(
         nonceResponse.customMsg,
         nonceResponse.error,
@@ -45416,13 +45408,16 @@ class EcommerceCart {
       },
     });
     if (verifyTokenResponse.hasOwnProperty("error")) {
+      const verifyTokenResponseError = verifyTokenResponse.error;
       throw new LogError(
-        verifyTokenResponse.error,
-        "Invalid Token",
+        verifyTokenResponseError.customMsg,
+        verifyTokenResponseError.error,
         {
           walletID: walletID,
           token: token,
         },
+        verifyTokenResponseError.uiMsg,
+        verifyTokenResponseError.errorID,
         () => {
           this.cryptoButton.disabled = false;
           alert("Invalid Token");
@@ -45439,10 +45434,11 @@ module.exports = {
 
 },{"./LogError":258,"ethers":184,"metamask-extension-provider":229}],258:[function(require,module,exports){
 class LogError {
-  constructor(customMsg, error, states, errorID, handle) {
+  constructor(customMsg, error, states, uiMsg, errorID, handle) {
     this.customMsg = customMsg;
     this.error = error;
     this.states = states;
+    this.uiMsg = uiMsg;
     this.errorID = errorID;
     this.errorOrigin = "Extension";
     this.timestamp = this.getDate();
