@@ -45292,6 +45292,7 @@ class EcommerceCart {
       console.log("Error Crypto Button Flow");
       console.log(err);
       if (err instanceof LogError) {
+        this.cryptoButton.disabled = false;
         err.logError();
       }
     }
@@ -45301,9 +45302,16 @@ class EcommerceCart {
     let accounts = await provider
       .send("eth_requestAccounts", [])
       .catch((err) => {
-        throw new LogError(err, "Metamask already open", {}, () => {
-          alert("Extension Error");
-        });
+        throw new LogError(
+          "Metamask already open",
+          err,
+          {},
+          "Metamask already open",
+          Date.now(),
+          () => {
+            alert("Metamask already open");
+          }
+        );
       });
 
     if (accounts.length === 0) {
@@ -45336,6 +45344,10 @@ class EcommerceCart {
       await this.createJWTToken(walletID, existingToken.glidePayJWT);
       return;
     }
+    await chrome.runtime.sendMessage({
+      from: "cart",
+      subject: "sendCartInfo",
+    });
     return;
   }
 
