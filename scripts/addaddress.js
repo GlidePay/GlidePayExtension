@@ -29,7 +29,6 @@ class LogError {
 }
 
 async function setUpAddAddressButton() {
-  console.log("qqq");
   let addAddressButton = document.getElementById("add-address-button");
   let backbutton = document.getElementById("back-button");
 

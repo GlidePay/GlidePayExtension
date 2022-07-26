@@ -1,32 +1,32 @@
-class LogError {
-  constructor(customMsg, error, states, uiMsg, errorID, handle) {
-    this.customMsg = customMsg;
-    this.error = error;
-    this.states = states;
-    this.uiMsg = uiMsg;
-    this.errorID = errorID;
-    this.errorOrigin = "Extension";
-    this.timestamp = this.getDate();
-    this.handle = handle();
-    this.logError();
-  }
+// class LogError {
+//   constructor(customMsg, error, states, uiMsg, errorID, handle) {
+//     this.customMsg = customMsg;
+//     this.error = error;
+//     this.states = states;
+//     this.uiMsg = uiMsg;
+//     this.errorID = errorID;
+//     this.errorOrigin = "Extension";
+//     this.timestamp = this.getDate();
+//     this.handle = handle();
+//     this.logError();
+//   }
 
-  getDate() {
-    const today = new Date();
-    const yyyy = today.getFullYear();
-    const mm = String(today.getMonth() + 1).padStart(2, "0");
-    const dd = String(today.getDate()).padStart(2, "0");
-    const hh = String(today.getHours()).padStart(2, "0");
-    const nn = String(today.getMinutes()).padStart(2, "0");
-    const ss = String(today.getSeconds()).padStart(2, "0");
+//   getDate() {
+//     const today = new Date();
+//     const yyyy = today.getFullYear();
+//     const mm = String(today.getMonth() + 1).padStart(2, "0");
+//     const dd = String(today.getDate()).padStart(2, "0");
+//     const hh = String(today.getHours()).padStart(2, "0");
+//     const nn = String(today.getMinutes()).padStart(2, "0");
+//     const ss = String(today.getSeconds()).padStart(2, "0");
 
-    return `${yyyy}/${mm}/${dd}T${hh}:${nn}:${ss}`;
-  }
+//     return `${yyyy}/${mm}/${dd}T${hh}:${nn}:${ss}`;
+//   }
 
-  logError() {
-    // TODO: Logs error to database
-  }
-}
+//   logError() {
+//     // TODO: Logs error to database
+//   }
+// }
 
 //TODO: Load in all saved addresses and display them as selectable options
 //TODO: Think about how we should handle it if someone tries to order to an address the product doesnt ship to
@@ -151,7 +151,7 @@ async function setProductInfo(products, addressButtonRow) {
   }
 
   const confirmButton = document.getElementById("submit-button");
-  confirmButton.addEventListener("click", () => {
+  confirmButton.addEventListener("click", async () => {
     const addressSelect = document.getElementById("addressSelect");
     if (addressSelect.selectedIndex === -1) {
       //TODO: Add text or popup or something that says this
@@ -160,35 +160,25 @@ async function setProductInfo(products, addressButtonRow) {
     }
     let value = addressSelect.options[addressSelect.selectedIndex].text;
     console.log(value);
-    chrome.windows.getAll({ populate: true }, (windows) => {
-      for (let a in windows) {
-        for (let b in windows[a].tabs) {
-          if (windows[a].tabs[b].url.includes("amazon.com/gp/cart")) {
-            chrome.tabs.sendMessage(windows[a].tabs[b].id, {
-              from: "popup",
-              subject: "promptTransaction",
-              price: totalPrice,
-              addressid:
-                addressSelect.options[addressSelect.selectedIndex].value,
-              products: products,
-            });
-            window.close();
-          }
+    const windows = await chrome.windows.getAll({ populate: true });
+    for (let a in windows) {
+      for (let b in windows[a].tabs) {
+        if (windows[a].tabs[b].url.includes("amazon.com/gp/cart")) {
+          chrome.tabs.sendMessage(windows[a].tabs[b].id, {
+            from: "popup",
+            subject: "promptTransaction",
+            price: totalPrice,
+            addressid: addressSelect.options[addressSelect.selectedIndex].value,
+            products: products,
+          });
+          window.close();
         }
       }
-    });
+    }
   });
 }
 
 async function cartMain() {
-  chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    if (request.from === "popup") {
-      if (request.subject === "splashError") {
-        splashErrorText(request.errorText);
-      }
-    }
-  });
-
   const senderTabID = await chrome.runtime.sendMessage({
     from: "confirmation",
     subject: "getTabID",
