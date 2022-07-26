@@ -41,22 +41,21 @@ async function getAddresses() {
     },
   });
   if (getAddressesResponse.hasOwnProperty("error")) {
-    const getAddressesResponse = signatureResponse.error;
     console.log("Throwing signature error");
     throw new LogError(
       getAddressesResponse.customMsg,
       getAddressesResponse.error,
       {
-        walletID: walletID,
-        token: token,
-        nonce: nonce,
-        message: message,
-        signature: signature,
+        jwt: jwt,
       },
       getAddressesResponse.uiMsg,
       getAddressesResponse.errorID,
       () => {
-        alert("Server Error");
+        const addressSelectDropdown = document.getElementById("addressSelect");
+        const errorText = document.createElement("p");
+        errorText.classList = "error-text text-center";
+        errorText.innerText = getAddressesResponse.uiMsg;
+        addressSelectDropdown.after(errorText);
       }
     );
   }
@@ -100,11 +99,22 @@ async function getAddresses() {
       addresses[i].Phone_Number;
     option.textContent = addressString.substring(0, 20) + "...";
     option.value = addresses[i].Address_ID;
+
     addressSelect.appendChild(option);
   }
+
+  const productSection = document.getElementById("cartTable");
+
+  const addressLabel = document.createElement("h2");
+  addressLabel.textContent = "Address";
+
+  const addressButtonRow = document.createElement("div");
+  addressButtonRow.setAttribute("class", "d-flex justify-content-between");
+
+  productSection.appendChild(addressButtonRow);
 }
 
-const setProductInfo = (products) => {
+async function setProductInfo(products, addressButtonRow) {
   console.log("products");
   console.log(products);
   let i = 0;
@@ -168,55 +178,91 @@ const setProductInfo = (products) => {
       }
     });
   });
-
-  getAddresses();
-
-  const addressLabel = document.createElement("h2");
-  addressLabel.textContent = "Address";
-
-  const addressButtonRow = document.createElement("div");
-  addressButtonRow.setAttribute("class", "d-flex justify-content-between");
-  productSection.appendChild(addressButtonRow);
-};
-
-async function main() {
-  console.log("nooo");
-  let senderTabID;
-  chrome.runtime.sendMessage(
-    {
-      from: "confirmation",
-      subject: "getTabID",
-    },
-    (response) => {
-      console.log("RESPONSE" + response);
-      senderTabID = response;
-      chrome.windows.getAll({ populate: true }, (windows) => {
-        for (let a in windows) {
-          for (let b in windows[a].tabs) {
-            if (windows[a].tabs[b].id === senderTabID) {
-              console.log(senderTabID + "TABID");
-              chrome.tabs.sendMessage(
-                windows[a].tabs[b].id,
-                { from: "popup", subject: "needInfo" },
-                setProductInfo
-              );
-              break;
-            }
-          }
-        }
-      });
-    }
-  );
 }
 
-window.addEventListener("load", () => {
-  try {
-    main();
-  } catch (err) {
-    console.log("Error Confirmation Cart Flow");
-    console.log(err);
-    if (err instanceof LogError) {
-      err.logError();
+async function cartMain() {
+  chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    if (request.from === "popup") {
+      if (request.subject === "splashError") {
+        splashErrorText(request.errorText);
+      }
     }
+  });
+
+  const senderTabID = await chrome.runtime.sendMessage({
+    from: "confirmation",
+    subject: "getTabID",
+  });
+
+  console.log("RESPONSE" + senderTabID);
+  const windows = await chrome.windows.getAll({ populate: true });
+  for (let a in windows) {
+    for (let b in windows[a].tabs) {
+      if (windows[a].tabs[b].id === senderTabID) {
+        console.log(senderTabID + "TABID");
+        const products = await chrome.tabs.sendMessage(windows[a].tabs[b].id, {
+          from: "popup",
+          subject: "needInfo",
+        });
+        try {
+          await setProductInfo(products);
+        } catch (err) {
+          if (!(err instanceof LogError)) {
+            new LogError(
+              "Setting Product Info Failed (Uncaught)",
+              err,
+              {},
+              "Getting Products Failed",
+              Date.now(),
+              () => {
+                const columnLabelRow =
+                  document.getElementById("column-label-row");
+                const errorText = document.createElement("p");
+                errorText.classList = "error-text text-center";
+                errorText.innerText = "Getting Products Failed";
+                columnLabelRow.after(errorText);
+              }
+            );
+          }
+        }
+        try {
+          await getAddresses();
+        } catch (err) {
+          if (!(err instanceof LogError)) {
+            new LogError(
+              "Getting Address Info Failed (Uncaught)",
+              err,
+              {},
+              "Getting Addresses Failed",
+              Date.now(),
+              () => {
+                const addressSelectDropdown =
+                  document.getElementById("addressSelect");
+                const errorText = document.createElement("p");
+                errorText.classList = "error-text text-center";
+                errorText.innerText = "Getting Addresses Failed";
+                addressSelectDropdown.after(errorText);
+              }
+            );
+          }
+        }
+        break;
+      }
+    }
+  }
+}
+
+window.addEventListener("load", async () => {
+  try {
+    await cartMain();
+  } catch (err) {
+    new LogError(
+      "Building Cart Popup Failed (Uncaught)",
+      err,
+      {},
+      "Building Cart Popup Failed",
+      Date.now(),
+      () => {}
+    );
   }
 });

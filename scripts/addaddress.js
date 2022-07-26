@@ -28,16 +28,16 @@ class LogError {
   }
 }
 
-function setUpAddAddressButton() {
+async function setUpAddAddressButton() {
   console.log("qqq");
-  let confirmButton = document.getElementById("submit-button");
+  let addAddressButton = document.getElementById("add-address-button");
   let backbutton = document.getElementById("back-button");
 
   backbutton.addEventListener("click", function (event) {
     window.location.href = "confirmation.html";
   });
 
-  confirmButton.addEventListener("click", async () => {
+  addAddressButton.addEventListener("click", async () => {
     await addAddressButtonClicked();
   });
 }
@@ -69,7 +69,19 @@ async function addAddressButtonClicked() {
 
   for (let key in address) {
     if (address[key] === "" && key !== "Address_Line_2") {
-      alert("Please fill out all fields");
+      console.log(document.getElementsByClassName("error-text text-center"));
+      console.log(
+        document.getElementsByClassName("error-text text-center").length === 0
+      );
+      if (
+        document.getElementsByClassName("error-text text-center").length === 0
+      ) {
+        let addAddressButton = document.getElementById("add-address-button");
+        let errorText = document.createElement("p");
+        errorText.classList = "error-text text-center";
+        errorText.innerText = "Please fill out all fields";
+        addAddressButton.after(errorText);
+      }
       return;
     }
   }
@@ -91,17 +103,42 @@ async function addAddressButtonClicked() {
       },
     });
     if (createAddressResponse.hasOwnProperty("error")) {
-      throw new LogError(
+      new LogError(
         createAddressResponse.customMsg,
         createAddressResponse.error,
         { address: address, token: token },
         createAddressResponse.uiMsg,
         createAddressResponse.errorID,
         () => {
-          alert("Server Error");
+          if (
+            document.getElementsByClassName("error-text text-center").length ===
+            1
+          ) {
+            let addAddressButton =
+              document.getElementById("add-address-button");
+            let errorText = document.getElementsByClassName(
+              "error-text text-center"
+            )[0];
+            console.log(errorText);
+            errorText.innerText = createAddressResponse.uiMsg;
+            addAddressButton.after(errorText);
+          }
+          if (
+            document.getElementsByClassName("error-text text-center").length ===
+            0
+          ) {
+            let addAddressButton =
+              document.getElementById("add-address-button");
+            const errorText = document.createElement("p");
+            errorText.classList = "error-text text-center";
+            errorText.innerText = createAddressResponse.uiMsg;
+            addAddressButton.after(errorText);
+          }
         }
       );
+      return;
     }
+    console.log(createAddressResponse);
     window.location.href = "/views/confirmation.html";
   } else {
     sessionStorage.setItem("tempAddress", JSON.stringify(address));
@@ -109,4 +146,19 @@ async function addAddressButtonClicked() {
   }
 }
 
-setUpAddAddressButton();
+async function addressMain() {
+  try {
+    await setUpAddAddressButton();
+  } catch (err) {
+    new LogError(
+      "Building Address Popup Failed (Uncaught)",
+      err,
+      {},
+      "Building Address Popup Failed",
+      Date.now(),
+      () => {}
+    );
+  }
+}
+
+addressMain();

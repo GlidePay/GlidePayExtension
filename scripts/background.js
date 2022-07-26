@@ -314,8 +314,9 @@ async function createAddress(payload) {
     }
   } catch (err) {
     return {
-      customMsg: "Verify Signature Failed",
+      customMsg: "Create Address Failed",
       error: err.stack,
+      uiMsg: "Creating this Address Failed.",
       errorID: Date.now(),
     };
   }
@@ -343,6 +344,7 @@ async function getAddresses(payload) {
     return {
       customMsg: "Verify Signature Failed",
       error: err.stack,
+      uiMsg: "Get Addresses Failed",
       errorID: Date.now(),
     };
   }
