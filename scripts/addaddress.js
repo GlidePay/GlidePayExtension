@@ -31,11 +31,11 @@ class LogError {
 function setUpAddAddressButton() {
   console.log("qqq");
   let confirmButton = document.getElementById("submit-button");
-  // let backbutton = document.getElementById("back-button");
+  let backbutton = document.getElementById("back-button");
 
-  // backbutton.addEventListener("click", function (event) {
-  //   window.location.href = "confirmation.html";
-  // });
+  backbutton.addEventListener("click", function (event) {
+    window.location.href = "confirmation.html";
+  });
 
   confirmButton.addEventListener("click", async () => {
     await addAddressButtonClicked();
