@@ -101,6 +101,16 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         });
         return true;
       }
+      case "getAddresses": {
+        getAddresses(message.body).then((result) => {
+          if (result.hasOwnProperty("error")) {
+            sendResponse(result);
+          } else {
+            sendResponse(result);
+          }
+        });
+        return true;
+      }
       case "createAddress": {
         createAddress(message.body).then((result) => {
           if (result instanceof Error) {
@@ -288,6 +298,33 @@ async function createAddress(payload) {
   try {
     let response = await fetch(
       "https://6zfr42udog.execute-api.us-east-1.amazonaws.com/default/createAddressRDS",
+      {
+        method: "POST",
+        body: JSON.stringify(payload),
+      }
+    );
+    const jsonData = await response.text();
+
+    if (response.status === 200) {
+      return JSON.parse(jsonData);
+    }
+
+    if (response.status !== 200) {
+      return JSON.parse(jsonData);
+    }
+  } catch (err) {
+    return {
+      customMsg: "Verify Signature Failed",
+      error: err.stack,
+      errorID: Date.now(),
+    };
+  }
+}
+
+async function getAddresses(payload) {
+  try {
+    let response = await fetch(
+      "https://vshqd3sv2c.execute-api.us-east-1.amazonaws.com/default/getAddressesRDS",
       {
         method: "POST",
         body: JSON.stringify(payload),

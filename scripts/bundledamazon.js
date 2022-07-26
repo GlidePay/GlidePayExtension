@@ -45208,10 +45208,10 @@ class EcommerceCart {
 
     if (getCoinPriceResponse.hasOwnProperty("error")) {
       throw new LogError(
+        getCoinPriceResponse.customMsg,
         getCoinPriceResponse.error,
-        "Failed to fetch",
-        {},
-        getCoinPriceResponse.errorOrigin,
+        { price: costUSD },
+        getCoinPriceResponse.uiMsg,
         getCoinPriceResponse.errorID,
         () => {
           this.cryptoButton.disabled = false;
@@ -45352,6 +45352,7 @@ class EcommerceCart {
         nonceResponse.customMsg,
         nonceResponse.error,
         { walletID: walletID, token: token },
+        nonceResponse.uiMsg,
         nonceResponse.errorID,
         () => {
           this.cryptoButton.disabled = false;
@@ -45386,6 +45387,7 @@ class EcommerceCart {
           message: message,
           signature: signature,
         },
+        signatureResponseError.uiMsg,
         signatureResponseError.errorID,
         () => {
           this.cryptoButton.disabled = false;

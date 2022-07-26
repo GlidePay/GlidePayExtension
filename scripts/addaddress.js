@@ -1,10 +1,41 @@
-function main() {
-  let confirmButton = document.getElementById("submit-button");
-  let backbutton = document.getElementById("back-button");
+class LogError {
+  constructor(customMsg, error, states, uiMsg, errorID, handle) {
+    this.customMsg = customMsg;
+    this.error = error;
+    this.states = states;
+    this.uiMsg = uiMsg;
+    this.errorID = errorID;
+    this.errorOrigin = "Extension";
+    this.timestamp = this.getDate();
+    this.handle = handle();
+    this.logError();
+  }
 
-  backbutton.addEventListener("click", function (event) {
-    window.location.href = "confirmation.html";
-  });
+  getDate() {
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, "0");
+    const dd = String(today.getDate()).padStart(2, "0");
+    const hh = String(today.getHours()).padStart(2, "0");
+    const nn = String(today.getMinutes()).padStart(2, "0");
+    const ss = String(today.getSeconds()).padStart(2, "0");
+
+    return `${yyyy}/${mm}/${dd}T${hh}:${nn}:${ss}`;
+  }
+
+  logError() {
+    // TODO: Logs error to database
+  }
+}
+
+function setUpAddAddressButton() {
+  console.log("qqq");
+  let confirmButton = document.getElementById("submit-button");
+  // let backbutton = document.getElementById("back-button");
+
+  // backbutton.addEventListener("click", function (event) {
+  //   window.location.href = "confirmation.html";
+  // });
 
   confirmButton.addEventListener("click", async () => {
     await addAddressButtonClicked();
@@ -36,6 +67,14 @@ async function addAddressButtonClicked() {
     Phone_Number: phone,
   };
 
+  for (let key in address) {
+    if (address[key] === "" && key !== "Address_Line_2") {
+      alert("Please fill out all fields");
+      return;
+    }
+  }
+
+  console.log(address);
   const saveAddressButton = document.getElementsByClassName(
     "form-check-input me-2"
   )[0];
@@ -56,6 +95,7 @@ async function addAddressButtonClicked() {
         createAddressResponse.customMsg,
         createAddressResponse.error,
         { address: address, token: token },
+        createAddressResponse.uiMsg,
         createAddressResponse.errorID,
         () => {
           alert("Server Error");
@@ -69,4 +109,4 @@ async function addAddressButtonClicked() {
   }
 }
 
-main();
+setUpAddAddressButton();

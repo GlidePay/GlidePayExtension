@@ -1,60 +1,107 @@
+class LogError {
+  constructor(customMsg, error, states, uiMsg, errorID, handle) {
+    this.customMsg = customMsg;
+    this.error = error;
+    this.states = states;
+    this.uiMsg = uiMsg;
+    this.errorID = errorID;
+    this.errorOrigin = "Extension";
+    this.timestamp = this.getDate();
+    this.handle = handle();
+    this.logError();
+  }
+
+  getDate() {
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, "0");
+    const dd = String(today.getDate()).padStart(2, "0");
+    const hh = String(today.getHours()).padStart(2, "0");
+    const nn = String(today.getMinutes()).padStart(2, "0");
+    const ss = String(today.getSeconds()).padStart(2, "0");
+
+    return `${yyyy}/${mm}/${dd}T${hh}:${nn}:${ss}`;
+  }
+
+  logError() {
+    // TODO: Logs error to database
+  }
+}
+
 //TODO: Load in all saved addresses and display them as selectable options
 //TODO: Think about how we should handle it if someone tries to order to an address the product doesnt ship to
-function getAddresses() {
-  chrome.storage.local.get("glidePayJWT", (result) => {
-    const jwt = result.glidePayJWT;
-    fetch(
-        "https://vshqd3sv2c.execute-api.us-east-1.amazonaws.com/default/getAddressesRDS",
-        {
-          method: "post",
-          body: JSON.stringify({ token: jwt }),
-        }
-    )
-        .then((response) => response.json())
-        .then((responseData) => {
-          console.log(responseData);
-
-          const tempAddress = sessionStorage.getItem("tempAddress");
-          if (tempAddress == null) {
-            console.log("no temp address");
-          } else {
-            responseData.push(JSON.parse(tempAddress));
-          }
-
-          const addressSelect = document.getElementById("addressSelect");
-          let address;
-          for (let i = 0; i < responseData.length; i++) {
-            const option = document.createElement("option");
-            address = [
-              responseData[i].Address_Line_1,
-              responseData[i].Address_Line_2,
-              responseData[i].City,
-              responseData[i].Province_State,
-              responseData[i].Zip_Postal_Code,
-              responseData[i].Country,
-              responseData[i].Phone_Number,
-            ];
-            option.setAttribute("address", address);
-            const addressString =
-                responseData[i].Address_Line_1 +
-                " " +
-                responseData[i].Address_Line_2 +
-                " " +
-                responseData[i].City +
-                " " +
-                responseData[i].Province_State +
-                " " +
-                responseData[i].Zip_Postal_Code +
-                " " +
-                responseData[i].Country +
-                " " +
-                responseData[i].Phone_Number;
-            option.textContent = addressString.substring(0, 20) + "...";
-            option.value = responseData[i].Address_ID;
-            addressSelect.appendChild(option);
-          }
-        });
+async function getAddresses() {
+  const result = await chrome.storage.local.get("glidePayJWT");
+  const jwt = result.glidePayJWT;
+  let getAddressesResponse = await chrome.runtime.sendMessage({
+    from: "cart",
+    subject: "getAddresses",
+    body: {
+      token: jwt,
+    },
   });
+  if (getAddressesResponse.hasOwnProperty("error")) {
+    const getAddressesResponse = signatureResponse.error;
+    console.log("Throwing signature error");
+    throw new LogError(
+      getAddressesResponse.customMsg,
+      getAddressesResponse.error,
+      {
+        walletID: walletID,
+        token: token,
+        nonce: nonce,
+        message: message,
+        signature: signature,
+      },
+      getAddressesResponse.uiMsg,
+      getAddressesResponse.errorID,
+      () => {
+        alert("Server Error");
+      }
+    );
+  }
+  const addresses = getAddressesResponse.data;
+  console.log("addreses" + addresses);
+
+  const tempAddress = sessionStorage.getItem("tempAddress");
+  if (tempAddress == null) {
+    console.log("no temp address");
+  } else {
+    addresses.push(JSON.parse(tempAddress));
+  }
+
+  const addressSelect = document.getElementById("addressSelect");
+  let address;
+  for (let i = 0; i < addresses.length; i++) {
+    const option = document.createElement("option");
+    address = [
+      addresses[i].Address_Line_1,
+      addresses[i].Address_Line_2,
+      addresses[i].City,
+      addresses[i].Province_State,
+      addresses[i].Zip_Postal_Code,
+      addresses[i].Country,
+      addresses[i].Phone_Number,
+    ];
+    option.setAttribute("address", address);
+    const addressString =
+      addresses[i].Address_Line_1 +
+      " " +
+      addresses[i].Address_Line_2 +
+      " " +
+      addresses[i].City +
+      " " +
+      addresses[i].Province_State +
+      " " +
+      addresses[i].Zip_Postal_Code +
+      " " +
+      addresses[i].Country +
+      " " +
+      addresses[i].Phone_Number;
+    option.textContent = addressString.substring(0, 20) + "...";
+    option.value = addresses[i].Address_ID;
+    addressSelect.appendChild(option);
+  }
 }
 
 const setProductInfo = (products) => {
@@ -86,9 +133,7 @@ const setProductInfo = (products) => {
 
     const itemPriceEntry = document.createElement("td");
     itemPriceEntry.setAttribute("class", "align-middle text-center");
-    itemPriceEntry.textContent =
-      "$" +
-      productDict["unitPrice"];
+    itemPriceEntry.textContent = "$" + productDict["unitPrice"];
     itemRow.appendChild(itemPriceEntry);
 
     productSection.appendChild(cartItem);
@@ -134,28 +179,44 @@ const setProductInfo = (products) => {
   productSection.appendChild(addressButtonRow);
 };
 
-window.addEventListener("load", () => {
+async function main() {
+  console.log("nooo");
   let senderTabID;
-  chrome.runtime.sendMessage({
-    from: "confirmation",
-    subject: "getTabID",
-    }, (response) => {
-    console.log("RESPONSE" + response);
-    senderTabID = response;
-    chrome.windows.getAll({ populate: true }, (windows) => {
-      for (let a in windows) {
-        for (let b in windows[a].tabs) {
-          if (windows[a].tabs[b].id === senderTabID) {
-            console.log(senderTabID + "TABID");
-            chrome.tabs.sendMessage(
+  chrome.runtime.sendMessage(
+    {
+      from: "confirmation",
+      subject: "getTabID",
+    },
+    (response) => {
+      console.log("RESPONSE" + response);
+      senderTabID = response;
+      chrome.windows.getAll({ populate: true }, (windows) => {
+        for (let a in windows) {
+          for (let b in windows[a].tabs) {
+            if (windows[a].tabs[b].id === senderTabID) {
+              console.log(senderTabID + "TABID");
+              chrome.tabs.sendMessage(
                 windows[a].tabs[b].id,
                 { from: "popup", subject: "needInfo" },
                 setProductInfo
-            );
-            break;
+              );
+              break;
+            }
           }
         }
-      }
-    });
-  });
+      });
+    }
+  );
+}
+
+window.addEventListener("load", () => {
+  try {
+    main();
+  } catch (err) {
+    console.log("Error Confirmation Cart Flow");
+    console.log(err);
+    if (err instanceof LogError) {
+      err.logError();
+    }
+  }
 });
