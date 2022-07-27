@@ -209,15 +209,14 @@ class EcommerceCart {
   async verifyWallet(walletID) {
     let existingToken = await chrome.storage.local.get("glidePayJWT");
     if (
-      JSON.stringify(existingToken) == "{}" ||
+      JSON.stringify(existingToken) === "{}" ||
       existingToken.hasOwnProperty("message")
     ) {
       existingToken = {};
       await this.createJWTToken(walletID, existingToken.glidePayJWT);
       return;
     }
-
-    if (!(await this.verifyToken(walletID, existingToken.glidePayJWT))) {
+    if (typeof (await this.verifyToken(walletID, existingToken.glidePayJWT)) === 'undefined') {
       await this.createJWTToken(walletID, existingToken.glidePayJWT);
       return;
     }
@@ -326,7 +325,7 @@ class EcommerceCart {
         verifyTokenResponseError.errorID,
         () => {
           this.cryptoButton.disabled = false;
-          alert("Invalid Token");
+          alert("CRITICAL ERROR: VERIFY TOKEN FAILED"); //? Why would we do this?
         }
       );
     }
