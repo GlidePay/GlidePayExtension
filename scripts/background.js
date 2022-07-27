@@ -134,6 +134,23 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   }
 });
 
+chrome.runtime.onConnect.addListener(function (port) {
+  if (port.name === "cartView") {
+    port.onDisconnect.addListener(function () {
+      chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+        console.log(tabs);
+        console.log(senderID);
+        chrome.tabs.sendMessage(senderID, {
+          from: "background",
+          subject: "popupClosed",
+        });
+
+        console.log("popup has been closed");
+      });
+    });
+  }
+});
+
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (msg.from === "confirmation" && msg.subject === "getTabID") {
     console.log("Msg received");

@@ -114,11 +114,14 @@ async function getAddresses() {
   productSection.appendChild(addressButtonRow);
 }
 
-async function setProductInfo(products, addressButtonRow) {
-  console.log("products");
-  console.log(products);
+async function setProductInfo(products) {
+  const cartView = document.getElementById("cart-view");
+  const loadingView = document.getElementById("loading-view");
+  cartView.style.display = "block";
+  loadingView.style.display = "none";
   let i = 0;
   const productSection = document.getElementById("cartTable");
+  productSection.innerHTML = "";
   let totalPrice = 0;
   for (const [key, productDict] of Object.entries(products)) {
     const cartItem = document.createElement("tbody");
@@ -159,7 +162,6 @@ async function setProductInfo(products, addressButtonRow) {
       return;
     }
     let value = addressSelect.options[addressSelect.selectedIndex].text;
-    console.log(value);
     const windows = await chrome.windows.getAll({ populate: true });
     for (let a in windows) {
       for (let b in windows[a].tabs) {
@@ -242,9 +244,65 @@ async function cartMain() {
   }
 }
 
+async function tryingLoading() {
+  chrome.runtime.connect({ name: "cartView" });
+  chrome.runtime.onMessage.addListener(
+    async (message, sender, sendResponse) => {
+      if (message.from === "cart" && message.subject === "sendCartInfo") {
+        chrome.runtime.onMessage.removeListener(arguments.callee);
+        sendResponse(true);
+        const products = message.data;
+        try {
+          await setProductInfo(products);
+        } catch (err) {
+          if (!(err instanceof LogError)) {
+            new LogError(
+              "Setting Product Info Failed (Uncaught)",
+              err,
+              {},
+              "Getting Products Failed",
+              Date.now(),
+              () => {
+                const columnLabelRow =
+                  document.getElementById("column-label-row");
+                const errorText = document.createElement("p");
+                errorText.classList = "error-text text-center";
+                errorText.innerText = "Getting Products Failed";
+                columnLabelRow.after(errorText);
+              }
+            );
+          }
+        }
+        try {
+          await getAddresses();
+        } catch (err) {
+          if (!(err instanceof LogError)) {
+            new LogError(
+              "Getting Address Info Failed (Uncaught)",
+              err,
+              {},
+              "Getting Addresses Failed",
+              Date.now(),
+              () => {
+                const addressSelectDropdown =
+                  document.getElementById("addressSelect");
+                const errorText = document.createElement("p");
+                errorText.classList = "error-text text-center";
+                errorText.innerText = "Getting Addresses Failed";
+                addressSelectDropdown.after(errorText);
+              }
+            );
+          }
+        }
+      }
+      return true;
+    }
+  );
+}
 window.addEventListener("load", async () => {
   try {
-    await cartMain();
+    await tryingLoading();
+    // await cartMain();
   } catch (err) {
     new LogError(
       "Building Cart Popup Failed (Uncaught)",

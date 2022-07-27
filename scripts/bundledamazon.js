@@ -45166,6 +45166,7 @@ class EcommerceCart {
     this.walletID;
     this.productDict;
     this.retailer;
+    this.popupOpen = false;
   }
 
   createListeners() {
@@ -45178,6 +45179,15 @@ class EcommerceCart {
     chrome.runtime.onMessage.addListener((msg, sender, response) => {
       if (msg.from === "popup" && msg.subject === "needInfo") {
         response(this.productDict);
+      }
+    });
+    console.log("Listeners created");
+    chrome.runtime.onMessage.addListener((msg, sender, response) => {
+      console.log("heard oyu");
+      if (msg.from === "background" && msg.subject === "popupClosed") {
+        this.popupOpen = false;
+        console.log("closed");
+        console.log(this.popupOpen);
       }
     });
 
@@ -45278,22 +45288,44 @@ class EcommerceCart {
   async cryptoButtonPressed() {
     try {
       let walletID = await this.checkMetamaskSignIn();
+      console.log("hi");
+      console.log(this.popupOpen);
       await this.verifyWallet(walletID);
       this.productDict = this.getProducts();
       this.retailer = this.getRetailer();
       console.log(this.retailer);
-      await chrome.runtime.sendMessage({
-        from: "cart",
-        subject: "createOrderPopup",
-        screenSize: screen.width,
-      });
+      const timer = (ms) => new Promise((res) => setTimeout(res, ms));
+      console.log("Is it open");
+      console.log(this.popupOpen);
+      while (this.popupOpen) {
+        console.log("sending!");
+        console.log(this.popupOpen);
+        console.log(this.productDict);
+        const cartInfoReceived = await chrome.runtime
+          .sendMessage({
+            from: "cart",
+            subject: "sendCartInfo",
+            data: this.productDict,
+          })
+          .then((response) => {
+            console.log(response);
+            return response;
+          });
+
+        if (cartInfoReceived) {
+          break;
+        }
+
+        await timer(1000); // then the created Promise can be awaited
+      }
+
       this.cryptoButton.disabled = false;
     } catch (err) {
       console.log("Error Crypto Button Flow");
       console.log(err);
       if (err instanceof LogError) {
+        console.log("instance");
         this.cryptoButton.disabled = false;
-        err.logError();
       }
     }
   }
@@ -45316,12 +45348,13 @@ class EcommerceCart {
 
     if (accounts.length === 0) {
       throw new LogError(
+        "No Metamask accounts available",
         err,
         "No Metamask accounts available",
         { accounts: accounts },
+        Date.now(),
         () => {
-          this.cryptoButton.disabled = false;
-          alert("Extension Error");
+          alert("No Metamask accounts available");
         }
       );
     } else {
@@ -45344,10 +45377,15 @@ class EcommerceCart {
       await this.createJWTToken(walletID, existingToken.glidePayJWT);
       return;
     }
-    await chrome.runtime.sendMessage({
-      from: "cart",
-      subject: "sendCartInfo",
-    });
+    console.log(this.popupOpen);
+    if (!this.popupOpen) {
+      await chrome.runtime.sendMessage({
+        from: "cart",
+        subject: "createOrderPopup",
+        screenSize: screen.width,
+      });
+    }
+    this.popupOpen = true;
     return;
   }
 
@@ -45376,6 +45414,16 @@ class EcommerceCart {
     let message = "Please sign this message to login!.\n Nonce: " + nonce;
     console.log("NONCE: " + nonce);
     const signature = await signer.signMessage(message);
+    console.log(this.popupOpen);
+    if (!this.popupOpen) {
+      await chrome.runtime.sendMessage({
+        from: "cart",
+        subject: "createOrderPopup",
+        screenSize: screen.width,
+      });
+    }
+    this.popupOpen = true;
+
     let signatureResponse = await chrome.runtime.sendMessage({
       from: "cart",
       subject: "verifySignature",
