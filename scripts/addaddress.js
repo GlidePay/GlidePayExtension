@@ -1,3 +1,4 @@
+// Error logging class.
 class LogError {
   constructor(customMsg, error, states, uiMsg, errorID, handle) {
     this.customMsg = customMsg;
@@ -28,22 +29,25 @@ class LogError {
   }
 }
 
+// Sets up the add address button.
 async function setUpAddAddressButton() {
   let addAddressButton = document.getElementById("add-address-button");
   let backbutton = document.getElementById("back-button");
 
-  backbutton.addEventListener("click", function (event) {
+  // Adds event listener for the back button.
+  backbutton.addEventListener("click", () => {
     window.location.href = "confirmation.html";
   });
 
+  // Adds event listener for the add address button.
   addAddressButton.addEventListener("click", async () => {
     await addAddressButtonClicked();
   });
 }
 
+// What happens when add address button is clicked.
 async function addAddressButtonClicked() {
-  //TODO: Checks if fully filled out and address is valid
-  //TODO: Check if address already exists
+  // This grabs all the inputs.
   const firstname = document.getElementById("firstname").value;
   const lastname = document.getElementById("lastname").value;
   const address1 = document.getElementById("address1").value;
@@ -54,6 +58,7 @@ async function addAddressButtonClicked() {
   const country = document.getElementById("country").value;
   const phone = document.getElementById("phone").value;
 
+  // Creates the address object.
   const address = {
     First_Name: firstname,
     Last_Name: lastname,
@@ -66,6 +71,7 @@ async function addAddressButtonClicked() {
     Phone_Number: phone,
   };
 
+  // This makes sure all fields are filled out and if not, shows error text.
   for (let key in address) {
     if (address[key] === "" && key !== "Address_Line_2") {
       console.log(document.getElementsByClassName("error-text text-center"));
@@ -86,12 +92,18 @@ async function addAddressButtonClicked() {
   }
 
   console.log(address);
+
+  // Gets the "Save Address" checkmark.
   const saveAddressButton = document.getElementsByClassName(
     "form-check-input me-2"
   )[0];
+
+  // Gets the JWT from localStorage.
   let token = await chrome.storage.local.get("glidePayJWT");
   token = token.glidePayJWT;
 
+  // Checks to see if save address checkmark is checked.
+  // If it is, it will save the address to the database.
   if (saveAddressButton.checked) {
     const createAddressResponse = await chrome.runtime.sendMessage({
       from: "cart",
@@ -101,6 +113,8 @@ async function addAddressButtonClicked() {
         address: address,
       },
     });
+
+    // Checks for error.
     if (createAddressResponse.hasOwnProperty("error")) {
       new LogError(
         createAddressResponse.customMsg,
@@ -137,14 +151,21 @@ async function addAddressButtonClicked() {
       );
       return;
     }
+
+    // If no error, redirects to main confirmation page.
     console.log(createAddressResponse);
     window.location.href = "/views/confirmation.html";
+
   } else {
+
+    // If save address checkmark is not checked, it will store the address in sessionStorage.
     sessionStorage.setItem("tempAddress", JSON.stringify(address));
     window.location.href = "/views/confirmation.html";
+
   }
 }
 
+// Main function that runs.
 async function addressMain() {
   try {
     await setUpAddAddressButton();
