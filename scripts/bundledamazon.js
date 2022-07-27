@@ -45372,7 +45372,7 @@ class EcommerceCart {
       await this.createJWTToken(walletID, existingToken.glidePayJWT);
       return;
     }
-    if (typeof (await this.verifyToken(walletID, existingToken.glidePayJWT)) === 'undefined') {
+    if (!(await this.verifyToken(walletID, existingToken.glidePayJWT))) {
       await this.createJWTToken(walletID.toLowerCase(), existingToken.glidePayJWT);
       return;
     } else {
