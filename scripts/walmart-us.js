@@ -105,13 +105,11 @@ function main() {
     // Waits for page to fully load before injecting the button.
     const loadObserver = new MutationObserver(function(mutations) {
         mutations.forEach(function(mutation) {
-            if (mutation.addedNodes.length > 0) {
-                if (mutation.addedNodes[0]) {
-                    if (mutation.addedNodes[0].childNodes) {
-                        if (mutation.addedNodes[0].childNodes[0].childNodes[0].id === "Continue to checkout button") {
-                            console.log("injecting button");
-                            walmart.injectButton(mutation.addedNodes[0].childNodes[0].childNodes[0]);
-                        }
+            console.log(mutation);
+            if (mutation.target.childNodes) {
+                if (mutation.target.childNodes[0].childNodes) {
+                    if (mutation.target.childNodes[0].childNodes[0].id === "Continue to checkout button") {
+                        walmart.injectButton(mutation.target.childNodes[0].childNodes[0]);
                     }
                 }
             }
@@ -119,6 +117,7 @@ function main() {
     });
     const container = document.querySelector("#__next")
     let config = { attributes: true, childList: true, subtree: true, characterData: true };
+    console.log(container);
     loadObserver.observe(container, config);
 }
 
