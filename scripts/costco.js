@@ -57,6 +57,7 @@ class Costco extends ECommerceCart.EcommerceCart {
                 const quantity = product.querySelector('div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > input').value;
                 const productImage = product.querySelector('div:nth-child(1) > div:nth-child(1) > a > img').getAttribute("src");
                 productDict[index] = {
+                    currency: 'USD',
                     productID: productID,
                     productName: productName,
                     unitPrice: unitPrice,
@@ -76,6 +77,7 @@ class Costco extends ECommerceCart.EcommerceCart {
                 const quantity = product.querySelector('div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > input').value;
                 const productImage = product.querySelector('div:nth-child(1) > div:nth-child(1) > a > img').getAttribute("src");
                 productDict[index] = {
+                    currency: 'USD',
                     productID: productID,
                     productName: productName,
                     unitPrice: unitPrice,

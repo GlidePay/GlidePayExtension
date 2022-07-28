@@ -45229,7 +45229,7 @@ class EcommerceCart {
     const cost = msg.price;
     const currency = msg.currency
     let costUSD;
-    if (currency == 'USD') {
+    if (currency === 'USD') {
       costUSD = cost
     } else {
       let currencyResponse = await this.convertCurrency(cost, currency)
@@ -45674,13 +45674,13 @@ class Walmart extends ECommerceCart.EcommerceCart {
         );
         let productElementsList = Array.from(productElements.children);
         productElementsList.forEach(function (part, index) {
-            console.log(part)
             let productCartSection = part.querySelector('div:nth-child(1) > div > ul');
             if (productCartSection != null) {
                 let productCartSectionList = Array.from(productCartSection.children);
                 productCartSectionList.forEach(function (part) {
+                    try {
                     let productItem = part.querySelector('div:nth-child(3)');
-                    console.log(productItem)
+                    console.log(productItem) 
                     let productInfo = productItem.querySelector('div:nth-child(1) > div > div');
                     let productID = productInfo.querySelector('a').getAttribute('href').split('/ip/seort/')[1];
                     let productName = productInfo.querySelector('a > h4 > div > span').innerText;
@@ -45689,13 +45689,39 @@ class Walmart extends ECommerceCart.EcommerceCart {
                     let productQuantity = productQuantityString.slice(productQuantityString.length - 1);
                     let productImage = productInfo.querySelector('a > img').getAttribute('srcset').split(' 1x')[0];
                     productDict[productIndex] = {
+                        currency: 'USD',
                         productID: productID,
                         productName: productName,
-                        unitPrice: unitPrice,
+                        unitPrice: parseFloat(unitPrice)/parseFloat(productQuantity),
                         quantity: productQuantity,
                         productImage: productImage,
+
                     };
                     productIndex++;
+                } catch(err) {
+                    try {
+                    let productItem = part.querySelector('div:nth-child(2)');
+                    console.log(productItem) 
+                    let productInfo = productItem.querySelector('div:nth-child(1) > div > div');
+                    let productID = productInfo.querySelector('a').getAttribute('href').split('/ip/seort/')[1];
+                    let productName = productInfo.querySelector('a > h4 > div > span').innerText;
+                    let unitPrice = productInfo.querySelector('div:nth-child(3) > div > div:nth-child(1) > span').innerText.split('$')[1];
+                    let productQuantityString = productItem.querySelector('a').getAttribute('aria-label').split(' in cart')[0];
+                    let productQuantity = productQuantityString.slice(productQuantityString.length - 1);
+                    let productImage = productInfo.querySelector('a > img').getAttribute('srcset').split(' 1x')[0];
+                    productDict[productIndex] = {
+                        currency: 'USD',
+                        productID: productID,
+                        productName: productName,
+                        unitPrice: parseFloat(unitPrice)/parseFloat(productQuantity),
+                        quantity: productQuantity,
+                        productImage: productImage,
+
+                    };
+                    productIndex++; }catch(err){
+                        console.log(err)
+                    }
+                }
                 });
             } else {
                 let productCartSection2 = part.querySelector('div > div > ul');
@@ -45710,9 +45736,10 @@ class Walmart extends ECommerceCart.EcommerceCart {
                     let productQuantity = productQuantityString.slice(productQuantityString.length - 1);
                     let productImage = productInfo.querySelector('a > img').getAttribute('srcset').split(' 1x')[0];
                     productDict[productIndex] = {
+                        currency: 'USD',
                         productID: productID,
                         productName: productName,
-                        unitPrice: unitPrice,
+                        unitPrice: parseFloat(unitPrice)/parseFloat(productQuantity),
                         quantity: productQuantity,
                         productImage: productImage,
                     };
