@@ -38,15 +38,17 @@ class Walmart extends ECommerceCart.EcommerceCart {
         );
         let productElementsList = Array.from(productElements.children);
         productElementsList.forEach(function (part, index) {
+            console.log(part)
             let productCartSection = part.querySelector('div:nth-child(1) > div > ul');
             if (productCartSection != null) {
                 let productCartSectionList = Array.from(productCartSection.children);
                 productCartSectionList.forEach(function (part) {
-                    let productItem = part.querySelector('div:nth-child(3)');
+                    let productItem = part.querySelector('div:nth-child(2)');
+                    console.log(productItem)
                     let productInfo = productItem.querySelector('div:nth-child(1) > div > div');
                     let productID = productInfo.querySelector('a').getAttribute('href').split('/ip/seort/')[1];
                     let productName = productInfo.querySelector('a > h4 > div > span').innerText;
-                    let unitPrice = productInfo.querySelector('div:nth-child(3) > div > div:nth-child(1) > span').innerText;
+                    let unitPrice = productInfo.querySelector('div:nth-child(3) > div > div:nth-child(1) > span').innerText.split('$')[1];
                     let productQuantityString = productItem.querySelector('a').getAttribute('aria-label').split(' in cart')[0];
                     let productQuantity = productQuantityString.slice(productQuantityString.length - 1);
                     let productImage = productInfo.querySelector('a > img').getAttribute('srcset').split(' 1x')[0];
@@ -63,11 +65,11 @@ class Walmart extends ECommerceCart.EcommerceCart {
                 let productCartSection2 = part.querySelector('div > div > ul');
                 let productCartSection2List = Array.from(productCartSection2.children);
                 productCartSection2List.forEach(function (part) {
-                    let productItem = part.querySelector('div:nth-child(3)');
+                    let productItem = part.querySelector('div:nth-child(2)');
                     let productInfo = productItem.querySelector('div:nth-child(1) > div > div');
                     let productID = productInfo.querySelector('a').getAttribute('href').split('/ip/seort/')[1];
                     let productName = productInfo.querySelector('a > h4 > div > span').innerText;
-                    let unitPrice = productInfo.querySelector('div:nth-child(3) > div > div:nth-child(1) > span').innerText;
+                    let unitPrice = productInfo.querySelector('div:nth-child(3) > div > div:nth-child(1) > span').innerText.split('$')[1];
                     let productQuantityString = productItem.querySelector('a').getAttribute('aria-label').split(' in cart')[0];
                     let productQuantity = productQuantityString.slice(productQuantityString.length - 1);
                     let productImage = productInfo.querySelector('a > img').getAttribute('srcset').split(' 1x')[0];
@@ -105,11 +107,13 @@ function main() {
     // Waits for page to fully load before injecting the button.
     const loadObserver = new MutationObserver(function(mutations) {
         mutations.forEach(function(mutation) {
-            console.log(mutation);
-            if (mutation.target.childNodes) {
-                if (mutation.target.childNodes[0].childNodes) {
-                    if (mutation.target.childNodes[0].childNodes[0].id === "Continue to checkout button") {
-                        walmart.injectButton(mutation.target.childNodes[0].childNodes[0]);
+            if (mutation.addedNodes.length > 0) {
+                if (mutation.addedNodes[0]) {
+                    if (mutation.addedNodes[0].childNodes) {
+                        if (mutation.addedNodes[0].childNodes[0].childNodes[0].id === "Continue to checkout button") {
+                            console.log("injecting button");
+                            walmart.injectButton(mutation.addedNodes[0].childNodes[0].childNodes[0]);
+                        }
                     }
                 }
             }
@@ -117,7 +121,6 @@ function main() {
     });
     const container = document.querySelector("#__next")
     let config = { attributes: true, childList: true, subtree: true, characterData: true };
-    console.log(container);
     loadObserver.observe(container, config);
 }
 

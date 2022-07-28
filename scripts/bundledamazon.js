@@ -36569,6 +36569,7 @@ function stringifyReplacer(_, value) {
     }
     return value;
 }
+
 },{"fast-safe-stringify":188}],178:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -36661,6 +36662,7 @@ exports.errorValues = {
         message: 'The provider is disconnected from the specified chain.',
     },
 };
+
 },{}],179:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -36800,6 +36802,7 @@ function parseOpts(arg) {
     }
     return [];
 }
+
 },{"./classes":177,"./error-constants":178,"./utils":181}],180:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -36814,6 +36817,7 @@ const errors_1 = require("./errors");
 Object.defineProperty(exports, "ethErrors", { enumerable: true, get: function () { return errors_1.ethErrors; } });
 const error_constants_1 = require("./error-constants");
 Object.defineProperty(exports, "errorCodes", { enumerable: true, get: function () { return error_constants_1.errorCodes; } });
+
 },{"./classes":177,"./error-constants":178,"./errors":179,"./utils":181}],181:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -36925,6 +36929,7 @@ function assignOriginalError(error) {
 function hasKey(obj, key) {
     return Object.prototype.hasOwnProperty.call(obj, key);
 }
+
 },{"./classes":177,"./error-constants":178}],182:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -40392,6 +40397,7 @@ exports.JsonRpcEngine = JsonRpcEngine;
 function jsonify(request) {
     return JSON.stringify(request, null, 2);
 }
+
 },{"@metamask/safe-event-emitter":150,"eth-rpc-errors":180}],208:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -40458,6 +40464,7 @@ function createAsyncMiddleware(asyncMiddleware) {
     };
 }
 exports.createAsyncMiddleware = createAsyncMiddleware;
+
 },{}],209:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -40479,6 +40486,7 @@ function createScaffoldMiddleware(handlers) {
     };
 }
 exports.createScaffoldMiddleware = createScaffoldMiddleware;
+
 },{}],210:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -40492,6 +40500,7 @@ function getUniqueId() {
     return idCounter;
 }
 exports.getUniqueId = getUniqueId;
+
 },{}],211:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -40511,6 +40520,7 @@ function createIdRemapMiddleware() {
     };
 }
 exports.createIdRemapMiddleware = createIdRemapMiddleware;
+
 },{"./getUniqueId":210}],212:[function(require,module,exports){
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
@@ -40530,6 +40540,7 @@ __exportStar(require("./createScaffoldMiddleware"), exports);
 __exportStar(require("./getUniqueId"), exports);
 __exportStar(require("./JsonRpcEngine"), exports);
 __exportStar(require("./mergeMiddleware"), exports);
+
 },{"./JsonRpcEngine":207,"./createAsyncMiddleware":208,"./createScaffoldMiddleware":209,"./getUniqueId":210,"./idRemapMiddleware":211,"./mergeMiddleware":213}],213:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -40541,6 +40552,7 @@ function mergeMiddleware(middlewareStack) {
     return engine.asMiddleware();
 }
 exports.mergeMiddleware = mergeMiddleware;
+
 },{"./JsonRpcEngine":207}],214:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -45178,6 +45190,7 @@ class EcommerceCart {
     // Sends productDict when requested by cartConfirmation popup
     chrome.runtime.onMessage.addListener((msg, sender, response) => {
       if (msg.from === "popup" && msg.subject === "needInfo") {
+        console.log(this.productDict)
         response(this.productDict);
       }
     });
@@ -45186,8 +45199,6 @@ class EcommerceCart {
       console.log("heard oyu");
       if (msg.from === "background" && msg.subject === "popupClosed") {
         this.popupOpen = false;
-        console.log("closed");
-        console.log(this.popupOpen);
       }
     });
 
@@ -45207,9 +45218,22 @@ class EcommerceCart {
     });
   }
 
+  convertCurrency(price, currency) {
+    return fetch('https://api.exchangerate.host/convert?from='+ currency + '&to=EUR&amount=' + String(price)).then(response => response.text())
+    .then(data => {return data});}
+  
   async handleTransaction(msg) {
-    const costUSD = msg.price;
-
+    const cost = msg.price;
+    const currency = msg.currency
+    let costUSD;
+    if (currency == 'USD') {
+      costUSD = cost
+    } else {
+      let currencyResponse = await this.convertCurrency(cost, currency)
+      costUSD = JSON.parse(currencyResponse).result
+    }
+    console.log(currency)
+    console.log(costUSD)
     const getCoinPriceResponse = await chrome.runtime.sendMessage({
       from: "cart",
       subject: "getCoinPrice",
@@ -45251,7 +45275,6 @@ class EcommerceCart {
 
     const tx = await signer.sendTransaction(transaction);
     console.log(`txHASH: ${tx.hash}`);
-    console.log(this.retailer);
     const body = {
       txHash: tx.hash,
       retailer: this.retailer,
@@ -45288,19 +45311,11 @@ class EcommerceCart {
   async cryptoButtonPressed() {
     try {
       let walletID = await this.checkMetamaskSignIn();
-      console.log("hi");
-      console.log(this.popupOpen);
       await this.verifyWallet(walletID);
       this.productDict = this.getProducts();
       this.retailer = this.getRetailer();
-      console.log(this.retailer);
       const timer = (ms) => new Promise((res) => setTimeout(res, ms));
-      console.log("Is it open");
-      console.log(this.popupOpen);
       while (this.popupOpen) {
-        console.log("sending!");
-        console.log(this.popupOpen);
-        console.log(this.productDict);
         const cartInfoReceived = await chrome.runtime
           .sendMessage({
             from: "cart",
@@ -45308,7 +45323,6 @@ class EcommerceCart {
             data: this.productDict,
           })
           .then((response) => {
-            console.log(response);
             return response;
           });
 
@@ -45324,7 +45338,6 @@ class EcommerceCart {
       console.log("Error Crypto Button Flow");
       console.log(err);
       if (err instanceof LogError) {
-        console.log("instance");
         this.cryptoButton.disabled = false;
       }
     }
@@ -45364,6 +45377,7 @@ class EcommerceCart {
 
   async verifyWallet(walletID) {
     let existingToken = await chrome.storage.local.get("glidePayJWT");
+    console.log(existingToken)
     if (
       JSON.stringify(existingToken) == "{}" ||
       existingToken.hasOwnProperty("message")
@@ -45377,7 +45391,6 @@ class EcommerceCart {
       await this.createJWTToken(walletID, existingToken.glidePayJWT);
       return;
     }
-    console.log(this.popupOpen);
     if (!this.popupOpen) {
       await chrome.runtime.sendMessage({
         from: "cart",
@@ -45414,7 +45427,6 @@ class EcommerceCart {
     let message = "Please sign this message to login!.\n Nonce: " + nonce;
     console.log("NONCE: " + nonce);
     const signature = await signer.signMessage(message);
-    console.log(this.popupOpen);
     if (!this.popupOpen) {
       await chrome.runtime.sendMessage({
         from: "cart",
@@ -45463,6 +45475,7 @@ class EcommerceCart {
   }
 
   async verifyToken(walletID, token) {
+    console.log(token)
     let verifyTokenResponse = await chrome.runtime.sendMessage({
       from: "cart",
       subject: "verifyToken",
@@ -45588,6 +45601,7 @@ class Amazon extends ECommerceCart.EcommerceCart {
         unitPrice: unitPrice,
         quantity: quantity,
         productImage: productImage,
+        currency: currency
       };
     });
     return productDict;

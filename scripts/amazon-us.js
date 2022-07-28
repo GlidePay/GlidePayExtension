@@ -54,6 +54,7 @@ class Amazon extends ECommerceCart.EcommerceCart {
         unitPrice: unitPrice,
         quantity: quantity,
         productImage: productImage,
+        currency: currency
       };
     });
     return productDict;

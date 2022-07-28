@@ -183,6 +183,7 @@ async function getCoinPrice(payload) {
 }
 
 async function getTransaction(body) {
+  console.log(body)
   try {
     let result = await chrome.storage.local.get("glidePayJWT");
     let jwt = result.glidePayJWT;
@@ -193,6 +194,7 @@ async function getTransaction(body) {
     let addressid = body.addressid;
     let amount = body.amount;
     let ticker = body.ticker;
+    console.log(retailer)
     await fetch(
       "https://xrl1xszvde.execute-api.us-east-1.amazonaws.com/prod/",
       {

@@ -45178,6 +45178,7 @@ class EcommerceCart {
     this.walletID;
     this.productDict;
     this.retailer;
+    this.popupOpen = false;
   }
 
   createListeners() {
@@ -45189,7 +45190,15 @@ class EcommerceCart {
     // Sends productDict when requested by cartConfirmation popup
     chrome.runtime.onMessage.addListener((msg, sender, response) => {
       if (msg.from === "popup" && msg.subject === "needInfo") {
+        console.log(this.productDict)
         response(this.productDict);
+      }
+    });
+    console.log("Listeners created");
+    chrome.runtime.onMessage.addListener((msg, sender, response) => {
+      console.log("heard oyu");
+      if (msg.from === "background" && msg.subject === "popupClosed") {
+        this.popupOpen = false;
       }
     });
 
@@ -45201,7 +45210,9 @@ class EcommerceCart {
         } catch (err) {
           console.log("Transaction Error");
           console.log(err);
-          err.logError();
+          if (err instanceof LogError) {
+            err.logError();
+          }
         }
       }
     });
@@ -45210,11 +45221,27 @@ class EcommerceCart {
   async handleTransaction(msg) {
     const costUSD = msg.price;
 
-    const coinPriceUSD = await chrome.runtime.sendMessage({
+    const getCoinPriceResponse = await chrome.runtime.sendMessage({
       from: "cart",
       subject: "getCoinPrice",
       body: { ticker: "ethusd" },
     });
+
+    if (getCoinPriceResponse.hasOwnProperty("error")) {
+      throw new LogError(
+        getCoinPriceResponse.customMsg,
+        getCoinPriceResponse.error,
+        { price: costUSD },
+        getCoinPriceResponse.uiMsg,
+        getCoinPriceResponse.errorID,
+        () => {
+          this.cryptoButton.disabled = false;
+          alert("Server Error");
+        }
+      );
+    }
+
+    const coinPriceUSD = getCoinPriceResponse.data;
 
     const ethCost = costUSD / coinPriceUSD;
     console.log(`Price in Eth: ${ethCost}`);
@@ -45235,10 +45262,10 @@ class EcommerceCart {
 
     const tx = await signer.sendTransaction(transaction);
     console.log(`txHASH: ${tx.hash}`);
-
+    let retailer = this.getRetailer();
     const body = {
       txHash: tx.hash,
-      retailer: this.retailer,
+      retailer: retailer,
       productidsarr: msg.products,
       addressid: msg.addressid,
       orderStatus: "Transaction Pending Confirmation.",
@@ -45275,16 +45302,32 @@ class EcommerceCart {
       await this.verifyWallet(walletID);
       this.productDict = this.getProducts();
       this.retailer = this.getRetailer();
-      await chrome.runtime.sendMessage({
-        from: "cart",
-        subject: "createOrderPopup",
-        screenSize: screen.width,
-      });
+      const timer = (ms) => new Promise((res) => setTimeout(res, ms));
+      while (this.popupOpen) {
+        const cartInfoReceived = await chrome.runtime
+          .sendMessage({
+            from: "cart",
+            subject: "sendCartInfo",
+            data: this.productDict,
+          })
+          .then((response) => {
+            return response;
+          });
+
+        if (cartInfoReceived) {
+          break;
+        }
+
+        await timer(1000); // then the created Promise can be awaited
+      }
+
       this.cryptoButton.disabled = false;
     } catch (err) {
       console.log("Error Crypto Button Flow");
       console.log(err);
-      err.logError();
+      if (err instanceof LogError) {
+        this.cryptoButton.disabled = false;
+      }
     }
   }
 
@@ -45292,19 +45335,27 @@ class EcommerceCart {
     let accounts = await provider
       .send("eth_requestAccounts", [])
       .catch((err) => {
-        throw LogError(err, "Metamask already open", {}, () => {
-          alert("Extension Error");
-        });
+        throw new LogError(
+          "Metamask already open",
+          err,
+          {},
+          "Metamask already open",
+          Date.now(),
+          () => {
+            alert("Metamask already open");
+          }
+        );
       });
 
     if (accounts.length === 0) {
-      throw LogError(
+      throw new LogError(
+        "No Metamask accounts available",
         err,
         "No Metamask accounts available",
         { accounts: accounts },
+        Date.now(),
         () => {
-          this.cryptoButton.disabled = false;
-          alert("Extension Error");
+          alert("No Metamask accounts available");
         }
       );
     } else {
@@ -45313,37 +45364,47 @@ class EcommerceCart {
   }
 
   async verifyWallet(walletID) {
-    const existingTokenResponse = await chrome.runtime.sendMessage({
-      from: "cart",
-      subject: "getToken",
-    });
-
-    const existingToken = existingTokenResponse.data;
-    if (existingToken == {}) {
-      await this.createJWTToken(walletID, existingToken);
+    let existingToken = await chrome.storage.local.get("glidePayJWT");
+    console.log(existingToken)
+    if (
+      JSON.stringify(existingToken) == "{}" ||
+      existingToken.hasOwnProperty("message")
+    ) {
+      existingToken = {};
+      await this.createJWTToken(walletID, existingToken.glidePayJWT);
       return;
     }
 
-    if (!(await this.verifyToken(walletID, existingToken))) {
-      await this.createJWTToken(walletID, existingToken);
+    if (!(await this.verifyToken(walletID, existingToken.glidePayJWT))) {
+      await this.createJWTToken(walletID, existingToken.glidePayJWT);
       return;
     }
+    if (!this.popupOpen) {
+      await chrome.runtime.sendMessage({
+        from: "cart",
+        subject: "createOrderPopup",
+        screenSize: screen.width,
+      });
+    }
+    this.popupOpen = true;
     return;
   }
 
   async createJWTToken(walletID, token) {
     let nonceResponse = await chrome.runtime.sendMessage({
       from: "cart",
-      subject: "getNonce",
+      subject: "generateNonce",
       body: {
         wallet: walletID,
       },
     });
     if (nonceResponse.hasOwnProperty("error")) {
       throw new LogError(
+        nonceResponse.customMsg,
         nonceResponse.error,
-        "Failed to fetch nonce",
         { walletID: walletID, token: token },
+        nonceResponse.uiMsg,
+        nonceResponse.errorID,
         () => {
           this.cryptoButton.disabled = false;
           alert("Server Error");
@@ -45351,6 +45412,18 @@ class EcommerceCart {
       );
     }
     const nonce = nonceResponse.data;
+    let message = "Please sign this message to login!.\n Nonce: " + nonce;
+    console.log("NONCE: " + nonce);
+    const signature = await signer.signMessage(message);
+    if (!this.popupOpen) {
+      await chrome.runtime.sendMessage({
+        from: "cart",
+        subject: "createOrderPopup",
+        screenSize: screen.width,
+      });
+    }
+    this.popupOpen = true;
+
     let signatureResponse = await chrome.runtime.sendMessage({
       from: "cart",
       subject: "verifySignature",
@@ -45360,10 +45433,13 @@ class EcommerceCart {
         existingToken: token,
       },
     });
+
     if (signatureResponse.hasOwnProperty("error")) {
+      const signatureResponseError = signatureResponse.error;
+      console.log("Throwing signature error");
       throw new LogError(
-        signatureResponse.error,
-        "Failed to verify signature",
+        signatureResponseError.customMsg,
+        signatureResponseError.error,
         {
           walletID: walletID,
           token: token,
@@ -45371,6 +45447,8 @@ class EcommerceCart {
           message: message,
           signature: signature,
         },
+        signatureResponseError.uiMsg,
+        signatureResponseError.errorID,
         () => {
           this.cryptoButton.disabled = false;
           alert("Server Error");
@@ -45378,32 +45456,14 @@ class EcommerceCart {
       );
     }
     const newToken = signatureResponse.data;
-    let setTokenResponse = chrome.runtime.sendMessage({
-      from: "cart",
-      subject: "setToken",
-      body: newToken,
+    await chrome.storage.local.set({
+      glidePayJWT: newToken,
     });
-    if (setTokenResponse.hasOwnProperty("error")) {
-      throw new LogError(
-        setTokenResponse.error,
-        "Failed to set token",
-        {
-          walletID: walletID,
-          token: token,
-          nonce: nonce,
-          message: message,
-          signature: signature,
-        },
-        () => {
-          this.cryptoButton.disabled = false;
-          alert("Server Error");
-        }
-      );
-    }
     console.log("Wallet Verified and Set");
   }
 
   async verifyToken(walletID, token) {
+    console.log(token)
     let verifyTokenResponse = await chrome.runtime.sendMessage({
       from: "cart",
       subject: "verifyToken",
@@ -45413,13 +45473,16 @@ class EcommerceCart {
       },
     });
     if (verifyTokenResponse.hasOwnProperty("error")) {
+      const verifyTokenResponseError = verifyTokenResponse.error;
       throw new LogError(
-        verifyTokenResponse.error,
-        "Invalid Token",
+        verifyTokenResponseError.customMsg,
+        verifyTokenResponseError.error,
         {
           walletID: walletID,
           token: token,
         },
+        verifyTokenResponseError.uiMsg,
+        verifyTokenResponseError.errorID,
         () => {
           this.cryptoButton.disabled = false;
           alert("Invalid Token");
@@ -45436,13 +45499,28 @@ module.exports = {
 
 },{"./LogError":258,"ethers":184,"metamask-extension-provider":229}],258:[function(require,module,exports){
 class LogError {
-  constructor(error, customMsg, states, handle) {
-    this.error = error;
+  constructor(customMsg, error, states, uiMsg, errorID, handle) {
     this.customMsg = customMsg;
+    this.error = error;
     this.states = states;
-    this.timestamp = Date.now();
+    this.uiMsg = uiMsg;
+    this.errorID = errorID;
+    this.errorOrigin = "Extension";
+    this.timestamp = this.getDate();
     this.handle = handle();
     this.logError();
+  }
+
+  getDate() {
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, "0");
+    const dd = String(today.getDate()).padStart(2, "0");
+    const hh = String(today.getHours()).padStart(2, "0");
+    const nn = String(today.getMinutes()).padStart(2, "0");
+    const ss = String(today.getSeconds()).padStart(2, "0");
+
+    return `${yyyy}/${mm}/${dd}T${hh}:${nn}:${ss}`;
   }
 
   logError() {
@@ -45455,6 +45533,7 @@ module.exports = {
 };
 
 },{}],259:[function(require,module,exports){
+const { LogError } = require("./LogError");
 const ECommerceCart = require("./ECommerceCart");
 // ALL CHANGES TO THIS FILE MUST BE COMPILED WITH "npm run buildCostco"
 
@@ -45503,11 +45582,13 @@ class Costco extends ECommerceCart.EcommerceCart {
         let index = 0;
         productElementsList.forEach(function (part) {
             if (part.tagName === "DIV") {
+                console.log(part)
                 const product = part.querySelector('div > div:nth-child(1)');
                 console.log(product);
                 const productID = product.getAttribute("data-orderitemnumber");
                 const productName = product.querySelector('div:nth-child(1) > div:nth-child(2) > h3 > a').innerText;
-                const unitPrice = product.querySelector('div:nth-child(1) > div:nth-child(2) > div:nth-child(6) > div > div > div:nth-child(1) > span');
+                const unitPrice = product.querySelector('div:nth-child(1) > div:nth-child(2) > div:nth-child(6) > div > div > div:nth-child(1) > span > span').innerHTML;
+                console.log(unitPrice)
                 const quantity = product.querySelector('div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > input').value;
                 const productImage = product.querySelector('div:nth-child(1) > div:nth-child(1) > a > img').getAttribute("src");
                 productDict[index] = {
@@ -45526,7 +45607,7 @@ class Costco extends ECommerceCart.EcommerceCart {
                 console.log(product);
                 const productID = product.getAttribute("data-orderitemnumber");
                 const productName = product.querySelector('div:nth-child(1) > div:nth-child(2) > h3 > a').innerText;
-                const unitPrice = product.querySelector('div:nth-child(1) > div:nth-child(2) > div:nth-child(6) > div > div > div:nth-child(1) > span').innerText;
+                const unitPrice = product.querySelector('div:nth-child(1) > div:nth-child(2) > div:nth-child(6) > div > div > div:nth-child(1) > span > span').innerText;
                 const quantity = product.querySelector('div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > input').value;
                 const productImage = product.querySelector('div:nth-child(1) > div:nth-child(1) > a > img').getAttribute("src");
                 productDict[index] = {
@@ -45539,11 +45620,12 @@ class Costco extends ECommerceCart.EcommerceCart {
                 index++;
             }
         });
+        console.log(productDict)
         return productDict;
     }
 
     getRetailer() {
-        return 'costco'
+            return 'costco'
     }
 }
 
@@ -45564,11 +45646,12 @@ function main() {
         console.log(mutations);
         costco.injectButton();
     });
+    /*
     var container = document.querySelector('#order-summary-body');
     console.log(container);
     let config = { attributes: true, subtree: true, characterData: true };
-    observer.observe(container, config);
+    observer.observe(container, config); */
 }
 
 main();
-},{"./ECommerceCart":257}]},{},[259]);
+},{"./ECommerceCart":257,"./LogError":258}]},{},[259]);
