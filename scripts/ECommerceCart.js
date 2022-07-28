@@ -73,7 +73,7 @@ class EcommerceCart {
     const cost = msg.price;
     const currency = msg.currency
     let costUSD;
-    if (currency == 'USD') {
+    if (currency === 'USD') {
       costUSD = cost
     } else {
       let currencyResponse = await this.convertCurrency(cost, currency)

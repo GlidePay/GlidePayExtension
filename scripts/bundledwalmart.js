@@ -45679,7 +45679,7 @@ class Walmart extends ECommerceCart.EcommerceCart {
             if (productCartSection != null) {
                 let productCartSectionList = Array.from(productCartSection.children);
                 productCartSectionList.forEach(function (part) {
-                    let productItem = part.querySelector('div:nth-child(2)');
+                    let productItem = part.querySelector('div:nth-child(3)');
                     console.log(productItem)
                     let productInfo = productItem.querySelector('div:nth-child(1) > div > div');
                     let productID = productInfo.querySelector('a').getAttribute('href').split('/ip/seort/')[1];
