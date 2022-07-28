@@ -131,7 +131,7 @@ async function setProductInfo(products, sender) {
     itemImgEntry.setAttribute("class", "ps-4");
     totalPrice +=
       parseFloat(productDict["unitPrice"]) * parseInt(productDict["quantity"]);
-    currency = (productDict["currency"])
+    currency = productDict["currency"];
     const itemImage = document.createElement("img");
     itemImage.src = productDict["productImage"];
     itemImage.setAttribute("height", "100px");
@@ -155,7 +155,10 @@ async function setProductInfo(products, sender) {
   }
 
   const confirmButton = document.getElementById("submit-button");
+  console.log("created listener");
   confirmButton.addEventListener("click", async () => {
+    console.log("created listener1");
+
     const addressSelect = document.getElementById("addressSelect");
     if (addressSelect.selectedIndex === -1) {
       //TODO: Add text or popup or something that says this
@@ -164,9 +167,13 @@ async function setProductInfo(products, sender) {
     }
     let value = addressSelect.options[addressSelect.selectedIndex].text;
     const windows = await chrome.windows.getAll({ populate: true });
+    console.log("created listener2");
+
     for (let a in windows) {
       for (let b in windows[a].tabs) {
         if (windows[a].tabs[b].id === sender) {
+          console.log("created listener3");
+
           chrome.tabs.sendMessage(windows[a].tabs[b].id, {
             from: "popup",
             subject: "promptTransaction",
@@ -325,6 +332,11 @@ async function tryingLoading() {
       }
     }
   }
+
+  const senderTabID = await chrome.runtime.sendMessage({
+    from: "confirmation",
+    subject: "getTabID",
+  });
   chrome.runtime.connect({ name: "cartView" });
   chrome.runtime.onMessage.addListener(
     async (message, sender, sendResponse) => {
@@ -333,7 +345,8 @@ async function tryingLoading() {
         sendResponse(true);
         const products = message.data;
         try {
-          await setProductInfo(products, sender);
+          console.log("sender1 " + sender);
+          await setProductInfo(products, senderTabID);
         } catch (err) {
           if (!(err instanceof LogError)) {
             new LogError(
