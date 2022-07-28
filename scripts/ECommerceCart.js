@@ -66,7 +66,7 @@ class EcommerceCart {
   }
 
   convertCurrency(price, currency) {
-    return fetch('https://api.exchangerate.host/convert?from='+ currency + '&to=EUR&amount=' + String(price)).then(response => response.text())
+    return fetch('https://api.exchangerate.host/convert?from='+ currency + '&to=USD&amount=' + String(price)).then(response => response.text())
     .then(data => {return data});}
   
   async handleTransaction(msg) {
@@ -77,6 +77,7 @@ class EcommerceCart {
       costUSD = cost
     } else {
       let currencyResponse = await this.convertCurrency(cost, currency)
+      console.log(currencyResponse)
       costUSD = JSON.parse(currencyResponse).result
     }
     console.log(currency)
