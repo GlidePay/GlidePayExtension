@@ -153,7 +153,6 @@ class EcommerceCart {
 
     // Defining functionality.
     cryptoButton.addEventListener("click", () => {
-
       // We disable the button to prevent multiple clicks.
       this.cryptoButton.disabled = true;
       this.cryptoButtonPressed();
@@ -181,7 +180,8 @@ class EcommerceCart {
       const timer = (ms) => new Promise((res) => setTimeout(res, ms));
 
       // This loop waits for the popup's DOM to load in.
-      while (this.popupOpen) { // While the popup is open
+      while (this.popupOpen) {
+        // While the popup is open
 
         // We send a message to the popup with the cartInfo.
         const cartInfoReceived = await chrome.runtime
@@ -205,7 +205,6 @@ class EcommerceCart {
 
       // Re-enable the button.
       this.cryptoButton.disabled = false;
-
     } catch (err) {
       console.log("Error Crypto Button Flow");
       console.log(err);
@@ -217,7 +216,6 @@ class EcommerceCart {
 
   // This function checks to make sure that the user is connected with Metamask and has a wallet connected.
   async checkMetamaskSignIn() {
-
     // We check to make sure that the user is connected with Metamask and has a wallet connected.
     let accounts = await provider
       .send("eth_requestAccounts", [])
@@ -249,36 +247,35 @@ class EcommerceCart {
     } else {
       // If there are accounts, we return the first one.
       return accounts[0];
-
     }
   }
 
   // This function checks to make sure that the request is actually coming from a user with a wallet,
   // and not being spoofed.
   async verifyWallet(walletID) {
-
     // We check for an existing JWT in local storage.
     let existingToken = await chrome.storage.local.get("glidePayJWT");
 
     if (
-        // We check to see if the JWT is empty.
-        JSON.stringify(existingToken) === "{}" ||
-        existingToken.hasOwnProperty("message")
-
+      // We check to see if the JWT is empty.
+      JSON.stringify(existingToken) === "{}" ||
+      existingToken.hasOwnProperty("message")
     ) {
       // If it is, we set it to an empty JSON object, and then we create a new JWT for the user.
       existingToken = {};
       await this.createJWTToken(walletID, existingToken.glidePayJWT);
       return;
-
     }
     // If the JWT is not empty, we check to make sure that the JWT is valid.
-    if (!(await this.verifyToken(walletID, existingToken.glidePayJWT))) { // this.verifyToken returns false if the token is invalid.
+    if (!(await this.verifyToken(walletID, existingToken.glidePayJWT))) {
+      // this.verifyToken returns false if the token is invalid.
 
       // If it is invalid, we create a new JWT for the user.
-      await this.createJWTToken(walletID.toLowerCase(), existingToken.glidePayJWT);
+      await this.createJWTToken(
+        walletID.toLowerCase(),
+        existingToken.glidePayJWT
+      );
       return;
-
     } else {
       // Otherwise, it's valid.
       console.log("Token is valid");
@@ -286,33 +283,28 @@ class EcommerceCart {
 
     // Check to see if the popup is not open.
     if (!this.popupOpen) {
-
       // If the popup is not open, we send a message asking for it to be created.
       await chrome.runtime.sendMessage({
         from: "cart",
         subject: "createOrderPopup",
         screenSize: screen.width,
       });
-
     }
     this.popupOpen = true;
   }
 
   // This function creates a JWT for the user.
   async createJWTToken(walletID, token) {
-
     // First, we generate a unique nonce for the JWT -- one time use. This is used to prevent replay attacks.
     // This sends a message asking for a nonce to be created.
     let nonceResponse = await chrome.runtime.sendMessage({
       from: "cart",
       subject: "generateNonce",
       body: {
-
         // We pass the walletID to the backend to get the nonce. We make sure that we set it to lowercase
         // because Metamask often sends us the walletID in lowercase, and so we must be consistent as to how we store
         // the wallet.
         wallet: walletID.toLowerCase(),
-
       },
     });
 
@@ -400,7 +392,6 @@ class EcommerceCart {
 
   // This function verifies the JWT.
   async verifyToken(walletID, token) {
-
     // We send the JWT to the backend to be verified.
     let verifyTokenResponse = await chrome.runtime.sendMessage({
       from: "cart",

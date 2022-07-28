@@ -36,7 +36,7 @@ async function setUpAddAddressButton() {
 
   // Adds event listener for the back button.
   backbutton.addEventListener("click", () => {
-    window.location.href = "confirmation.html";
+    window.location.href = "/views/confirmation.html?id=2";
   });
 
   // Adds event listener for the add address button.
@@ -154,14 +154,11 @@ async function addAddressButtonClicked() {
 
     // If no error, redirects to main confirmation page.
     console.log(createAddressResponse);
-    window.location.href = "/views/confirmation.html";
-
+    window.location.href = "/views/confirmation.html?id=2";
   } else {
-
     // If save address checkmark is not checked, it will store the address in sessionStorage.
     sessionStorage.setItem("tempAddress", JSON.stringify(address));
-    window.location.href = "/views/confirmation.html";
-
+    window.location.href = "/views/confirmation.html?id=2";
   }
 }
 

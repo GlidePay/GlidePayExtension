@@ -244,7 +244,85 @@ async function cartMain() {
   }
 }
 
+function GetURLParameter(sParam) {
+  let sPageURL = window.location.search.substring(1);
+  let sURLVariables = sPageURL.split("&");
+  for (var i = 0; i < sURLVariables.length; i++) {
+    let sParameterName = sURLVariables[i].split("=");
+    if (sParameterName[0] == sParam) {
+      return sParameterName[1];
+    }
+  }
+}
+
 async function tryingLoading() {
+  console.log("loggin shit");
+  console.log(GetURLParameter("id"));
+  if (GetURLParameter("id") === "2") {
+    const senderTabID = await chrome.runtime.sendMessage({
+      from: "confirmation",
+      subject: "getTabID",
+    });
+
+    console.log("RESPONSE" + senderTabID);
+    const windows = await chrome.windows.getAll({ populate: true });
+    for (let a in windows) {
+      for (let b in windows[a].tabs) {
+        if (windows[a].tabs[b].id === senderTabID) {
+          console.log(senderTabID + "TABID");
+          const products = await chrome.tabs.sendMessage(
+            windows[a].tabs[b].id,
+            {
+              from: "popup",
+              subject: "needInfo",
+            }
+          );
+          try {
+            await setProductInfo(products);
+          } catch (err) {
+            if (!(err instanceof LogError)) {
+              new LogError(
+                "Setting Product Info Failed (Uncaught)",
+                err,
+                {},
+                "Getting Products Failed",
+                Date.now(),
+                () => {
+                  const columnLabelRow =
+                    document.getElementById("column-label-row");
+                  const errorText = document.createElement("p");
+                  errorText.classList = "error-text text-center";
+                  errorText.innerText = "Getting Products Failed";
+                  columnLabelRow.after(errorText);
+                }
+              );
+            }
+          }
+          try {
+            await getAddresses();
+          } catch (err) {
+            if (!(err instanceof LogError)) {
+              new LogError(
+                "Getting Address Info Failed (Uncaught)",
+                err,
+                {},
+                "Getting Addresses Failed",
+                Date.now(),
+                () => {
+                  const addressSelectDropdown =
+                    document.getElementById("addressSelect");
+                  const errorText = document.createElement("p");
+                  errorText.classList = "error-text text-center";
+                  errorText.innerText = "Getting Addresses Failed";
+                  addressSelectDropdown.after(errorText);
+                }
+              );
+            }
+          }
+        }
+      }
+    }
+  }
   chrome.runtime.connect({ name: "cartView" });
   chrome.runtime.onMessage.addListener(
     async (message, sender, sendResponse) => {
