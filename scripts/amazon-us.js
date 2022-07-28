@@ -30,6 +30,8 @@ class Amazon extends ECommerceCart.EcommerceCart {
      * @function getProducts
      * @return  {Object} Contains the products selected by the user.
      */
+    console.log('getProducts');
+    console.log(document.querySelector('#activeCartViewForm'));
     let productDict = {};
     let productElements = document.querySelectorAll(
       "#activeCartViewForm > div.a-section.a-spacing-mini.sc-list-body.sc-java-remote-feature > div.a-row.sc-list-item.sc-list-item-border.sc-java-remote-feature"
