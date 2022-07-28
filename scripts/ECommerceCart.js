@@ -36,6 +36,7 @@ class EcommerceCart {
     // Sends productDict when requested by cartConfirmation popup
     chrome.runtime.onMessage.addListener((msg, sender, response) => {
       if (msg.from === "popup" && msg.subject === "needInfo") {
+        console.log(this.productDict)
         response(this.productDict);
       }
     });
@@ -64,12 +65,22 @@ class EcommerceCart {
     });
   }
 
-  // Executes the actual Metamask transaction
+  convertCurrency(price, currency) {
+    return fetch('https://api.exchangerate.host/convert?from='+ currency + '&to=EUR&amount=' + String(price)).then(response => response.text())
+    .then(data => {return data});}
+  
   async handleTransaction(msg) {
-    // Cost of the card in USD.
-    const costUSD = msg.price;
-
-    // Sends a message asking for the price of the Crypto in USD.
+    const cost = msg.price;
+    const currency = msg.currency
+    let costUSD;
+    if (currency == 'USD') {
+      costUSD = cost
+    } else {
+      let currencyResponse = await this.convertCurrency(cost, currency)
+      costUSD = JSON.parse(currencyResponse).result
+    }
+    console.log(currency)
+    console.log(costUSD)
     const getCoinPriceResponse = await chrome.runtime.sendMessage({
       from: "cart",
       subject: "getCoinPrice",
@@ -120,8 +131,6 @@ class EcommerceCart {
     // This prompts the user to approve the transaction on Metamask.
     const tx = await signer.sendTransaction(transaction);
     console.log(`txHASH: ${tx.hash}`);
-    console.log(this.retailer);
-    // Creating the body to pass to our backend to track the order.
     const body = {
       txHash: tx.hash,
       retailer: this.retailer,
@@ -255,7 +264,7 @@ class EcommerceCart {
   async verifyWallet(walletID) {
     // We check for an existing JWT in local storage.
     let existingToken = await chrome.storage.local.get("glidePayJWT");
-
+    console.log(existingToken)
     if (
       // We check to see if the JWT is empty.
       JSON.stringify(existingToken) === "{}" ||
@@ -392,7 +401,7 @@ class EcommerceCart {
 
   // This function verifies the JWT.
   async verifyToken(walletID, token) {
-    // We send the JWT to the backend to be verified.
+    console.log(token)
     let verifyTokenResponse = await chrome.runtime.sendMessage({
       from: "cart",
       subject: "verifyToken",

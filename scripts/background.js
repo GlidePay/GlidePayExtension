@@ -238,6 +238,7 @@ async function getCoinPrice(payload) {
 
 // This function passes the transaction to the GlidePay API.
 async function getTransaction(body) {
+  console.log(body)
   try {
     // We get the JWT from the local storage.
     let result = await chrome.storage.local.get("glidePayJWT");
@@ -251,9 +252,8 @@ async function getTransaction(body) {
     let addressid = body.addressid;
     let amount = body.amount;
     let ticker = body.ticker;
-
-    // We make the call.
-    let response = await fetch(
+    console.log(retailer)
+    await fetch(
       "https://xrl1xszvde.execute-api.us-east-1.amazonaws.com/prod/",
       {
         method: "post",

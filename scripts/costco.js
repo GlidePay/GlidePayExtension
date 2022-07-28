@@ -1,3 +1,4 @@
+const { LogError } = require("./LogError");
 const ECommerceCart = require("./ECommerceCart");
 // ALL CHANGES TO THIS FILE MUST BE COMPILED WITH "npm run buildCostco"
 
@@ -46,11 +47,13 @@ class Costco extends ECommerceCart.EcommerceCart {
         let index = 0;
         productElementsList.forEach(function (part) {
             if (part.tagName === "DIV") {
+                console.log(part)
                 const product = part.querySelector('div > div:nth-child(1)');
                 console.log(product);
                 const productID = product.getAttribute("data-orderitemnumber");
                 const productName = product.querySelector('div:nth-child(1) > div:nth-child(2) > h3 > a').innerText;
-                const unitPrice = product.querySelector('div:nth-child(1) > div:nth-child(2) > div:nth-child(6) > div > div > div:nth-child(1) > span');
+                const unitPrice = product.querySelector('div:nth-child(1) > div:nth-child(2) > div:nth-child(6) > div > div > div:nth-child(1) > span > span').innerHTML;
+                console.log(unitPrice)
                 const quantity = product.querySelector('div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > input').value;
                 const productImage = product.querySelector('div:nth-child(1) > div:nth-child(1) > a > img').getAttribute("src");
                 productDict[index] = {
@@ -69,7 +72,7 @@ class Costco extends ECommerceCart.EcommerceCart {
                 console.log(product);
                 const productID = product.getAttribute("data-orderitemnumber");
                 const productName = product.querySelector('div:nth-child(1) > div:nth-child(2) > h3 > a').innerText;
-                const unitPrice = product.querySelector('div:nth-child(1) > div:nth-child(2) > div:nth-child(6) > div > div > div:nth-child(1) > span').innerText;
+                const unitPrice = product.querySelector('div:nth-child(1) > div:nth-child(2) > div:nth-child(6) > div > div > div:nth-child(1) > span > span').innerText;
                 const quantity = product.querySelector('div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > input').value;
                 const productImage = product.querySelector('div:nth-child(1) > div:nth-child(1) > a > img').getAttribute("src");
                 productDict[index] = {
@@ -82,11 +85,12 @@ class Costco extends ECommerceCart.EcommerceCart {
                 index++;
             }
         });
+        console.log(productDict)
         return productDict;
     }
 
     getRetailer() {
-        return 'costco'
+            return 'costco'
     }
 }
 
@@ -107,10 +111,11 @@ function main() {
         console.log(mutations);
         costco.injectButton();
     });
+    /*
     var container = document.querySelector('#order-summary-body');
     console.log(container);
     let config = { attributes: true, subtree: true, characterData: true };
-    observer.observe(container, config);
+    observer.observe(container, config); */
 }
 
 main();

@@ -45154,7 +45154,9 @@ function wrappy (fn, cb) {
 }
 
 },{}],257:[function(require,module,exports){
+// This is a metamask library that allows us to connect to the metamask extension from our extension.
 const createProvider = require("metamask-extension-provider");
+
 const { ethers } = require("ethers");
 const maskInpageProvider = createProvider();
 const provider = new ethers.providers.Web3Provider(maskInpageProvider, "any");
@@ -45190,10 +45192,12 @@ class EcommerceCart {
     // Sends productDict when requested by cartConfirmation popup
     chrome.runtime.onMessage.addListener((msg, sender, response) => {
       if (msg.from === "popup" && msg.subject === "needInfo") {
+        console.log(this.productDict)
         response(this.productDict);
       }
     });
     console.log("Listeners created");
+    // Listens for when the popup is closed, keeps track of popup state.
     chrome.runtime.onMessage.addListener((msg, sender, response) => {
       console.log("heard oyu");
       if (msg.from === "background" && msg.subject === "popupClosed") {
@@ -45201,7 +45205,7 @@ class EcommerceCart {
       }
     });
 
-    // Prompts metamask transaction.
+    // Sends message prompting Metamask transaction.
     chrome.runtime.onMessage.addListener((msg) => {
       if (msg.from === "popup" && msg.subject === "promptTransaction") {
         try {
@@ -45217,15 +45221,29 @@ class EcommerceCart {
     });
   }
 
+  convertCurrency(price, currency) {
+    return fetch('https://api.exchangerate.host/convert?from='+ currency + '&to=EUR&amount=' + String(price)).then(response => response.text())
+    .then(data => {return data});}
+  
   async handleTransaction(msg) {
-    const costUSD = msg.price;
-
+    const cost = msg.price;
+    const currency = msg.currency
+    let costUSD;
+    if (currency == 'USD') {
+      costUSD = cost
+    } else {
+      let currencyResponse = await this.convertCurrency(cost, currency)
+      costUSD = JSON.parse(currencyResponse).result
+    }
+    console.log(currency)
+    console.log(costUSD)
     const getCoinPriceResponse = await chrome.runtime.sendMessage({
       from: "cart",
       subject: "getCoinPrice",
       body: { ticker: "ethusd" },
     });
 
+    // Checking that the price of the Crypto in USD is received, and an error was not thrown.
     if (getCoinPriceResponse.hasOwnProperty("error")) {
       throw new LogError(
         getCoinPriceResponse.customMsg,
@@ -45240,28 +45258,35 @@ class EcommerceCart {
       );
     }
 
+    // Getting the price of the Crypto in USD.
     const coinPriceUSD = getCoinPriceResponse.data;
 
+    // Calculating the cost of the cart in ETH.
+    // TODO: Update this to use the selected token.
     const ethCost = costUSD / coinPriceUSD;
     console.log(`Price in Eth: ${ethCost}`);
 
+    // Declaring variables for the transaction.
     const gas_limit = "0x100000";
     const gas = await provider.getGasPrice();
     const gasPrice = ethers.utils.hexlify(gas);
 
+    // Creating the transaction object.
     const transaction = {
+      // The address of the user's wallet.
       from: maskInpageProvider.selectedAddress,
+      // The destination address.
+      // TODO: Update this to be the actual Gemini address.
       to: "0xB5EC5c29Ed50067ba97c4009e14f5Bff607a324c",
+      // The amount of Crypto to send.
       value: ethers.utils.parseEther(ethCost.toString()),
       gasLimit: ethers.utils.hexlify(gas_limit),
       gasPrice: gasPrice,
-      //TODO: Maybe we use the nonce or data field of this to encode information about the transaction?
-      //We could verify that on the backend to ensure that the transaction is valid. Something like that.
     };
 
+    // This prompts the user to approve the transaction on Metamask.
     const tx = await signer.sendTransaction(transaction);
     console.log(`txHASH: ${tx.hash}`);
-    console.log(this.retailer);
     const body = {
       txHash: tx.hash,
       retailer: this.retailer,
@@ -45273,6 +45298,7 @@ class EcommerceCart {
     };
     console.log("BODY" + JSON.stringify(body));
 
+    // Sending the body to the backend to track the order.
     chrome.runtime.sendMessage({
       from: "cart",
       subject: "getTransaction",
@@ -45280,7 +45306,9 @@ class EcommerceCart {
     });
   }
 
+  // This defines the Pay with Crypto button and its functionality.
   createButton() {
+    // Creating the button.
     let cryptoButton = document.createElement("INPUT");
     cryptoButton.id = "crypto-button";
     cryptoButton.type = "image";
@@ -45288,21 +45316,39 @@ class EcommerceCart {
       "https://bafkreiflbuggpczchtd2elv5qqhyks27ujz6hihi4xxzrp5kxu3psd4qce.ipfs.nftstorage.link/";
     cryptoButton.style.cssText = "height: 79px; width: 260px";
 
+    // Defining functionality.
     cryptoButton.addEventListener("click", () => {
+      // We disable the button to prevent multiple clicks.
       this.cryptoButton.disabled = true;
       this.cryptoButtonPressed();
     });
     return cryptoButton;
   }
 
+  // This function is called when the Pay with Crypto button is pressed.
   async cryptoButtonPressed() {
     try {
+      // We check to make sure that the user is connected with Metamask and has a wallet connected.
       let walletID = await this.checkMetamaskSignIn();
+
+      // We check to make sure that the request is actually coming from a user with a wallet, and not being spoofed.
+      // We do this by calling verifyWallet.
       await this.verifyWallet(walletID);
+
+      // We get the products selected by the user.
       this.productDict = this.getProducts();
+
+      // We get the retailer of the products.
       this.retailer = this.getRetailer();
+
+      // This is a timer we will use for loading animation.
       const timer = (ms) => new Promise((res) => setTimeout(res, ms));
+
+      // This loop waits for the popup's DOM to load in.
       while (this.popupOpen) {
+        // While the popup is open
+
+        // We send a message to the popup with the cartInfo.
         const cartInfoReceived = await chrome.runtime
           .sendMessage({
             from: "cart",
@@ -45313,13 +45359,16 @@ class EcommerceCart {
             return response;
           });
 
+        // Once we know the cart has received the products, we can break and stop with the loading animation.
         if (cartInfoReceived) {
           break;
         }
 
-        await timer(1000); // then the created Promise can be awaited
+        // We wait for 1 second before checking again.
+        await timer(1000);
       }
 
+      // Re-enable the button.
       this.cryptoButton.disabled = false;
     } catch (err) {
       console.log("Error Crypto Button Flow");
@@ -45330,7 +45379,9 @@ class EcommerceCart {
     }
   }
 
+  // This function checks to make sure that the user is connected with Metamask and has a wallet connected.
   async checkMetamaskSignIn() {
+    // We check to make sure that the user is connected with Metamask and has a wallet connected.
     let accounts = await provider
       .send("eth_requestAccounts", [])
       .catch((err) => {
@@ -45346,6 +45397,7 @@ class EcommerceCart {
         );
       });
 
+    // If there are no accounts, we throw an error.
     if (accounts.length === 0) {
       throw new LogError(
         "No Metamask accounts available",
@@ -45358,25 +45410,45 @@ class EcommerceCart {
         }
       );
     } else {
+      // If there are accounts, we return the first one.
       return accounts[0];
     }
   }
 
+  // This function checks to make sure that the request is actually coming from a user with a wallet,
+  // and not being spoofed.
   async verifyWallet(walletID) {
+    // We check for an existing JWT in local storage.
     let existingToken = await chrome.storage.local.get("glidePayJWT");
+    console.log(existingToken)
     if (
+      // We check to see if the JWT is empty.
       JSON.stringify(existingToken) === "{}" ||
       existingToken.hasOwnProperty("message")
     ) {
+      // If it is, we set it to an empty JSON object, and then we create a new JWT for the user.
       existingToken = {};
       await this.createJWTToken(walletID, existingToken.glidePayJWT);
       return;
     }
+    // If the JWT is not empty, we check to make sure that the JWT is valid.
     if (!(await this.verifyToken(walletID, existingToken.glidePayJWT))) {
-      await this.createJWTToken(walletID, existingToken.glidePayJWT);
+      // this.verifyToken returns false if the token is invalid.
+
+      // If it is invalid, we create a new JWT for the user.
+      await this.createJWTToken(
+        walletID.toLowerCase(),
+        existingToken.glidePayJWT
+      );
       return;
+    } else {
+      // Otherwise, it's valid.
+      console.log("Token is valid");
     }
+
+    // Check to see if the popup is not open.
     if (!this.popupOpen) {
+      // If the popup is not open, we send a message asking for it to be created.
       await chrome.runtime.sendMessage({
         from: "cart",
         subject: "createOrderPopup",
@@ -45384,17 +45456,24 @@ class EcommerceCart {
       });
     }
     this.popupOpen = true;
-    return;
   }
 
+  // This function creates a JWT for the user.
   async createJWTToken(walletID, token) {
+    // First, we generate a unique nonce for the JWT -- one time use. This is used to prevent replay attacks.
+    // This sends a message asking for a nonce to be created.
     let nonceResponse = await chrome.runtime.sendMessage({
       from: "cart",
       subject: "generateNonce",
       body: {
-        wallet: walletID,
+        // We pass the walletID to the backend to get the nonce. We make sure that we set it to lowercase
+        // because Metamask often sends us the walletID in lowercase, and so we must be consistent as to how we store
+        // the wallet.
+        wallet: walletID.toLowerCase(),
       },
     });
+
+    // Checks to make sure there's no error.
     if (nonceResponse.hasOwnProperty("error")) {
       throw new LogError(
         nonceResponse.customMsg,
@@ -45408,10 +45487,21 @@ class EcommerceCart {
         }
       );
     }
+
+    // Declaring the nonce.
     const nonce = nonceResponse.data;
+
+    // We generate this message to be displayed to the user in the Metamask popup. THIS MUST BE EXACTLY THE SAME HERE
+    // AS IT IS ON THE BACKEND. IF YOU CHANGE THIS, MAKE SURE TO ALSO CHANGE THE BACKEND.
     let message = "Please sign this message to login!.\n Nonce: " + nonce;
+
     console.log("NONCE: " + nonce);
+
+    // This prompts the user to sign the message, and awaits the signature that is generated.
     const signature = await signer.signMessage(message);
+
+    // This then creates the popup. We do this in advance of calling the backend so that we can have a loading animation
+    // while awaiting the backend response.
     if (!this.popupOpen) {
       await chrome.runtime.sendMessage({
         from: "cart",
@@ -45421,6 +45511,7 @@ class EcommerceCart {
     }
     this.popupOpen = true;
 
+    // We send the signature to the backend.
     let signatureResponse = await chrome.runtime.sendMessage({
       from: "cart",
       subject: "verifySignature",
@@ -45431,6 +45522,7 @@ class EcommerceCart {
       },
     });
 
+    // Checks to make sure there's no error.
     if (signatureResponse.hasOwnProperty("error")) {
       const signatureResponseError = signatureResponse.error;
       console.log("Throwing signature error");
@@ -45452,14 +45544,20 @@ class EcommerceCart {
         }
       );
     }
+
+    // If there's no error, we set the JWT to the response.
     const newToken = signatureResponse.data;
+
+    // Then we store it in localStorage.
     await chrome.storage.local.set({
       glidePayJWT: newToken,
     });
     console.log("Wallet Verified and Set");
   }
 
+  // This function verifies the JWT.
   async verifyToken(walletID, token) {
+    console.log(token)
     let verifyTokenResponse = await chrome.runtime.sendMessage({
       from: "cart",
       subject: "verifyToken",
@@ -45468,6 +45566,8 @@ class EcommerceCart {
         wallet: walletID,
       },
     });
+
+    // Checks to make sure there's no error.
     if (verifyTokenResponse.hasOwnProperty("error")) {
       const verifyTokenResponseError = verifyTokenResponse.error;
       throw new LogError(
@@ -45481,14 +45581,17 @@ class EcommerceCart {
         verifyTokenResponseError.errorID,
         () => {
           this.cryptoButton.disabled = false;
-          alert("Invalid Token");
+          alert("CRITICAL ERROR: VERIFY TOKEN FAILED"); //? Why would we do this?
         }
       );
     }
+
+    // If there's no error, we set the JWT to the response.
     return verifyTokenResponse.data;
   }
 }
 
+// Export the class so that it can be used in other files.
 module.exports = {
   EcommerceCart,
 };
@@ -45533,33 +45636,35 @@ const ECommerceCart = require("./ECommerceCart");
 // ALL CHANGES TO THIS FILE MUST BE COMPILED WITH "npm run buildWalmart"
 
 class Walmart extends ECommerceCart.EcommerceCart {
-    /**
-     * Defines methods and handles the flow specific to Walmart's website.
-     */
-    constructor() {
-        super();
-    }
+  /**
+   * Defines methods and handles the flow specific to Walmart's website.
+   */
+  constructor() {
+    super();
+  }
 
-    injectButton(buttonLocation) {
-        /**
+  injectButton(buttonLocation) {
+    /**
          * Injects the pay with crypto button into Walmart's cart page.
          * @function injectButton
 
          */
-            // Loads in button and aligns it.
-        const buttonBox = document.querySelector("#maincontent > div > div > div > div:nth-child(2) > div.flex.w-third.flex-column.ml3 > div > div > div:nth-child(1)");
-        buttonBox.style.alignItems = "center";
-        buttonLocation.after(this.cryptoButton);
-        buttonLocation.style.marginBottom = "10px";
-        buttonLocation.style.paddingBottom = "5px";
-    }
+    // Loads in button and aligns it.
+    const buttonBox = document.querySelector(
+      "#maincontent > div > div > div > div:nth-child(2) > div.flex.w-third.flex-column.ml3 > div > div > div:nth-child(1)"
+    );
+    buttonBox.style.alignItems = "center";
+    buttonLocation.after(this.cryptoButton);
+    buttonLocation.style.marginBottom = "10px";
+    buttonLocation.style.paddingBottom = "5px";
+  }
 
-    getProducts() {
-        /**
-         * Parses Walmart's checkout page for the user's selected products.
-         * @function getProducts
-         * @return  {Object} Contains the products selected by the user.
-         */
+  getProducts() {
+    /**
+     * Parses Walmart's checkout page for the user's selected products.
+     * @function getProducts
+     * @return  {Object} Contains the products selected by the user.
+     */
 
         // Fucking disgusting ass code lol
         let productDict = {};
@@ -45569,15 +45674,17 @@ class Walmart extends ECommerceCart.EcommerceCart {
         );
         let productElementsList = Array.from(productElements.children);
         productElementsList.forEach(function (part, index) {
+            console.log(part)
             let productCartSection = part.querySelector('div:nth-child(1) > div > ul');
             if (productCartSection != null) {
                 let productCartSectionList = Array.from(productCartSection.children);
                 productCartSectionList.forEach(function (part) {
-                    let productItem = part.querySelector('div:nth-child(3)');
+                    let productItem = part.querySelector('div:nth-child(2)');
+                    console.log(productItem)
                     let productInfo = productItem.querySelector('div:nth-child(1) > div > div');
                     let productID = productInfo.querySelector('a').getAttribute('href').split('/ip/seort/')[1];
                     let productName = productInfo.querySelector('a > h4 > div > span').innerText;
-                    let unitPrice = productInfo.querySelector('div:nth-child(3) > div > div:nth-child(1) > span').innerText;
+                    let unitPrice = productInfo.querySelector('div:nth-child(3) > div > div:nth-child(1) > span').innerText.split('$')[1];
                     let productQuantityString = productItem.querySelector('a').getAttribute('aria-label').split(' in cart')[0];
                     let productQuantity = productQuantityString.slice(productQuantityString.length - 1);
                     let productImage = productInfo.querySelector('a > img').getAttribute('srcset').split(' 1x')[0];
@@ -45594,11 +45701,11 @@ class Walmart extends ECommerceCart.EcommerceCart {
                 let productCartSection2 = part.querySelector('div > div > ul');
                 let productCartSection2List = Array.from(productCartSection2.children);
                 productCartSection2List.forEach(function (part) {
-                    let productItem = part.querySelector('div:nth-child(3)');
+                    let productItem = part.querySelector('div:nth-child(2)');
                     let productInfo = productItem.querySelector('div:nth-child(1) > div > div');
                     let productID = productInfo.querySelector('a').getAttribute('href').split('/ip/seort/')[1];
                     let productName = productInfo.querySelector('a > h4 > div > span').innerText;
-                    let unitPrice = productInfo.querySelector('div:nth-child(3) > div > div:nth-child(1) > span').innerText;
+                    let unitPrice = productInfo.querySelector('div:nth-child(3) > div > div:nth-child(1) > span').innerText.split('$')[1];
                     let productQuantityString = productItem.querySelector('a').getAttribute('aria-label').split(' in cart')[0];
                     let productQuantity = productQuantityString.slice(productQuantityString.length - 1);
                     let productImage = productInfo.querySelector('a > img').getAttribute('srcset').split(' 1x')[0];
@@ -45613,13 +45720,13 @@ class Walmart extends ECommerceCart.EcommerceCart {
                 });
             }
         });
-        console.log(productElements);
-        return productDict;
-    }
+    console.log(productElements);
+    return productDict;
+  }
 
-    getRetailer() {
-        return 'walmart'
-    }
+  getRetailer() {
+    return "walmart";
+  }
 }
 
 function main() {
@@ -45636,11 +45743,13 @@ function main() {
     // Waits for page to fully load before injecting the button.
     const loadObserver = new MutationObserver(function(mutations) {
         mutations.forEach(function(mutation) {
-            console.log(mutation);
-            if (mutation.target.childNodes) {
-                if (mutation.target.childNodes[0].childNodes) {
-                    if (mutation.target.childNodes[0].childNodes[0].id === "Continue to checkout button") {
-                        walmart.injectButton(mutation.target.childNodes[0].childNodes[0]);
+            if (mutation.addedNodes.length > 0) {
+                if (mutation.addedNodes[0]) {
+                    if (mutation.addedNodes[0].childNodes) {
+                        if (mutation.addedNodes[0].childNodes[0].childNodes[0].id === "Continue to checkout button") {
+                            console.log("injecting button");
+                            walmart.injectButton(mutation.addedNodes[0].childNodes[0].childNodes[0]);
+                        }
                     }
                 }
             }
@@ -45648,9 +45757,9 @@ function main() {
     });
     const container = document.querySelector("#__next")
     let config = { attributes: true, childList: true, subtree: true, characterData: true };
-    console.log(container);
     loadObserver.observe(container, config);
 }
 
 main();
+
 },{"./ECommerceCart":257}]},{},[259]);

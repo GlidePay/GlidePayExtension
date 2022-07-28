@@ -114,7 +114,8 @@ async function getAddresses() {
   productSection.appendChild(addressButtonRow);
 }
 
-async function setProductInfo(products) {
+async function setProductInfo(products, sender) {
+  let currency;
   const cartView = document.getElementById("cart-view");
   const loadingView = document.getElementById("loading-view");
   cartView.style.display = "block";
@@ -130,7 +131,7 @@ async function setProductInfo(products) {
     itemImgEntry.setAttribute("class", "ps-4");
     totalPrice +=
       parseFloat(productDict["unitPrice"]) * parseInt(productDict["quantity"]);
-
+    currency = (productDict["currency"])
     const itemImage = document.createElement("img");
     itemImage.src = productDict["productImage"];
     itemImage.setAttribute("height", "100px");
@@ -165,11 +166,12 @@ async function setProductInfo(products) {
     const windows = await chrome.windows.getAll({ populate: true });
     for (let a in windows) {
       for (let b in windows[a].tabs) {
-        if (windows[a].tabs[b].url.includes("amazon.com/gp/cart")) {
+        if (windows[a].tabs[b].id === sender) {
           chrome.tabs.sendMessage(windows[a].tabs[b].id, {
             from: "popup",
             subject: "promptTransaction",
             price: totalPrice,
+            currency: currency,
             addressid: addressSelect.options[addressSelect.selectedIndex].value,
             products: products,
           });
@@ -181,7 +183,7 @@ async function setProductInfo(products) {
 }
 
 async function cartMain() {
-  const senderTabID = await chrome.runtime.sendMessage({
+  var senderTabID = await chrome.runtime.sendMessage({
     from: "confirmation",
     subject: "getTabID",
   });
@@ -197,7 +199,7 @@ async function cartMain() {
           subject: "needInfo",
         });
         try {
-          await setProductInfo(products);
+          await setProductInfo(products, senderTabID);
         } catch (err) {
           if (!(err instanceof LogError)) {
             new LogError(
@@ -331,7 +333,7 @@ async function tryingLoading() {
         sendResponse(true);
         const products = message.data;
         try {
-          await setProductInfo(products);
+          await setProductInfo(products, sender);
         } catch (err) {
           if (!(err instanceof LogError)) {
             new LogError(
@@ -380,7 +382,7 @@ async function tryingLoading() {
 window.addEventListener("load", async () => {
   try {
     await tryingLoading();
-    // await cartMain();
+    //await cartMain();
   } catch (err) {
     new LogError(
       "Building Cart Popup Failed (Uncaught)",

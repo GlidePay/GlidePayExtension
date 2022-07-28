@@ -45190,6 +45190,7 @@ class EcommerceCart {
     // Sends productDict when requested by cartConfirmation popup
     chrome.runtime.onMessage.addListener((msg, sender, response) => {
       if (msg.from === "popup" && msg.subject === "needInfo") {
+        console.log(this.productDict)
         response(this.productDict);
       }
     });
@@ -45217,9 +45218,22 @@ class EcommerceCart {
     });
   }
 
+  convertCurrency(price, currency) {
+    return fetch('https://api.exchangerate.host/convert?from='+ currency + '&to=EUR&amount=' + String(price)).then(response => response.text())
+    .then(data => {return data});}
+  
   async handleTransaction(msg) {
-    const costUSD = msg.price;
-
+    const cost = msg.price;
+    const currency = msg.currency
+    let costUSD;
+    if (currency == 'USD') {
+      costUSD = cost
+    } else {
+      let currencyResponse = await this.convertCurrency(cost, currency)
+      costUSD = JSON.parse(currencyResponse).result
+    }
+    console.log(currency)
+    console.log(costUSD)
     const getCoinPriceResponse = await chrome.runtime.sendMessage({
       from: "cart",
       subject: "getCoinPrice",
@@ -45261,7 +45275,6 @@ class EcommerceCart {
 
     const tx = await signer.sendTransaction(transaction);
     console.log(`txHASH: ${tx.hash}`);
-    console.log(this.retailer);
     const body = {
       txHash: tx.hash,
       retailer: this.retailer,
@@ -45364,6 +45377,7 @@ class EcommerceCart {
 
   async verifyWallet(walletID) {
     let existingToken = await chrome.storage.local.get("glidePayJWT");
+    console.log(existingToken)
     if (
       JSON.stringify(existingToken) === "{}" ||
       existingToken.hasOwnProperty("message")
@@ -45462,6 +45476,7 @@ class EcommerceCart {
   }
 
   async verifyToken(walletID, token) {
+    console.log(token)
     let verifyTokenResponse = await chrome.runtime.sendMessage({
       from: "cart",
       subject: "verifyToken",
@@ -45587,6 +45602,7 @@ class Amazon extends ECommerceCart.EcommerceCart {
         unitPrice: unitPrice,
         quantity: quantity,
         productImage: productImage,
+        currency: currency
       };
     });
     return productDict;
