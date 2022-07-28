@@ -2,33 +2,35 @@ const ECommerceCart = require("./ECommerceCart");
 // ALL CHANGES TO THIS FILE MUST BE COMPILED WITH "npm run buildWalmart"
 
 class Walmart extends ECommerceCart.EcommerceCart {
-    /**
-     * Defines methods and handles the flow specific to Walmart's website.
-     */
-    constructor() {
-        super();
-    }
+  /**
+   * Defines methods and handles the flow specific to Walmart's website.
+   */
+  constructor() {
+    super();
+  }
 
-    injectButton(buttonLocation) {
-        /**
+  injectButton(buttonLocation) {
+    /**
          * Injects the pay with crypto button into Walmart's cart page.
          * @function injectButton
 
          */
-            // Loads in button and aligns it.
-        const buttonBox = document.querySelector("#maincontent > div > div > div > div:nth-child(2) > div.flex.w-third.flex-column.ml3 > div > div > div:nth-child(1)");
-        buttonBox.style.alignItems = "center";
-        buttonLocation.after(this.cryptoButton);
-        buttonLocation.style.marginBottom = "10px";
-        buttonLocation.style.paddingBottom = "5px";
-    }
+    // Loads in button and aligns it.
+    const buttonBox = document.querySelector(
+      "#maincontent > div > div > div > div:nth-child(2) > div.flex.w-third.flex-column.ml3 > div > div > div:nth-child(1)"
+    );
+    buttonBox.style.alignItems = "center";
+    buttonLocation.after(this.cryptoButton);
+    buttonLocation.style.marginBottom = "10px";
+    buttonLocation.style.paddingBottom = "5px";
+  }
 
-    getProducts() {
-        /**
-         * Parses Walmart's checkout page for the user's selected products.
-         * @function getProducts
-         * @return  {Object} Contains the products selected by the user.
-         */
+  getProducts() {
+    /**
+     * Parses Walmart's checkout page for the user's selected products.
+     * @function getProducts
+     * @return  {Object} Contains the products selected by the user.
+     */
 
         // Fucking disgusting ass code lol
         let productDict = {};
@@ -84,13 +86,13 @@ class Walmart extends ECommerceCart.EcommerceCart {
                 });
             }
         });
-        console.log(productElements);
-        return productDict;
-    }
+    console.log(productElements);
+    return productDict;
+  }
 
-    getRetailer() {
-        return 'walmart'
-    }
+  getRetailer() {
+    return "walmart";
+  }
 }
 
 function main() {

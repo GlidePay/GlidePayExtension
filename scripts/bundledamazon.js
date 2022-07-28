@@ -45379,19 +45379,21 @@ class EcommerceCart {
     let existingToken = await chrome.storage.local.get("glidePayJWT");
     console.log(existingToken)
     if (
-      JSON.stringify(existingToken) == "{}" ||
+      JSON.stringify(existingToken) === "{}" ||
       existingToken.hasOwnProperty("message")
     ) {
       existingToken = {};
       await this.createJWTToken(walletID, existingToken.glidePayJWT);
       return;
     }
-
     if (!(await this.verifyToken(walletID, existingToken.glidePayJWT))) {
-      await this.createJWTToken(walletID, existingToken.glidePayJWT);
+      await this.createJWTToken(walletID.toLowerCase(), existingToken.glidePayJWT);
       return;
+    } else {
+      console.log("Token is valid");
     }
     if (!this.popupOpen) {
+      console.log("VerifiedWallet");
       await chrome.runtime.sendMessage({
         from: "cart",
         subject: "createOrderPopup",
@@ -45399,7 +45401,6 @@ class EcommerceCart {
       });
     }
     this.popupOpen = true;
-    return;
   }
 
   async createJWTToken(walletID, token) {
@@ -45407,7 +45408,7 @@ class EcommerceCart {
       from: "cart",
       subject: "generateNonce",
       body: {
-        wallet: walletID,
+        wallet: walletID.toLowerCase(),
       },
     });
     if (nonceResponse.hasOwnProperty("error")) {
@@ -45497,7 +45498,7 @@ class EcommerceCart {
         verifyTokenResponseError.errorID,
         () => {
           this.cryptoButton.disabled = false;
-          alert("Invalid Token");
+          alert("CRITICAL ERROR: VERIFY TOKEN FAILED"); //? Why would we do this?
         }
       );
     }
