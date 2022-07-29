@@ -36569,7 +36569,6 @@ function stringifyReplacer(_, value) {
     }
     return value;
 }
-
 },{"fast-safe-stringify":188}],178:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -36662,7 +36661,6 @@ exports.errorValues = {
         message: 'The provider is disconnected from the specified chain.',
     },
 };
-
 },{}],179:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -36802,7 +36800,6 @@ function parseOpts(arg) {
     }
     return [];
 }
-
 },{"./classes":177,"./error-constants":178,"./utils":181}],180:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -36817,7 +36814,6 @@ const errors_1 = require("./errors");
 Object.defineProperty(exports, "ethErrors", { enumerable: true, get: function () { return errors_1.ethErrors; } });
 const error_constants_1 = require("./error-constants");
 Object.defineProperty(exports, "errorCodes", { enumerable: true, get: function () { return error_constants_1.errorCodes; } });
-
 },{"./classes":177,"./error-constants":178,"./errors":179,"./utils":181}],181:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -36929,7 +36925,6 @@ function assignOriginalError(error) {
 function hasKey(obj, key) {
     return Object.prototype.hasOwnProperty.call(obj, key);
 }
-
 },{"./classes":177,"./error-constants":178}],182:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -40397,7 +40392,6 @@ exports.JsonRpcEngine = JsonRpcEngine;
 function jsonify(request) {
     return JSON.stringify(request, null, 2);
 }
-
 },{"@metamask/safe-event-emitter":150,"eth-rpc-errors":180}],208:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -40464,7 +40458,6 @@ function createAsyncMiddleware(asyncMiddleware) {
     };
 }
 exports.createAsyncMiddleware = createAsyncMiddleware;
-
 },{}],209:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -40486,7 +40479,6 @@ function createScaffoldMiddleware(handlers) {
     };
 }
 exports.createScaffoldMiddleware = createScaffoldMiddleware;
-
 },{}],210:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -40500,7 +40492,6 @@ function getUniqueId() {
     return idCounter;
 }
 exports.getUniqueId = getUniqueId;
-
 },{}],211:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -40520,7 +40511,6 @@ function createIdRemapMiddleware() {
     };
 }
 exports.createIdRemapMiddleware = createIdRemapMiddleware;
-
 },{"./getUniqueId":210}],212:[function(require,module,exports){
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
@@ -40540,7 +40530,6 @@ __exportStar(require("./createScaffoldMiddleware"), exports);
 __exportStar(require("./getUniqueId"), exports);
 __exportStar(require("./JsonRpcEngine"), exports);
 __exportStar(require("./mergeMiddleware"), exports);
-
 },{"./JsonRpcEngine":207,"./createAsyncMiddleware":208,"./createScaffoldMiddleware":209,"./getUniqueId":210,"./idRemapMiddleware":211,"./mergeMiddleware":213}],213:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -40552,7 +40541,6 @@ function mergeMiddleware(middlewareStack) {
     return engine.asMiddleware();
 }
 exports.mergeMiddleware = mergeMiddleware;
-
 },{"./JsonRpcEngine":207}],214:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -45192,14 +45180,11 @@ class EcommerceCart {
     // Sends productDict when requested by cartConfirmation popup
     chrome.runtime.onMessage.addListener((msg, sender, response) => {
       if (msg.from === "popup" && msg.subject === "needInfo") {
-        console.log(this.productDict)
         response(this.productDict);
       }
     });
-    console.log("Listeners created");
     // Listens for when the popup is closed, keeps track of popup state.
     chrome.runtime.onMessage.addListener((msg, sender, response) => {
-      console.log("heard oyu");
       if (msg.from === "background" && msg.subject === "popupClosed") {
         this.popupOpen = false;
       }
@@ -45222,22 +45207,31 @@ class EcommerceCart {
   }
 
   convertCurrency(price, currency) {
-    return fetch('https://api.exchangerate.host/convert?from='+ currency + '&to=USD&amount=' + String(price)).then(response => response.text())
-    .then(data => {return data});}
-  
+    return fetch(
+      "https://api.exchangerate.host/convert?from=" +
+        currency +
+        "&to=USD&amount=" +
+        String(price)
+    )
+      .then((response) => response.text())
+      .then((data) => {
+        return data;
+      });
+  }
+
   async handleTransaction(msg) {
     const cost = msg.price;
-    const currency = msg.currency
+    const currency = msg.currency;
     let costUSD;
-    if (currency === 'USD') {
-      costUSD = cost
+    if (currency === "USD") {
+      costUSD = cost;
     } else {
-      let currencyResponse = await this.convertCurrency(cost, currency)
-      console.log(currencyResponse)
-      costUSD = JSON.parse(currencyResponse).result
+      let currencyResponse = await this.convertCurrency(cost, currency);
+      console.log(currencyResponse);
+      costUSD = JSON.parse(currencyResponse).result;
     }
-    console.log(currency)
-    console.log(costUSD)
+    console.log(currency);
+    console.log(costUSD);
     const getCoinPriceResponse = await chrome.runtime.sendMessage({
       from: "cart",
       subject: "getCoinPrice",
@@ -45248,7 +45242,7 @@ class EcommerceCart {
     if (getCoinPriceResponse.hasOwnProperty("error")) {
       throw new LogError(
         getCoinPriceResponse.customMsg,
-        getCoinPriceResponse.error,
+        "getCoinPriceResponse.error",
         { price: costUSD },
         getCoinPriceResponse.uiMsg,
         getCoinPriceResponse.errorID,
@@ -45321,7 +45315,11 @@ class EcommerceCart {
     cryptoButton.addEventListener("click", () => {
       // We disable the button to prevent multiple clicks.
       this.cryptoButton.disabled = true;
-      this.cryptoButtonPressed();
+      if (!this.popupOpen) {
+        this.cryptoButtonPressed();
+        return;
+      }
+      this.cryptoButton.disabled = false;
     });
     return cryptoButton;
   }
@@ -45388,7 +45386,7 @@ class EcommerceCart {
       .catch((err) => {
         throw new LogError(
           "Metamask already open",
-          err,
+          err.stack,
           {},
           "Metamask already open",
           Date.now(),
@@ -45421,7 +45419,6 @@ class EcommerceCart {
   async verifyWallet(walletID) {
     // We check for an existing JWT in local storage.
     let existingToken = await chrome.storage.local.get("glidePayJWT");
-    console.log(existingToken)
     if (
       // We check to see if the JWT is empty.
       JSON.stringify(existingToken) === "{}" ||
@@ -45444,7 +45441,6 @@ class EcommerceCart {
       return;
     } else {
       // Otherwise, it's valid.
-      console.log("Token is valid");
     }
 
     // Check to see if the popup is not open.
@@ -45496,8 +45492,6 @@ class EcommerceCart {
     // AS IT IS ON THE BACKEND. IF YOU CHANGE THIS, MAKE SURE TO ALSO CHANGE THE BACKEND.
     let message = "Please sign this message to login!.\n Nonce: " + nonce;
 
-    console.log("NONCE: " + nonce);
-
     // This prompts the user to sign the message, and awaits the signature that is generated.
     const signature = await signer.signMessage(message);
 
@@ -45526,7 +45520,6 @@ class EcommerceCart {
     // Checks to make sure there's no error.
     if (signatureResponse.hasOwnProperty("error")) {
       const signatureResponseError = signatureResponse.error;
-      console.log("Throwing signature error");
       throw new LogError(
         signatureResponseError.customMsg,
         signatureResponseError.error,
@@ -45545,7 +45538,7 @@ class EcommerceCart {
         }
       );
     }
-
+    console.log(signatureResponse);
     // If there's no error, we set the JWT to the response.
     const newToken = signatureResponse.data;
 
@@ -45558,7 +45551,6 @@ class EcommerceCart {
 
   // This function verifies the JWT.
   async verifyToken(walletID, token) {
-    console.log(token)
     let verifyTokenResponse = await chrome.runtime.sendMessage({
       from: "cart",
       subject: "verifyToken",
@@ -45598,16 +45590,17 @@ module.exports = {
 };
 
 },{"./LogError":258,"ethers":184,"metamask-extension-provider":229}],258:[function(require,module,exports){
+// Error logging class.
 class LogError {
   constructor(customMsg, error, states, uiMsg, errorID, handle) {
-    this.customMsg = customMsg;
-    this.error = error;
+    this.customMsg = customMsg || null;
+    this.error = error || null;
     this.states = states;
-    this.uiMsg = uiMsg;
+    this.uiMsg = uiMsg || null;
     this.errorID = errorID;
     this.errorOrigin = "Extension";
     this.timestamp = this.getDate();
-    this.handle = handle();
+    handle();
     this.logError();
   }
 
@@ -45665,8 +45658,8 @@ class Amazon extends ECommerceCart.EcommerceCart {
      * @function getProducts
      * @return  {Object} Contains the products selected by the user.
      */
-    console.log('getProducts');
-    console.log(document.querySelector('#activeCartViewForm'));
+    console.log("getProducts");
+    console.log(document.querySelector("#activeCartViewForm"));
     let productDict = {};
     let productElements = document.querySelectorAll(
       "#activeCartViewForm > div.a-section.a-spacing-mini.sc-list-body.sc-java-remote-feature > div.a-row.sc-list-item.sc-list-item-border.sc-java-remote-feature"
@@ -45677,6 +45670,9 @@ class Amazon extends ECommerceCart.EcommerceCart {
       const imageElement = theArray[index].querySelectorAll(
         "div.sc-list-item-content > div > div.a-column.a-span10 > div > div > div.a-fixed-left-grid-col.a-float-left.sc-product-image-desktop.a-col-left > a > img"
       )[0];
+      if (imageElement === undefined) {
+        return;
+      }
       const currency = JSON.parse(part.getAttribute("data-subtotal")).subtotal
         .code;
       console.log(currency);
@@ -45691,28 +45687,27 @@ class Amazon extends ECommerceCart.EcommerceCart {
         unitPrice: unitPrice,
         quantity: quantity,
         productImage: productImage,
-        currency: currency
+        currency: currency,
       };
     });
     return productDict;
   }
 
   getRetailer() {
-    let url = window.location.href
-    if (url.includes('amazon.com.mx')) {
-      return 'amazon_mx'
-    }else if (url.includes('www.amazon.ca')){
-      return 'amazon_ca'
-    }else if (url.includes('www.amazon.de')){
-      return 'amazon_de'
-    } else if (url.includes('www.amazon.co.uk')){
-      return 'amazon_uk'
+    let url = window.location.href;
+    if (url.includes("amazon.com.mx")) {
+      return "amazon_mx";
+    } else if (url.includes("www.amazon.ca")) {
+      return "amazon_ca";
+    } else if (url.includes("www.amazon.de")) {
+      return "amazon_de";
+    } else if (url.includes("www.amazon.co.uk")) {
+      return "amazon_uk";
     } else {
-    return 'amazon'
+      return "amazon";
     }
   }
 }
-
 
 function main() {
   /**
