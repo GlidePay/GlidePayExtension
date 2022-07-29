@@ -64,18 +64,20 @@ class Costco extends ECommerceCart.EcommerceCart {
                 let unitPrice;
                 try{
                 unitPrice = product.querySelector('div:nth-child(1) > div:nth-child(2) > div:nth-child(7) > div > div > div:nth-child(1) > span > span').innerText;}
-                catch {}
-                try {
+                catch {try {
                     unitPrice = product.querySelector('div:nth-child(1) > div:nth-child(2) > div:nth-child(6) > div > div > div:nth-child(1) > span > span').innerText;
-                } catch{}
+                } catch{}}
+
                 console.log(unitPrice)
                 let quantity;
                 try {
-                quantity = product.querySelector('div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > input').value;}
-                catch{}
-                try {
-                    quantity = product.querySelector('div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > span').innerText;
-                }catch{}
+                quantity = product.querySelector('div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > input').value;
+            console.log(quantity)}
+                catch{try {
+                    quantity = product.querySelector('div:nth-child(2) > div:nth-child(1) > div:nth-child(2)').innerHTML;
+                    console.log(quantity)
+                }catch{}}
+
                 const productImage = product.querySelector('div:nth-child(1) > div:nth-child(1) > a > img').getAttribute("src");
                 productDict[index] = {
                     currency: 'USD',
