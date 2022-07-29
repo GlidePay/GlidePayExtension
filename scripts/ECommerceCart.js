@@ -47,10 +47,11 @@ class EcommerceCart {
     });
 
     // Sends message prompting Metamask transaction.
-    chrome.runtime.onMessage.addListener((msg) => {
+    chrome.runtime.onMessage.addListener(async (msg, sender, sendResponse) => {
       if (msg.from === "popup" && msg.subject === "promptTransaction") {
         try {
-          this.handleTransaction(msg);
+          sendResponse(await this.handleTransaction(msg));
+          return true;
         } catch (err) {
           console.log("Transaction Error");
           console.log(err);
@@ -138,6 +139,7 @@ class EcommerceCart {
     // This prompts the user to approve the transaction on Metamask.
     const tx = await signer.sendTransaction(transaction);
     console.log(`txHASH: ${tx.hash}`);
+
     const body = {
       txHash: tx.hash,
       retailer: this.retailer,
@@ -155,6 +157,7 @@ class EcommerceCart {
       subject: "getTransaction",
       body: body,
     });
+    return true;
   }
 
   // This defines the Pay with Crypto button and its functionality.

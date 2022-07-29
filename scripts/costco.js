@@ -51,9 +51,14 @@ class Costco extends ECommerceCart.EcommerceCart {
                 const product = part.querySelector('div > div:nth-child(1)');
                 console.log(product);
                 const productID = product.getAttribute("data-orderitemnumber");
+                console.log("productID: " + productID);
                 const productName = product.querySelector('div:nth-child(1) > div:nth-child(2) > h3 > a').innerText;
-                const unitPrice = product.querySelector('div:nth-child(1) > div:nth-child(2) > div:nth-child(6) > div > div > div:nth-child(1) > span > span').innerHTML;
-                console.log(unitPrice)
+                console.log("productName: " + productName);
+                if (product.getElementsByClassName("free-gift")) {
+                    console.log("free gift");
+                }
+                const unitPrice = product.querySelector('div:nth-child(1) > div:nth-child(2) > div:nth-child(6) > div > div > div:nth-child(1) > span > span').innerText;
+                console.log("price: " + unitPrice);
                 const quantity = product.querySelector('div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > input').value;
                 const productImage = product.querySelector('div:nth-child(1) > div:nth-child(1) > a > img').getAttribute("src");
                 productDict[index] = {

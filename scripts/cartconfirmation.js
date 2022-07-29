@@ -99,8 +99,7 @@ async function setProductInfo(products, sender) {
     const itemRow = document.createElement("tr");
     const itemImgEntry = document.createElement("td");
     itemImgEntry.setAttribute("class", "ps-4");
-    totalPrice +=
-      parseFloat(productDict["unitPrice"]) * parseInt(productDict["quantity"]);
+    totalPrice += parseFloat(productDict["unitPrice"]) * parseInt(productDict["quantity"]);
     currency = productDict["currency"];
     const itemImage = document.createElement("img");
     itemImage.src = productDict["productImage"];
@@ -144,8 +143,11 @@ async function setProductInfo(products, sender) {
             currency: currency,
             addressid: addressSelect.options[addressSelect.selectedIndex].value,
             products: products,
+          }, async response => {
+            if (await response) {
+              window.location.href = '/views/ordersentpopup.html';
+            }
           });
-          window.close();
         }
       }
     }
