@@ -30,8 +30,8 @@ class Amazon extends ECommerceCart.EcommerceCart {
      * @function getProducts
      * @return  {Object} Contains the products selected by the user.
      */
-    console.log('getProducts');
-    console.log(document.querySelector('#activeCartViewForm'));
+    console.log("getProducts");
+    console.log(document.querySelector("#activeCartViewForm"));
     let productDict = {};
     let productElements = document.querySelectorAll(
       "#activeCartViewForm > div.a-section.a-spacing-mini.sc-list-body.sc-java-remote-feature > div.a-row.sc-list-item.sc-list-item-border.sc-java-remote-feature"
@@ -42,6 +42,9 @@ class Amazon extends ECommerceCart.EcommerceCart {
       const imageElement = theArray[index].querySelectorAll(
         "div.sc-list-item-content > div > div.a-column.a-span10 > div > div > div.a-fixed-left-grid-col.a-float-left.sc-product-image-desktop.a-col-left > a > img"
       )[0];
+      if (imageElement === undefined) {
+        return;
+      }
       const currency = JSON.parse(part.getAttribute("data-subtotal")).subtotal
         .code;
       console.log(currency);
@@ -56,28 +59,27 @@ class Amazon extends ECommerceCart.EcommerceCart {
         unitPrice: unitPrice,
         quantity: quantity,
         productImage: productImage,
-        currency: currency
+        currency: currency,
       };
     });
     return productDict;
   }
 
   getRetailer() {
-    let url = window.location.href
-    if (url.includes('amazon.com.mx')) {
-      return 'amazon_mx'
-    }else if (url.includes('www.amazon.ca')){
-      return 'amazon_ca'
-    }else if (url.includes('www.amazon.de')){
-      return 'amazon_de'
-    } else if (url.includes('www.amazon.co.uk')){
-      return 'amazon_uk'
+    let url = window.location.href;
+    if (url.includes("amazon.com.mx")) {
+      return "amazon_mx";
+    } else if (url.includes("www.amazon.ca")) {
+      return "amazon_ca";
+    } else if (url.includes("www.amazon.de")) {
+      return "amazon_de";
+    } else if (url.includes("www.amazon.co.uk")) {
+      return "amazon_uk";
     } else {
-    return 'amazon'
+      return "amazon";
     }
   }
 }
-
 
 function main() {
   /**

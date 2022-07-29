@@ -1,13 +1,14 @@
+// Error logging class.
 class LogError {
   constructor(customMsg, error, states, uiMsg, errorID, handle) {
-    this.customMsg = customMsg;
-    this.error = error;
+    this.customMsg = customMsg || null;
+    this.error = error || null;
     this.states = states;
-    this.uiMsg = uiMsg;
+    this.uiMsg = uiMsg || null;
     this.errorID = errorID;
     this.errorOrigin = "Extension";
     this.timestamp = this.getDate();
-    this.handle = handle();
+    handle();
     this.logError();
   }
 

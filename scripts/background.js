@@ -5,10 +5,8 @@ let senderID;
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   // This handles requests from cart.
   if (message.from === "cart") {
-
     // Switch statement on the subject to improve performance.
     switch (message.subject) {
-
       // NO CLUE WHAT THIS DOES, DO NOT DELETE PLEASE.
       case "productData":
         {
@@ -30,7 +28,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
           // Creates the popup.
           chrome.windows.create(
             {
-
               // HTML File for the popup.
               url: "views/confirmation.html",
               type: "popup",
@@ -40,11 +37,10 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
               height: 620,
             },
 
-              // This callback function is run once the popup is created. It sets the senderID variable to the
-              // tab id of the tab that created the popup.
+            // This callback function is run once the popup is created. It sets the senderID variable to the
+            // tab id of the tab that created the popup.
             () => {
               senderID = sender.tab.id;
-              console.log("senderID being sent" + senderID);
             }
           );
         }
@@ -52,7 +48,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
       // This gets the price of the coin being asked for by querying the gemini API.
       case "getCoinPrice": {
-
         // We call the helper function.
         getCoinPrice(message.body).then((result) => {
           sendResponse(result);
@@ -66,10 +61,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       // This essentially passes the transaction to the GlidePay API.
       case "getTransaction":
         {
-
           // We call the helper function.
           getTransaction(message.body).then((result) => {
-
             // Checking for error.
             if (result instanceof Error) {
               sendResponse(result);
@@ -82,7 +75,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
       // This generates a nonce for wallet verification purposes.
       case "generateNonce": {
-
         // We call the helper function.
         generateNonce(message.body).then((result) => {
           if (result.hasOwnProperty("error")) {
@@ -99,7 +91,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
       // This verifies the JWT.
       case "verifyToken": {
-
         // We call the helper function.
         verifyToken(message.body).then((result) => {
           if (result.hasOwnProperty("error")) {
@@ -116,7 +107,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
       // This verifies the signature created by the user's wallet.
       case "verifySignature": {
-
         // We call the helper function.
         verifySignature(message.body).then((result) => {
           if (result.hasOwnProperty("error")) {
@@ -133,7 +123,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
       // This queries the GlidePay API for all the saved addresses associated with a user.
       case "getAddresses": {
-
         // We call the helper function.
         getAddresses(message.body).then((result) => {
           if (result.hasOwnProperty("error")) {
@@ -150,7 +139,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
       // This queries the GlidePay API and saves a new address for a user.
       case "createAddress": {
-
         // We call the helper function.
         createAddress(message.body).then((result) => {
           if (result instanceof Error) {
@@ -169,7 +157,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     // Messages from the GlidePay website.
   } else if (message.from === "site") {
     switch (message.subject) {
-
       // This gets the JWT and sends it back to the GlidePay website.
       case "getToken": {
         chrome.storage.local.get("glidePayJWT", (result) => {
@@ -189,14 +176,10 @@ chrome.runtime.onConnect.addListener(function (port) {
   if (port.name === "cartView") {
     port.onDisconnect.addListener(function () {
       chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-        console.log(tabs);
-        console.log(senderID);
         chrome.tabs.sendMessage(senderID, {
           from: "background",
           subject: "popupClosed",
         });
-
-        console.log("popup has been closed");
       });
     });
   }
@@ -205,11 +188,30 @@ chrome.runtime.onConnect.addListener(function (port) {
 // This sends the senderTabID to the popup so that it can communicate with the cart.
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (msg.from === "confirmation" && msg.subject === "getTabID") {
-    console.log("Msg received");
-    console.log("senderID " + senderID);
     sendResponse(senderID);
   }
 });
+
+async function handleResponse(response) {
+  const jsonData = await response.text();
+  const parsedJSONData = JSON.parse(jsonData);
+  console.log(parsedJSONData);
+  if (response.status === 200) {
+    return parsedJSONData;
+  }
+
+  if (response.status !== 200) {
+    if (parsedJSONData.hasOwnProperty("message")) {
+      return {
+        error: {
+          customMsg: "Internal Server Error",
+          errorID: Date.now(),
+        },
+      };
+    }
+    return parsedJSONData;
+  }
+}
 
 // This function gets the price of the coin being asked for by querying the Gemini API.
 async function getCoinPrice(payload) {
@@ -223,22 +225,19 @@ async function getCoinPrice(payload) {
       }
     );
 
-    const jsonData = await response.text();
-
-    if (response.status === 200) {
-      return JSON.parse(jsonData);
-    }
-    if (response.status !== 200) {
-      return JSON.parse(jsonData);
-    }
+    return await handleResponse(response);
   } catch (err) {
-    return { error: err.stack, errorOrigin: "Extension", errorID: Date.now() };
+    return {
+      customMsg: "Get Coin Price Failed",
+      error: err.stack,
+      uiMsg: "Get Coin Price Failed",
+      errorID: Date.now(),
+    };
   }
 }
 
 // This function passes the transaction to the GlidePay API.
 async function getTransaction(body) {
-  console.log(body)
   try {
     // We get the JWT from the local storage.
     let result = await chrome.storage.local.get("glidePayJWT");
@@ -252,7 +251,6 @@ async function getTransaction(body) {
     let addressid = body.addressid;
     let amount = body.amount;
     let ticker = body.ticker;
-    console.log(retailer)
     await fetch(
       "https://xrl1xszvde.execute-api.us-east-1.amazonaws.com/prod/",
       {
@@ -274,17 +272,12 @@ async function getTransaction(body) {
       }
     );
 
-    if (response.status === 200) {
-      return { data: true };
-    }
-
-    if (response.status !== 200) {
-      return JSON.parse(await response.text());
-    }
+    return await handleResponse(response);
   } catch (err) {
     return {
       customMsg: "Get transaction Failed",
       error: err.stack,
+      uiMsg: "Get transaction Failed",
       errorID: Date.now(),
     };
   }
@@ -300,18 +293,12 @@ async function generateNonce(payload) {
         body: JSON.stringify(payload),
       }
     );
-    const jsonData = await response.text();
-
-    if (response.status === 200) {
-      return JSON.parse(jsonData);
-    }
-    if (response.status !== 200) {
-      return JSON.parse(jsonData);
-    }
+    return await handleResponse(response);
   } catch (err) {
     return {
       customMsg: "Generate Nonce Failed",
       error: err.stack,
+      uiMsg: "Generate Nonce Failed",
       errorID: Date.now(),
     };
   }
@@ -347,6 +334,7 @@ async function verifyToken(payload) {
     return {
       customMsg: "Verify Token Failed",
       error: err.stack,
+      uiMsg: "Verify Token Failed",
       errorID: Date.now(),
     };
   }
@@ -377,6 +365,7 @@ async function verifySignature(payload) {
     return {
       customMsg: "Verify Signature Failed",
       error: err.stack,
+      uiMsg: "Verify Signature Failed",
       errorID: Date.now(),
     };
   }
@@ -392,21 +381,15 @@ async function createAddress(payload) {
         body: JSON.stringify(payload),
       }
     );
-    const jsonData = await response.text();
-
-    if (response.status === 200) {
-      return JSON.parse(jsonData);
-    }
-
-    if (response.status !== 200) {
-      return JSON.parse(jsonData);
-    }
+    return await handleResponse(response);
   } catch (err) {
     return {
-      customMsg: "Create Address Failed",
-      error: err.stack,
-      uiMsg: "Creating this Address Failed.",
-      errorID: Date.now(),
+      error: {
+        customMsg: "Create Address Failed (Extension)",
+        error: err.stack,
+        uiMsg: "Creating this Address Failed",
+        errorID: Date.now(),
+      },
     };
   }
 }
@@ -421,20 +404,12 @@ async function getAddresses(payload) {
         body: JSON.stringify(payload),
       }
     );
-    const jsonData = await response.text();
-
-    if (response.status === 200) {
-      return JSON.parse(jsonData);
-    }
-
-    if (response.status !== 200) {
-      return JSON.parse(jsonData);
-    }
+    return await handleResponse(response);
   } catch (err) {
     return {
-      customMsg: "Verify Signature Failed",
+      customMsg: "Get Addresses Failed (Extension)",
       error: err.stack,
-      uiMsg: "Get Addresses Failed",
+      uiMsg: "Retrieving Addresses Failed",
       errorID: Date.now(),
     };
   }

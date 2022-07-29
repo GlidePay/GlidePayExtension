@@ -1,33 +1,3 @@
-// class LogError {
-//   constructor(customMsg, error, states, uiMsg, errorID, handle) {
-//     this.customMsg = customMsg;
-//     this.error = error;
-//     this.states = states;
-//     this.uiMsg = uiMsg;
-//     this.errorID = errorID;
-//     this.errorOrigin = "Extension";
-//     this.timestamp = this.getDate();
-//     this.handle = handle();
-//     this.logError();
-//   }
-
-//   getDate() {
-//     const today = new Date();
-//     const yyyy = today.getFullYear();
-//     const mm = String(today.getMonth() + 1).padStart(2, "0");
-//     const dd = String(today.getDate()).padStart(2, "0");
-//     const hh = String(today.getHours()).padStart(2, "0");
-//     const nn = String(today.getMinutes()).padStart(2, "0");
-//     const ss = String(today.getSeconds()).padStart(2, "0");
-
-//     return `${yyyy}/${mm}/${dd}T${hh}:${nn}:${ss}`;
-//   }
-
-//   logError() {
-//     // TODO: Logs error to database
-//   }
-// }
-
 //TODO: Load in all saved addresses and display them as selectable options
 //TODO: Think about how we should handle it if someone tries to order to an address the product doesnt ship to
 async function getAddresses() {
@@ -40,31 +10,31 @@ async function getAddresses() {
       token: jwt,
     },
   });
+  console.log(getAddressesResponse);
   if (getAddressesResponse.hasOwnProperty("error")) {
-    console.log("Throwing signature error");
-    throw new LogError(
-      getAddressesResponse.customMsg,
-      getAddressesResponse.error,
+    new LogError(
+      getAddressesResponse.error.customMsg,
+      getAddressesResponse.error.error,
       {
         jwt: jwt,
       },
-      getAddressesResponse.uiMsg,
-      getAddressesResponse.errorID,
+      getAddressesResponse.error.uiMsg,
+      getAddressesResponse.error.errorID,
       () => {
         const addressSelectDropdown = document.getElementById("addressSelect");
         const errorText = document.createElement("p");
         errorText.classList = "error-text text-center";
-        errorText.innerText = getAddressesResponse.uiMsg;
+        errorText.innerText =
+          getAddressesResponse.uiMsg ?? "Retrieving Addresses Failed";
         addressSelectDropdown.after(errorText);
       }
     );
+    return;
   }
   const addresses = getAddressesResponse.data;
-  console.log("addreses" + addresses);
 
   const tempAddress = sessionStorage.getItem("tempAddress");
   if (tempAddress == null) {
-    console.log("no temp address");
   } else {
     addresses.push(JSON.parse(tempAddress));
   }
@@ -155,25 +125,18 @@ async function setProductInfo(products, sender) {
   }
 
   const confirmButton = document.getElementById("submit-button");
-  console.log("created listener");
   confirmButton.addEventListener("click", async () => {
-    console.log("created listener1");
-
     const addressSelect = document.getElementById("addressSelect");
     if (addressSelect.selectedIndex === -1) {
       //TODO: Add text or popup or something that says this
-      console.log("Please select an address");
       return;
     }
     let value = addressSelect.options[addressSelect.selectedIndex].text;
     const windows = await chrome.windows.getAll({ populate: true });
-    console.log("created listener2");
 
     for (let a in windows) {
       for (let b in windows[a].tabs) {
         if (windows[a].tabs[b].id === sender) {
-          console.log("created listener3");
-
           chrome.tabs.sendMessage(windows[a].tabs[b].id, {
             from: "popup",
             subject: "promptTransaction",
@@ -189,70 +152,6 @@ async function setProductInfo(products, sender) {
   });
 }
 
-async function cartMain() {
-  var senderTabID = await chrome.runtime.sendMessage({
-    from: "confirmation",
-    subject: "getTabID",
-  });
-
-  console.log("RESPONSE" + senderTabID);
-  const windows = await chrome.windows.getAll({ populate: true });
-  for (let a in windows) {
-    for (let b in windows[a].tabs) {
-      if (windows[a].tabs[b].id === senderTabID) {
-        console.log(senderTabID + "TABID");
-        const products = await chrome.tabs.sendMessage(windows[a].tabs[b].id, {
-          from: "popup",
-          subject: "needInfo",
-        });
-        try {
-          await setProductInfo(products, senderTabID);
-        } catch (err) {
-          if (!(err instanceof LogError)) {
-            new LogError(
-              "Setting Product Info Failed (Uncaught)",
-              err,
-              {},
-              "Getting Products Failed",
-              Date.now(),
-              () => {
-                const columnLabelRow =
-                  document.getElementById("column-label-row");
-                const errorText = document.createElement("p");
-                errorText.classList = "error-text text-center";
-                errorText.innerText = "Getting Products Failed";
-                columnLabelRow.after(errorText);
-              }
-            );
-          }
-        }
-        try {
-          await getAddresses();
-        } catch (err) {
-          if (!(err instanceof LogError)) {
-            new LogError(
-              "Getting Address Info Failed (Uncaught)",
-              err,
-              {},
-              "Getting Addresses Failed",
-              Date.now(),
-              () => {
-                const addressSelectDropdown =
-                  document.getElementById("addressSelect");
-                const errorText = document.createElement("p");
-                errorText.classList = "error-text text-center";
-                errorText.innerText = "Getting Addresses Failed";
-                addressSelectDropdown.after(errorText);
-              }
-            );
-          }
-        }
-        break;
-      }
-    }
-  }
-}
-
 function GetURLParameter(sParam) {
   let sPageURL = window.location.search.substring(1);
   let sURLVariables = sPageURL.split("&");
@@ -264,21 +163,61 @@ function GetURLParameter(sParam) {
   }
 }
 
-async function tryingLoading() {
-  console.log("loggin shit");
-  console.log(GetURLParameter("id"));
-  if (GetURLParameter("id") === "2") {
-    const senderTabID = await chrome.runtime.sendMessage({
-      from: "confirmation",
-      subject: "getTabID",
-    });
+async function setUpCart(products, senderTabID) {
+  try {
+    await setProductInfo(products, senderTabID);
+  } catch (err) {
+    new LogError(
+      "Setting Product Info Failed (Uncaught)",
+      err,
+      {},
+      "Getting Products Failed",
+      Date.now(),
+      () => {
+        const columnLabelRow = document.getElementById("column-label-row");
+        const errorText = document.createElement("p");
+        errorText.classList = "error-text text-center";
+        errorText.innerText = "Getting Products Failed";
+        columnLabelRow.after(errorText);
+      }
+    );
+  }
+  try {
+    await getAddresses();
+  } catch (err) {
+    console.log(err);
+    console.log(err.stack);
+    new LogError(
+      "Retrieving Addresses Failed (Uncaught)",
+      err.stack,
+      {},
+      "Retrieving Addresses Failed",
+      Date.now(),
+      () => {
+        const addressSelectDropdown = document.getElementById("addressSelect");
+        const errorText = document.createElement("p");
+        errorText.classList = "error-text text-center";
+        errorText.innerText = "Retrieving Addresses Failed";
+        addressSelectDropdown.after(errorText);
+      }
+    );
+  }
+}
 
-    console.log("RESPONSE" + senderTabID);
+async function cartMain() {
+  chrome.runtime.connect({ name: "cartView" });
+  const senderTabID = await chrome.runtime.sendMessage({
+    from: "confirmation",
+    subject: "getTabID",
+  });
+
+  if (GetURLParameter("from") === "addaddress") {
+    console.log("From address");
     const windows = await chrome.windows.getAll({ populate: true });
     for (let a in windows) {
       for (let b in windows[a].tabs) {
         if (windows[a].tabs[b].id === senderTabID) {
-          console.log(senderTabID + "TABID");
+          console.log("Requesting popup info");
           const products = await chrome.tabs.sendMessage(
             windows[a].tabs[b].id,
             {
@@ -286,107 +225,20 @@ async function tryingLoading() {
               subject: "needInfo",
             }
           );
-          try {
-            await setProductInfo(products);
-          } catch (err) {
-            if (!(err instanceof LogError)) {
-              new LogError(
-                "Setting Product Info Failed (Uncaught)",
-                err,
-                {},
-                "Getting Products Failed",
-                Date.now(),
-                () => {
-                  const columnLabelRow =
-                    document.getElementById("column-label-row");
-                  const errorText = document.createElement("p");
-                  errorText.classList = "error-text text-center";
-                  errorText.innerText = "Getting Products Failed";
-                  columnLabelRow.after(errorText);
-                }
-              );
-            }
-          }
-          try {
-            await getAddresses();
-          } catch (err) {
-            if (!(err instanceof LogError)) {
-              new LogError(
-                "Getting Address Info Failed (Uncaught)",
-                err,
-                {},
-                "Getting Addresses Failed",
-                Date.now(),
-                () => {
-                  const addressSelectDropdown =
-                    document.getElementById("addressSelect");
-                  const errorText = document.createElement("p");
-                  errorText.classList = "error-text text-center";
-                  errorText.innerText = "Getting Addresses Failed";
-                  addressSelectDropdown.after(errorText);
-                }
-              );
-            }
-          }
+          await setUpCart(products, senderTabID);
         }
       }
     }
+    return;
   }
 
-  const senderTabID = await chrome.runtime.sendMessage({
-    from: "confirmation",
-    subject: "getTabID",
-  });
-  chrome.runtime.connect({ name: "cartView" });
   chrome.runtime.onMessage.addListener(
     async (message, sender, sendResponse) => {
       if (message.from === "cart" && message.subject === "sendCartInfo") {
         chrome.runtime.onMessage.removeListener(arguments.callee);
         sendResponse(true);
         const products = message.data;
-        try {
-          console.log("sender1 " + sender);
-          await setProductInfo(products, senderTabID);
-        } catch (err) {
-          if (!(err instanceof LogError)) {
-            new LogError(
-              "Setting Product Info Failed (Uncaught)",
-              err,
-              {},
-              "Getting Products Failed",
-              Date.now(),
-              () => {
-                const columnLabelRow =
-                  document.getElementById("column-label-row");
-                const errorText = document.createElement("p");
-                errorText.classList = "error-text text-center";
-                errorText.innerText = "Getting Products Failed";
-                columnLabelRow.after(errorText);
-              }
-            );
-          }
-        }
-        try {
-          await getAddresses();
-        } catch (err) {
-          if (!(err instanceof LogError)) {
-            new LogError(
-              "Getting Address Info Failed (Uncaught)",
-              err,
-              {},
-              "Getting Addresses Failed",
-              Date.now(),
-              () => {
-                const addressSelectDropdown =
-                  document.getElementById("addressSelect");
-                const errorText = document.createElement("p");
-                errorText.classList = "error-text text-center";
-                errorText.innerText = "Getting Addresses Failed";
-                addressSelectDropdown.after(errorText);
-              }
-            );
-          }
-        }
+        await setUpCart(products, senderTabID);
       }
       return true;
     }
@@ -394,8 +246,7 @@ async function tryingLoading() {
 }
 window.addEventListener("load", async () => {
   try {
-    await tryingLoading();
-    //await cartMain();
+    await cartMain();
   } catch (err) {
     new LogError(
       "Building Cart Popup Failed (Uncaught)",

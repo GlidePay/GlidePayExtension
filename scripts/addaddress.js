@@ -1,14 +1,14 @@
 // Error logging class.
 class LogError {
   constructor(customMsg, error, states, uiMsg, errorID, handle) {
-    this.customMsg = customMsg;
-    this.error = error;
+    this.customMsg = customMsg || null;
+    this.error = error || null;
     this.states = states;
-    this.uiMsg = uiMsg;
+    this.uiMsg = uiMsg || null;
     this.errorID = errorID;
     this.errorOrigin = "Extension";
     this.timestamp = this.getDate();
-    this.handle = handle();
+    handle();
     this.logError();
   }
 
@@ -36,7 +36,7 @@ async function setUpAddAddressButton() {
 
   // Adds event listener for the back button.
   backbutton.addEventListener("click", () => {
-    window.location.href = "/views/confirmation.html?id=2";
+    window.location.href = "/views/confirmation.html?from=addaddress";
   });
 
   // Adds event listener for the add address button.
@@ -74,24 +74,22 @@ async function addAddressButtonClicked() {
   // This makes sure all fields are filled out and if not, shows error text.
   for (let key in address) {
     if (address[key] === "" && key !== "Address_Line_2") {
-      console.log(document.getElementsByClassName("error-text text-center"));
-      console.log(
-        document.getElementsByClassName("error-text text-center").length === 0
+      const addAddressButton = document.getElementById("add-address-button");
+      const errorTextQuery = document.getElementsByClassName(
+        "error-text text-center"
       );
-      if (
-        document.getElementsByClassName("error-text text-center").length === 0
-      ) {
-        let addAddressButton = document.getElementById("add-address-button");
-        let errorText = document.createElement("p");
+      if (errorTextQuery.length === 0) {
+        const errorText = document.createElement("p");
         errorText.classList = "error-text text-center";
-        errorText.innerText = "Please fill out all fields";
+        errorText.innerText = "Please fill out required fields";
         addAddressButton.after(errorText);
+        return;
       }
+
+      errorTextQuery[0].innerText = "Please fill out required fields";
       return;
     }
   }
-
-  console.log(address);
 
   // Gets the "Save Address" checkmark.
   const saveAddressButton = document.getElementsByClassName(
@@ -117,49 +115,40 @@ async function addAddressButtonClicked() {
     // Checks for error.
     if (createAddressResponse.hasOwnProperty("error")) {
       new LogError(
-        createAddressResponse.customMsg,
-        createAddressResponse.error,
+        createAddressResponse.error.customMsg,
+        createAddressResponse.error.error,
         { address: address, token: token },
-        createAddressResponse.uiMsg,
-        createAddressResponse.errorID,
+        createAddressResponse.error.uiMsg,
+        createAddressResponse.error.errorID,
         () => {
-          if (
-            document.getElementsByClassName("error-text text-center").length ===
-            1
-          ) {
-            let addAddressButton =
-              document.getElementById("add-address-button");
-            let errorText = document.getElementsByClassName(
-              "error-text text-center"
-            )[0];
-            console.log(errorText);
-            errorText.innerText = createAddressResponse.uiMsg;
-            addAddressButton.after(errorText);
-          }
-          if (
-            document.getElementsByClassName("error-text text-center").length ===
-            0
-          ) {
-            let addAddressButton =
-              document.getElementById("add-address-button");
+          const addAddressButton =
+            document.getElementById("add-address-button");
+          const errorTextQuery = document.getElementsByClassName(
+            "error-text text-center"
+          );
+          if (errorTextQuery.length === 0) {
             const errorText = document.createElement("p");
             errorText.classList = "error-text text-center";
-            errorText.innerText = createAddressResponse.uiMsg;
+            errorText.innerText =
+              createAddressResponse.error.uiMsg ??
+              "Creating this Address Failed";
             addAddressButton.after(errorText);
+            return;
           }
+
+          errorTextQuery[0].innerText =
+            createAddressResponse.error.uiMsg ?? "Creating this Address Failed";
         }
       );
       return;
     }
 
     // If no error, redirects to main confirmation page.
-    console.log(createAddressResponse);
-    window.location.href = "/views/confirmation.html?id=2";
   } else {
     // If save address checkmark is not checked, it will store the address in sessionStorage.
     sessionStorage.setItem("tempAddress", JSON.stringify(address));
-    window.location.href = "/views/confirmation.html?id=2";
   }
+  window.location.href = "/views/confirmation.html?from=addaddress";
 }
 
 // Main function that runs.

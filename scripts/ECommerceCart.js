@@ -36,14 +36,11 @@ class EcommerceCart {
     // Sends productDict when requested by cartConfirmation popup
     chrome.runtime.onMessage.addListener((msg, sender, response) => {
       if (msg.from === "popup" && msg.subject === "needInfo") {
-        console.log(this.productDict)
         response(this.productDict);
       }
     });
-    console.log("Listeners created");
     // Listens for when the popup is closed, keeps track of popup state.
     chrome.runtime.onMessage.addListener((msg, sender, response) => {
-      console.log("heard oyu");
       if (msg.from === "background" && msg.subject === "popupClosed") {
         this.popupOpen = false;
       }
@@ -66,22 +63,31 @@ class EcommerceCart {
   }
 
   convertCurrency(price, currency) {
-    return fetch('https://api.exchangerate.host/convert?from='+ currency + '&to=USD&amount=' + String(price)).then(response => response.text())
-    .then(data => {return data});}
-  
+    return fetch(
+      "https://api.exchangerate.host/convert?from=" +
+        currency +
+        "&to=USD&amount=" +
+        String(price)
+    )
+      .then((response) => response.text())
+      .then((data) => {
+        return data;
+      });
+  }
+
   async handleTransaction(msg) {
     const cost = msg.price;
-    const currency = msg.currency
+    const currency = msg.currency;
     let costUSD;
-    if (currency === 'USD') {
-      costUSD = cost
+    if (currency === "USD") {
+      costUSD = cost;
     } else {
-      let currencyResponse = await this.convertCurrency(cost, currency)
-      console.log(currencyResponse)
-      costUSD = JSON.parse(currencyResponse).result
+      let currencyResponse = await this.convertCurrency(cost, currency);
+      console.log(currencyResponse);
+      costUSD = JSON.parse(currencyResponse).result;
     }
-    console.log(currency)
-    console.log(costUSD)
+    console.log(currency);
+    console.log(costUSD);
     const getCoinPriceResponse = await chrome.runtime.sendMessage({
       from: "cart",
       subject: "getCoinPrice",
@@ -92,7 +98,7 @@ class EcommerceCart {
     if (getCoinPriceResponse.hasOwnProperty("error")) {
       throw new LogError(
         getCoinPriceResponse.customMsg,
-        getCoinPriceResponse.error,
+        "getCoinPriceResponse.error",
         { price: costUSD },
         getCoinPriceResponse.uiMsg,
         getCoinPriceResponse.errorID,
@@ -165,7 +171,11 @@ class EcommerceCart {
     cryptoButton.addEventListener("click", () => {
       // We disable the button to prevent multiple clicks.
       this.cryptoButton.disabled = true;
-      this.cryptoButtonPressed();
+      if (!this.popupOpen) {
+        this.cryptoButtonPressed();
+        return;
+      }
+      this.cryptoButton.disabled = false;
     });
     return cryptoButton;
   }
@@ -232,7 +242,7 @@ class EcommerceCart {
       .catch((err) => {
         throw new LogError(
           "Metamask already open",
-          err,
+          err.stack,
           {},
           "Metamask already open",
           Date.now(),
@@ -265,7 +275,6 @@ class EcommerceCart {
   async verifyWallet(walletID) {
     // We check for an existing JWT in local storage.
     let existingToken = await chrome.storage.local.get("glidePayJWT");
-    console.log(existingToken)
     if (
       // We check to see if the JWT is empty.
       JSON.stringify(existingToken) === "{}" ||
@@ -288,7 +297,6 @@ class EcommerceCart {
       return;
     } else {
       // Otherwise, it's valid.
-      console.log("Token is valid");
     }
 
     // Check to see if the popup is not open.
@@ -340,8 +348,6 @@ class EcommerceCart {
     // AS IT IS ON THE BACKEND. IF YOU CHANGE THIS, MAKE SURE TO ALSO CHANGE THE BACKEND.
     let message = "Please sign this message to login!.\n Nonce: " + nonce;
 
-    console.log("NONCE: " + nonce);
-
     // This prompts the user to sign the message, and awaits the signature that is generated.
     const signature = await signer.signMessage(message);
 
@@ -370,7 +376,6 @@ class EcommerceCart {
     // Checks to make sure there's no error.
     if (signatureResponse.hasOwnProperty("error")) {
       const signatureResponseError = signatureResponse.error;
-      console.log("Throwing signature error");
       throw new LogError(
         signatureResponseError.customMsg,
         signatureResponseError.error,
@@ -389,7 +394,7 @@ class EcommerceCart {
         }
       );
     }
-
+    console.log(signatureResponse);
     // If there's no error, we set the JWT to the response.
     const newToken = signatureResponse.data;
 
@@ -402,7 +407,6 @@ class EcommerceCart {
 
   // This function verifies the JWT.
   async verifyToken(walletID, token) {
-    console.log(token)
     let verifyTokenResponse = await chrome.runtime.sendMessage({
       from: "cart",
       subject: "verifyToken",
