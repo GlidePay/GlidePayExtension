@@ -130,7 +130,7 @@ class EcommerceCart {
       // TODO: Update this to be the actual Gemini address.
       to: "0xB5EC5c29Ed50067ba97c4009e14f5Bff607a324c",
       // The amount of Crypto to send.
-      value: ethers.utils.parseEther(ethCost.toString()),
+      value: ethers.utils.parseEther(ethCost.toFixed(18)),
       gasLimit: ethers.utils.hexlify(gas_limit),
       gasPrice: gasPrice,
     };

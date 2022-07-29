@@ -42,9 +42,17 @@ class Costco extends ECommerceCart.EcommerceCart {
         let groceryElements = document.querySelector(
             "#order-items-grocery"
         );
-        let productElementsList = Array.from(productElements.children);
-        let groceryElementsList = Array.from(groceryElements.children);
+
+        let productElementsList = undefined;
+        let groceryElementsList = undefined;
+        try {
+        productElementsList = Array.from(productElements.children);}
+        catch{}
+        try {
+        groceryElementsList = Array.from(groceryElements.children);}
+        catch{}
         let index = 0;
+        if (productElementsList !== undefined) {
         productElementsList.forEach(function (part) {
             if (part.tagName === "DIV") {
                 console.log(part)
@@ -66,7 +74,8 @@ class Costco extends ECommerceCart.EcommerceCart {
                 };
                 index++;
             }
-        });
+                });}
+        if (groceryElementsList !== undefined) {
         groceryElementsList.forEach(function (part) {
             if (part.tagName === "DIV") {
                 const product = part.querySelector('div > div:nth-child(1)');
@@ -86,7 +95,7 @@ class Costco extends ECommerceCart.EcommerceCart {
                 };
                 index++;
             }
-        });
+        });}
         console.log(productDict)
         return productDict;
     }
@@ -113,11 +122,10 @@ function main() {
         console.log(mutations);
         costco.injectButton();
     });
-    /*
-    var container = document.querySelector('#order-summary-body');
+    var container = document.querySelector('#cart');
     console.log(container);
     let config = { attributes: true, subtree: true, characterData: true };
-    observer.observe(container, config); */
+    observer.observe(container, config);
 }
 
 main();
