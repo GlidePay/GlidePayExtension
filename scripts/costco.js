@@ -60,9 +60,22 @@ class Costco extends ECommerceCart.EcommerceCart {
                 console.log(product);
                 const productID = product.getAttribute("data-orderitemnumber");
                 const productName = product.querySelector('div:nth-child(1) > div:nth-child(2) > h3 > a').innerText;
-                const unitPrice = product.querySelector('div:nth-child(1) > div:nth-child(2) > div:nth-child(6) > div > div > div:nth-child(1) > span > span').innerHTML;
+                console.log(product.getElementsByClassName('free-gift'))
+                let unitPrice;
+                try{
+                unitPrice = product.querySelector('div:nth-child(1) > div:nth-child(2) > div:nth-child(7) > div > div > div:nth-child(1) > span > span').innerText;}
+                catch {}
+                try {
+                    unitPrice = product.querySelector('div:nth-child(1) > div:nth-child(2) > div:nth-child(6) > div > div > div:nth-child(1) > span > span').innerText;
+                } catch{}
                 console.log(unitPrice)
-                const quantity = product.querySelector('div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > input').value;
+                let quantity;
+                try {
+                quantity = product.querySelector('div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > input').value;}
+                catch{}
+                try {
+                    quantity = product.querySelector('div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > span').innerText;
+                }catch{}
                 const productImage = product.querySelector('div:nth-child(1) > div:nth-child(1) > a > img').getAttribute("src");
                 productDict[index] = {
                     currency: 'USD',
