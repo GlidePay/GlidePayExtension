@@ -79,6 +79,10 @@ class Amazon extends ECommerceCart.EcommerceCart {
       return "amazon";
     }
   }
+
+  getShipping() {
+    return 0;
+  }
 }
 
 function main() {

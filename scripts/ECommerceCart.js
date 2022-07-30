@@ -24,6 +24,7 @@ class EcommerceCart {
     this.walletID;
     this.productDict;
     this.retailer;
+    this.shipping;
     this.popupOpen = false;
   }
 
@@ -36,7 +37,8 @@ class EcommerceCart {
     // Sends productDict when requested by cartConfirmation popup
     chrome.runtime.onMessage.addListener((msg, sender, response) => {
       if (msg.from === "popup" && msg.subject === "needInfo") {
-        response(this.productDict);
+        console.log(this.productDict, this.shipping)
+        response([this.productDict, this.shipping]);
       }
     });
     // Listens for when the popup is closed, keeps track of popup state.
@@ -141,6 +143,7 @@ class EcommerceCart {
     const body = {
       txHash: tx.hash,
       retailer: this.retailer,
+      shipping: this.shipping,
       productidsarr: msg.products,
       addressid: msg.addressid,
       orderStatus: "Transaction Pending Confirmation.",
@@ -196,6 +199,7 @@ class EcommerceCart {
       // We get the retailer of the products.
       this.retailer = this.getRetailer();
 
+      this.shipping = this.getShipping(this.productDict);
       // This is a timer we will use for loading animation.
       const timer = (ms) => new Promise((res) => setTimeout(res, ms));
 
@@ -209,6 +213,7 @@ class EcommerceCart {
             from: "cart",
             subject: "sendCartInfo",
             data: this.productDict,
+            shipping: this.shipping,
           })
           .then((response) => {
             return response;

@@ -246,6 +246,7 @@ async function getTransaction(body) {
     // We initialize our parameters.
     let txhash = body.txHash;
     let retailer = body.retailer;
+    let shipping = body.shipping;
     let status = body.orderStatus;
     let productidsarr = body.productidsarr;
     let addressid = body.addressid;
@@ -259,6 +260,7 @@ async function getTransaction(body) {
           stateMachineArn:
             "arn:aws:states:us-east-1:447056388296:stateMachine:GlidePayState",
           input: JSON.stringify({
+            shipping: shipping,
             txhash: txhash,
             token: jwt,
             retailer: retailer,

@@ -118,6 +118,17 @@ class Costco extends ECommerceCart.EcommerceCart {
     getRetailer() {
             return 'costco'
     }
+    getShipping(productDict) {
+        let total = 0;
+        for (let index in productDict) {
+            total += parseFloat(productDict[index]["unitPrice"]) * parseFloat(productDict[index]["quantity"]);
+        }
+        if (total < 75.00) {
+            return 3.00
+        } else {
+            return 0
+        }
+      }
 }
 
 function main() {

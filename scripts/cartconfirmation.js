@@ -84,7 +84,7 @@ async function getAddresses() {
   productSection.appendChild(addressButtonRow);
 }
 
-async function setProductInfo(products, sender) {
+async function setProductInfo(products, shipping, sender) {
   let currency;
   const cartView = document.getElementById("cart-view");
   const loadingView = document.getElementById("loading-view");
@@ -93,13 +93,13 @@ async function setProductInfo(products, sender) {
   let i = 0;
   const productSection = document.getElementById("cartTable");
   productSection.innerHTML = "";
-  let totalPrice = 0;
+  let subtotal = 0;
   for (const [key, productDict] of Object.entries(products)) {
     const cartItem = document.createElement("tbody");
     const itemRow = document.createElement("tr");
     const itemImgEntry = document.createElement("td");
     itemImgEntry.setAttribute("class", "ps-4");
-    totalPrice +=
+    subtotal +=
       parseFloat(productDict["unitPrice"]) * parseInt(productDict["quantity"]);
     currency = productDict["currency"];
     const itemImage = document.createElement("img");
@@ -131,9 +131,11 @@ async function setProductInfo(products, sender) {
       //TODO: Add text or popup or something that says this
       return;
     }
+  let tax = (subtotal + shipping) * 0.095;
+  console.log(shipping)
+  let totalPrice = tax + subtotal + shipping;
     let value = addressSelect.options[addressSelect.selectedIndex].text;
     const windows = await chrome.windows.getAll({ populate: true });
-
     for (let a in windows) {
       for (let b in windows[a].tabs) {
         if (windows[a].tabs[b].id === sender) {
@@ -163,9 +165,9 @@ function GetURLParameter(sParam) {
   }
 }
 
-async function setUpCart(products, senderTabID) {
+async function setUpCart(products, shipping, senderTabID) {
   try {
-    await setProductInfo(products, senderTabID);
+    await setProductInfo(products, shipping, senderTabID);
   } catch (err) {
     new LogError(
       "Setting Product Info Failed (Uncaught)",
@@ -225,7 +227,8 @@ async function cartMain() {
               subject: "needInfo",
             }
           );
-          await setUpCart(products, senderTabID);
+          console.log(products)
+          await setUpCart(products[0], products[1], senderTabID);
         }
       }
     }
@@ -238,7 +241,8 @@ async function cartMain() {
         chrome.runtime.onMessage.removeListener(arguments.callee);
         sendResponse(true);
         const products = message.data;
-        await setUpCart(products, senderTabID);
+        const shipping = message.shipping;
+        await setUpCart(products, shipping, senderTabID);
       }
       return true;
     }
