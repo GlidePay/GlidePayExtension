@@ -45205,17 +45205,18 @@ class EcommerceCart {
     });
 
     // Sends message prompting Metamask transaction.
-    chrome.runtime.onMessage.addListener((msg) => {
+    chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
       if (msg.from === "popup" && msg.subject === "promptTransaction") {
-        try {
-          this.handleTransaction(msg);
-        } catch (err) {
-          console.log("Transaction Error");
-          console.log(err);
-          if (err instanceof LogError) {
-            err.logError();
-          }
-        }
+        this.handleTransaction(msg)
+          .then((response) => {
+            sendResponse(true);
+          })
+          .catch((err) => {
+            console.log(err);
+            sendResponse(false);
+          });
+
+        return true;
       }
     });
   }
@@ -45292,10 +45293,11 @@ class EcommerceCart {
       gasLimit: ethers.utils.hexlify(gas_limit),
       gasPrice: gasPrice,
     };
-
+    console.log("waiting o sign");
     // This prompts the user to approve the transaction on Metamask.
     const tx = await signer.sendTransaction(transaction);
     console.log(`txHASH: ${tx.hash}`);
+
     const body = {
       txHash: tx.hash,
       retailer: this.retailer,
@@ -45314,6 +45316,8 @@ class EcommerceCart {
       subject: "getTransaction",
       body: body,
     });
+    console.log("returning");
+    return true;
   }
 
   // This defines the Pay with Crypto button and its functionality.

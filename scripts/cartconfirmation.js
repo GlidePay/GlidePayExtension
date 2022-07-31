@@ -139,15 +139,26 @@ async function setProductInfo(products, shipping, sender) {
     for (let a in windows) {
       for (let b in windows[a].tabs) {
         if (windows[a].tabs[b].id === sender) {
-          chrome.tabs.sendMessage(windows[a].tabs[b].id, {
-            from: "popup",
-            subject: "promptTransaction",
-            price: totalPrice,
-            currency: currency,
-            addressid: addressSelect.options[addressSelect.selectedIndex].value,
-            products: products,
-          });
-          window.close();
+          console.log("Found sender");
+          chrome.tabs.sendMessage(
+            windows[a].tabs[b].id,
+            {
+              from: "popup",
+              subject: "promptTransaction",
+              price: totalPrice,
+              currency: currency,
+              addressid:
+                addressSelect.options[addressSelect.selectedIndex].value,
+              products: products,
+            },
+            (response) => {
+              if (response) {
+                window.location.href = "/views/ordersentpopup.html";
+              } else {
+                alert("Signing failed");
+              }
+            }
+          );
         }
       }
     }
