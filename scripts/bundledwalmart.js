@@ -45670,7 +45670,7 @@ class Walmart extends ECommerceCart.EcommerceCart {
     buttonLocation.style.paddingBottom = "5px";
   }
 
-  getProducts() {
+  async getProducts() {
     /**
      * Parses Walmart's checkout page for the user's selected products.
      * @function getProducts
