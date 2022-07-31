@@ -45350,7 +45350,7 @@ class EcommerceCart {
       await this.verifyWallet(walletID);
 
       // We get the products selected by the user.
-      this.productDict = this.getProducts();
+      this.productDict = await this.getProducts();
 
       // We get the retailer of the products.
       this.retailer = this.getRetailer();

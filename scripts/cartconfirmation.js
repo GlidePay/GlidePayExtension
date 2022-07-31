@@ -242,6 +242,7 @@ async function cartMain() {
         sendResponse(true);
         const products = message.data;
         const shipping = message.shipping;
+        console.log(shipping)
         await setUpCart(products, shipping, senderTabID);
       }
       return true;

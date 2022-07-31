@@ -29,18 +29,43 @@ class Costco extends ECommerceCart.EcommerceCart {
         this.cryptoButton.style.marginBottom = "5px";
         add_to_cart.after(this.cryptoButton);
     }
-    getProducts() {
+
+    async getCostcoPage() {
+        return new Promise(function (resolve) {
+          let xhr = new XMLHttpRequest();
+          xhr.responseType = "document";
+          let url = "https://www.costco.com/CheckoutCartDisplayView";
+          xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200 /* DONE */) {
+              let html = xhr.response;
+              resolve(
+                html);
+            }
+          };
+          xhr.open("GET", url, true);
+          xhr.send("");
+        });
+      }
+
+    async temp() {
+        return await this.getCostcoPage()
+    }
+    async getProducts() {
         /**
          * Parses Costco's checkout page for the user's selected products.
          * @function getProducts
          * @return  {Object} Contains the products selected by the user.
          */
+        console.log('calling function')
+        let costcoDocument = await this.temp();
+        console.log(costcoDocument)
+
         let productDict = {};
-        let productElements = document.querySelector(
-            "#order-items-regular"
+        let productElements = costcoDocument.getElementById(
+            "order-items-regular"
         );
-        let groceryElements = document.querySelector(
-            "#order-items-grocery"
+        let groceryElements = costcoDocument.getElementById(
+            "order-items-grocery"
         );
 
         let productElementsList = undefined;
@@ -120,14 +145,20 @@ class Costco extends ECommerceCart.EcommerceCart {
     }
     getShipping(productDict) {
         let total = 0;
+        let shipping = 0;
         for (let index in productDict) {
             total += parseFloat(productDict[index]["unitPrice"]) * parseFloat(productDict[index]["quantity"]);
         }
         if (total < 75.00) {
-            return 3.00
+            shipping = 3.00;
         } else {
-            return 0
+            shipping = 0;
         }
+        try {
+        console.log(parseFloat(document.getElementById("order-estimated-shipping").innerHTML.split('automation-id="orderEstimatedShipping">$')[1].split("</")[0]))
+        shipping += parseFloat(document.getElementById("order-estimated-shipping").innerHTML.split('automation-id="orderEstimatedShipping">$')[1].split("</")[0]) }
+        catch{}
+        return shipping
       }
 }
 
@@ -136,6 +167,7 @@ function main() {
      * Main runner function.
      * @function main
      */
+    console.log('running')
     let costco = new Costco();
     costco.createListeners();
     costco.injectButton();
