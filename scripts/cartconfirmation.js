@@ -99,7 +99,8 @@ async function setProductInfo(products, sender) {
     const itemRow = document.createElement("tr");
     const itemImgEntry = document.createElement("td");
     itemImgEntry.setAttribute("class", "ps-4");
-    totalPrice += parseFloat(productDict["unitPrice"]) * parseInt(productDict["quantity"]);
+    totalPrice +=
+      parseFloat(productDict["unitPrice"]) * parseInt(productDict["quantity"]);
     currency = productDict["currency"];
     const itemImage = document.createElement("img");
     itemImage.src = productDict["productImage"];
@@ -136,18 +137,26 @@ async function setProductInfo(products, sender) {
     for (let a in windows) {
       for (let b in windows[a].tabs) {
         if (windows[a].tabs[b].id === sender) {
-          chrome.tabs.sendMessage(windows[a].tabs[b].id, {
-            from: "popup",
-            subject: "promptTransaction",
-            price: totalPrice,
-            currency: currency,
-            addressid: addressSelect.options[addressSelect.selectedIndex].value,
-            products: products,
-          }, async response => {
-            if (await response) {
-              window.location.href = '/views/ordersentpopup.html';
+          console.log("Found sender");
+          chrome.tabs.sendMessage(
+            windows[a].tabs[b].id,
+            {
+              from: "popup",
+              subject: "promptTransaction",
+              price: totalPrice,
+              currency: currency,
+              addressid:
+                addressSelect.options[addressSelect.selectedIndex].value,
+              products: products,
+            },
+            (response) => {
+              if (response) {
+                window.location.href = "/views/ordersentpopup.html";
+              } else {
+                alert("Signing failed");
+              }
             }
-          });
+          );
         }
       }
     }
