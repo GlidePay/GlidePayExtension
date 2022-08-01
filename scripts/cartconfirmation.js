@@ -131,10 +131,14 @@ async function setProductInfo(products, shipping, sender) {
   let totalPrice = tax + subtotal + shipping;
   //let value = addressSelect.options[addressSelect.selectedIndex].text;
 
-  document.getElementById("shipping-total").innerHTML = "Shipping: $" + shipping.toFixed(2).toString();
-  document.getElementById("tax-total").innerHTML = "Tax: $" + tax.toFixed(2).toString();
-  document.getElementById("sub-total").innerHTML = "Subtotal: $" + subtotal.toFixed(2).toString();
-  document.getElementById("final-total").innerHTML = "Total: $" + totalPrice.toFixed(2).toString();
+  document.getElementById("shipping-total").innerHTML =
+    "Shipping: $" + shipping.toFixed(2).toString();
+  document.getElementById("tax-total").innerHTML =
+    "Tax: $" + tax.toFixed(2).toString();
+  document.getElementById("sub-total").innerHTML =
+    "Subtotal: $" + subtotal.toFixed(2).toString();
+  document.getElementById("final-total").innerHTML =
+    "Total: $" + totalPrice.toFixed(2).toString();
 
   const confirmButton = document.getElementById("submit-button");
   confirmButton.addEventListener("click", async () => {
@@ -227,11 +231,24 @@ async function setUpCart(products, shipping, senderTabID) {
 }
 
 async function cartMain() {
+  console.log("hi");
+  const popupTabID = await chrome.tabs.query({
+    currentWindow: true,
+    active: true,
+  });
+  console.log(popupTabID[0].id);
+  await chrome.runtime.sendMessage({
+    from: "popup",
+    subject: "setPopupTabID",
+    body: { popupID: popupTabID[0].id },
+  });
+
   chrome.runtime.connect({ name: "cartView" });
   const senderTabID = await chrome.runtime.sendMessage({
     from: "confirmation",
     subject: "getTabID",
   });
+  console.log("sender id: " + senderTabID);
 
   if (GetURLParameter("from") === "addaddress") {
     console.log("From address");
