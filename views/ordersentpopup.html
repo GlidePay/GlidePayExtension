@@ -14,17 +14,20 @@
     <title>Title</title>
   </head>
   <body>
-  <div class="d-flex justify-content-center align-items-center" style="height: 100vh">
-    <div class="row">
-      <div class="alert alert-success">
-        <h1>Your order has been sent!</h1>
-      </div>
-    </div>
+  <div class="container justify-content-center mt-5" style="height: 100vh">
     <div class="row">
       <div class="col">
-        <div class="btn btn-outline-success" onclick="window.close()">
+        <div class="alert alert-success">
+          <h1>Your order has been sent!</h1>
+        </div>
+      </div>
+    </div>
+    <div class="row d-flex justify-content-center">
+      <div class="col">
+        <div id="ok-button" class="btn btn-outline-success">
           Okay
         </div>
+        <script src="/scripts/ordersentpopup.js"></script>
       </div>
     </div>
   </div>
