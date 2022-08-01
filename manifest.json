@@ -9,16 +9,12 @@
   "key": "hpgooldjdnhkoplnmlfgfkbmkomhomcl",
   "content_scripts": [
     {
-      "matches": ["*://www.amazon.com.mx/gp/cart/*", "*://www.amazon.com/gp/cart/*", "*://www.amazon.ca/gp/cart/*", "*://www.amazon.de/*/gp/cart/*", "*://www.amazon.de/gp/cart/*", "*://www.amazon.co.uk/gp/cart/*"],
+      "matches": ["*://www.amazon.com/gp/cart/*"],
       "js": ["scripts/bundledamazon.js"]
     },
     {
       "matches": ["*://www.walmart.com/cart*", "*://www.walmart.com/*"],
       "js": ["scripts/bundledwalmart.js"]
-    },
-    {
-      "matches": ["*://www.aliexpress.com/p/shoppingcart*"],
-      "js": ["scripts/bundledaliexpress.js"]
     },
     {
       "matches": ["*://www.costco.com/CheckoutCartDisplayView*", "*://www.costco.com/CheckoutCartView*"],

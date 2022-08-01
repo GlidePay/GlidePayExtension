@@ -127,6 +127,15 @@ async function setProductInfo(products, shipping, sender) {
     i++;
   }
 
+  let tax = (subtotal + shipping) * 0.095;
+  let totalPrice = tax + subtotal + shipping;
+  //let value = addressSelect.options[addressSelect.selectedIndex].text;
+
+  document.getElementById("shipping-total").innerHTML = "Shipping: $" + shipping.toFixed(2).toString();
+  document.getElementById("tax-total").innerHTML = "Tax: $" + tax.toFixed(2).toString();
+  document.getElementById("sub-total").innerHTML = "Subtotal: $" + subtotal.toFixed(2).toString();
+  document.getElementById("final-total").innerHTML = "Total: $" + totalPrice.toFixed(2).toString();
+
   const confirmButton = document.getElementById("submit-button");
   confirmButton.addEventListener("click", async () => {
     const addressSelect = document.getElementById("addressSelect");
@@ -134,10 +143,7 @@ async function setProductInfo(products, shipping, sender) {
       //TODO: Add text or popup or something that says this
       return;
     }
-    let tax = (subtotal + shipping) * 0.095;
-    console.log(shipping);
-    let totalPrice = tax + subtotal + shipping;
-    let value = addressSelect.options[addressSelect.selectedIndex].text;
+
     const windows = await chrome.windows.getAll({ populate: true });
     for (let a in windows) {
       for (let b in windows[a].tabs) {

@@ -86,15 +86,6 @@ class Costco extends ECommerceCart.EcommerceCart {
                 const productID = product.getAttribute("data-orderitemnumber");
                 console.log("productID: " + productID);
                 const productName = product.querySelector('div:nth-child(1) > div:nth-child(2) > h3 > a').innerText;
-<<<<<<< HEAD
-                console.log("productName: " + productName);
-                if (product.getElementsByClassName("free-gift")) {
-                    console.log("free gift");
-                }
-                const unitPrice = product.querySelector('div:nth-child(1) > div:nth-child(2) > div:nth-child(6) > div > div > div:nth-child(1) > span > span').innerText;
-                console.log("price: " + unitPrice);
-                const quantity = product.querySelector('div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > input').value;
-=======
                 console.log(product.getElementsByClassName('free-gift'))
                 let unitPrice;
                 try{
@@ -113,7 +104,6 @@ class Costco extends ECommerceCart.EcommerceCart {
                     console.log(quantity)
                 }catch{}}
 
->>>>>>> testing
                 const productImage = product.querySelector('div:nth-child(1) > div:nth-child(1) > a > img').getAttribute("src");
                 productDict[index] = {
                     currency: 'USD',
