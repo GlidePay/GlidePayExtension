@@ -102,8 +102,15 @@ async function setProductInfo(products, shipping, sender) {
     const itemRow = document.createElement("tr");
     const itemImgEntry = document.createElement("td");
     itemImgEntry.setAttribute("class", "ps-4");
-    subtotal +=
-      parseFloat(productDict["unitPrice"]) * parseInt(productDict["quantity"]);
+    let priceString = productDict["unitPrice"];
+    if (priceString.includes(",")) {
+        priceString = priceString.replace(/,/g, "");
+    }
+    subtotal += parseFloat(priceString) * productDict["quantity"];
+    console.log("LOGGING");
+    console.log(parseFloat(productDict["unitPrice"]));
+    console.log(productDict["quantity"]);
+    console.log(subtotal);
     currency = productDict["currency"];
     const itemImage = document.createElement("img");
     itemImage.src = productDict["productImage"];
