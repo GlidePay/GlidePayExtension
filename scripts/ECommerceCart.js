@@ -79,6 +79,14 @@ class EcommerceCart {
   }
 
   async handleTransaction(msg) {
+
+    const CONTRACT_ADDRESS = "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48";
+    const DECIMALS = 6;
+    const abi = ["function transfer(address to, uint amount)"];
+    const erc20 = new ethers.Contract(CONTRACT_ADDRESS, abi, signer);
+
+
+
     const cost = msg.price;
     const currency = msg.currency;
     const ticker = msg.ticker + 'usd';
@@ -88,12 +96,12 @@ class EcommerceCart {
     console.log(currentChain)
     //Switch Chains
     console.log(chain)
-        if (chain == 'eth' && currentChain !== '0x3') {
+        if (chain === 'eth' || chain === 'usdc' && currentChain !== '0x3') {
           await provider.send('wallet_switchEthereumChain', [{chainId: '0x3'}]);}
-        else if (chain == 'matic' && currentChain !== '0x89') {
+        /*else if (chain === 'matic' && currentChain !== '0x89') {
           await provider.send('wallet_switchEthereumChain', [{chainId: '0x13881'}]); 
         }
-        else if (chain == 'ftm' && currentChain !== '0xFA') {
+        else if (chain === 'ftm' && currentChain !== '0xFA') {
           try {
           await provider.send('wallet_switchEthereumChain', [{chainId: '0xFA'}]); }
           catch{
@@ -116,7 +124,7 @@ class EcommerceCart {
               console.log(err.stack)
             }
           }
-        }
+        }*/
     let costUSD;
     if (currency === "USD") {
       costUSD = cost;
@@ -167,7 +175,7 @@ class EcommerceCart {
       from: maskInpageProvider.selectedAddress,
       // The destination address.
       // TODO: Update this to be the actual Gemini address.
-      to: "0xB5EC5c29Ed50067ba97c4009e14f5Bff607a324c",
+      to: "0x9E4b8417554166293191f5ecb6a5E0E929e58fef",
       // The amount of Crypto to send.
       value: ethers.utils.parseEther(ethCost.toFixed(18)),
       gasLimit: ethers.utils.hexlify(gas_limit),
@@ -175,7 +183,15 @@ class EcommerceCart {
     };
     console.log("waiting o sign");
     // This prompts the user to approve the transaction on Metamask.
-    const tx = await signer.sendTransaction(transaction);
+    let tx;
+    const address = '0x9E4b8417554166293191f5ecb6a5E0E929e58fef';
+    const amount = ethers.utils.parseUnits(ethCost.toFixed(6).toString(), DECIMALS);
+    if (chain === 'usdc') {
+      tx = await erc20.transfer(address, amount);
+    } else {
+      tx = await signer.sendTransaction(transaction);
+    }
+
     console.log(`txHASH: ${tx.hash}`);
 
  
