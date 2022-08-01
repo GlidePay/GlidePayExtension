@@ -89,10 +89,33 @@ class EcommerceCart {
     //Switch Chains
     console.log(chain)
         if (chain == 'eth' && currentChain !== '0x3') {
-          await provider.send('wallet_switchEthereumChain', [{chainId: '0x3'}]);
-        }
+          await provider.send('wallet_switchEthereumChain', [{chainId: '0x3'}]);}
         else if (chain == 'matic' && currentChain !== '0x89') {
           await provider.send('wallet_switchEthereumChain', [{chainId: '0x13881'}]); 
+        }
+        else if (chain == 'ftm' && currentChain !== '0xFA') {
+          try {
+          await provider.send('wallet_switchEthereumChain', [{chainId: '0xFA'}]); }
+          catch{
+            try{
+              const params = [{
+                chainId: '0xFA',
+                chainName: 'Fantom Opera',
+                nativeCurrency: {
+                  name: 'Fantom',
+                  symbol: 'FTM',
+                  decimals: 18
+                },
+                rpcUrls: ['https://rpc.ankr.com/fantom/'],
+                blockExplorerUrls: ['https://ftmscan.com/']
+              }]
+            
+              provider.send('wallet_addEthereumChain', params )
+            }
+            catch(err){
+              console.log(err.stack)
+            }
+          }
         }
     let costUSD;
     if (currency === "USD") {
