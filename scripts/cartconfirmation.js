@@ -146,11 +146,12 @@ async function setProductInfo(products, shipping, sender) {
   const confirmButton = document.getElementById("submit-button");
   confirmButton.addEventListener("click", async () => {
     const addressSelect = document.getElementById("addressSelect");
+    const chain = document.getElementById("currencySelect").value
     if (addressSelect.selectedIndex === -1) {
       //TODO: Add text or popup or something that says this
       return;
     }
-
+    console.log(chain)
     const windows = await chrome.windows.getAll({ populate: true });
     for (let a in windows) {
       for (let b in windows[a].tabs) {
@@ -166,6 +167,7 @@ async function setProductInfo(products, shipping, sender) {
               addressid:
                 addressSelect.options[addressSelect.selectedIndex].value,
               products: products,
+              ticker: chain
             },
             (response) => {
               if (response) {

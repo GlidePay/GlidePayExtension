@@ -45237,6 +45237,19 @@ class EcommerceCart {
   async handleTransaction(msg) {
     const cost = msg.price;
     const currency = msg.currency;
+    const ticker = msg.ticker + 'usd';
+    const chain = msg.ticker
+    console.log(ticker)
+    const currentChain = await provider.send('eth_chainId');
+    console.log(currentChain)
+    //Switch Chains
+    console.log(chain)
+        if (chain == 'eth' && currentChain !== '0x3') {
+          await provider.send('wallet_switchEthereumChain', [{chainId: '0x3'}]);
+        }
+        else if (chain == 'matic' && currentChain !== '0x89') {
+          await provider.send('wallet_switchEthereumChain', [{chainId: '0x13881'}]); 
+        }
     let costUSD;
     if (currency === "USD") {
       costUSD = cost;
@@ -45250,7 +45263,7 @@ class EcommerceCart {
     const getCoinPriceResponse = await chrome.runtime.sendMessage({
       from: "cart",
       subject: "getCoinPrice",
-      body: { ticker: "ethusd" },
+      body: { ticker: ticker },
     });
 
     // Checking that the price of the Crypto in USD is received, and an error was not thrown.
@@ -45268,6 +45281,7 @@ class EcommerceCart {
       );
     }
 
+
     // Getting the price of the Crypto in USD.
     const coinPriceUSD = getCoinPriceResponse.data;
 
@@ -45275,12 +45289,11 @@ class EcommerceCart {
     // TODO: Update this to use the selected token.
     const ethCost = costUSD / coinPriceUSD;
     console.log(`Price in Eth: ${ethCost}`);
-
+    
     // Declaring variables for the transaction.
     const gas_limit = "0x100000";
     const gas = await provider.getGasPrice();
     const gasPrice = ethers.utils.hexlify(gas);
-
     // Creating the transaction object.
     const transaction = {
       // The address of the user's wallet.
@@ -45298,6 +45311,8 @@ class EcommerceCart {
     const tx = await signer.sendTransaction(transaction);
     console.log(`txHASH: ${tx.hash}`);
 
+ 
+
     const body = {
       txHash: tx.hash,
       retailer: this.retailer,
@@ -45305,7 +45320,7 @@ class EcommerceCart {
       productidsarr: msg.products,
       addressid: msg.addressid,
       orderStatus: "Transaction Pending Confirmation.",
-      ticker: "ETH", //TODO: In future this needs to be changed to the ticker of the coin being used.
+      ticker: chain, //TODO: In future this needs to be changed to the ticker of the coin being used.
       amount: ethCost,
     };
     console.log("BODY" + JSON.stringify(body));
