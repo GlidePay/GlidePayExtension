@@ -152,6 +152,21 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         // to get the response and send it.
         return true;
       }
+
+      case "logError": {
+        // We call the helper function.
+        logError(message.body).then((result) => {
+          if (result instanceof Error) {
+            sendResponse(result);
+          } else {
+            sendResponse(result);
+          }
+        });
+
+        // We need to return true because the function is asynchronous. This keeps the messaging port open long enough
+        // to get the response and send it.
+        return true;
+      }
     }
 
     // Messages from the GlidePay website.
@@ -195,7 +210,6 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 async function handleResponse(response) {
   const jsonData = await response.text();
   const parsedJSONData = JSON.parse(jsonData);
-  console.log(parsedJSONData);
   if (response.status === 200) {
     return parsedJSONData;
   }
@@ -412,6 +426,27 @@ async function getAddresses(payload) {
       customMsg: "Get Addresses Failed (Extension)",
       error: err.stack,
       uiMsg: "Retrieving Addresses Failed",
+      errorID: Date.now(),
+    };
+  }
+}
+
+// This function gets the saved addresses of the user.
+async function logError(payload) {
+  try {
+    let response = await fetch(
+      "https://1c889zfgii.execute-api.us-east-1.amazonaws.com/default/LogErrorRDS",
+      {
+        method: "POST",
+        body: JSON.stringify(payload),
+      }
+    );
+    return await handleResponse(response);
+  } catch (err) {
+    return {
+      customMsg: "Logging Error Failed (Extension)",
+      error: err.stack,
+      uiMsg: "Logging Error Failed",
       errorID: Date.now(),
     };
   }

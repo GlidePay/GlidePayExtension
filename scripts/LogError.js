@@ -25,6 +25,11 @@ class LogError {
   }
 
   logError() {
+    chrome.runtime.sendMessage({
+      from: "cart",
+      subject: "logError",
+      body: { logError: this },
+    });
     // TODO: Logs error to database
   }
 }

@@ -12,22 +12,25 @@ async function getAddresses() {
   });
   console.log(getAddressesResponse);
   if (getAddressesResponse.hasOwnProperty("error")) {
-    new LogError(
-      getAddressesResponse.error.customMsg,
-      getAddressesResponse.error.error,
-      {
-        jwt: jwt,
-      },
-      getAddressesResponse.error.uiMsg,
-      getAddressesResponse.error.errorID,
-      () => {
-        const addressSelectDropdown = document.getElementById("addressSelect");
-        const errorText = document.createElement("p");
-        errorText.classList = "error-text text-center";
-        errorText.innerText =
-          getAddressesResponse.uiMsg ?? "Retrieving Addresses Failed";
-        addressSelectDropdown.after(errorText);
-      }
+    console.log(
+      new LogError(
+        getAddressesResponse.error.customMsg,
+        getAddressesResponse.error.error,
+        {
+          jwt: jwt,
+        },
+        getAddressesResponse.error.uiMsg,
+        getAddressesResponse.error.errorID,
+        () => {
+          const addressSelectDropdown =
+            document.getElementById("addressSelect");
+          const errorText = document.createElement("p");
+          errorText.classList = "error-text text-center";
+          errorText.innerText =
+            getAddressesResponse.uiMsg ?? "Retrieving Addresses Failed";
+          addressSelectDropdown.after(errorText);
+        }
+      )
     );
     return;
   }
@@ -131,9 +134,9 @@ async function setProductInfo(products, shipping, sender) {
       //TODO: Add text or popup or something that says this
       return;
     }
-  let tax = (subtotal + shipping) * 0.095;
-  console.log(shipping)
-  let totalPrice = tax + subtotal + shipping;
+    let tax = (subtotal + shipping) * 0.095;
+    console.log(shipping);
+    let totalPrice = tax + subtotal + shipping;
     let value = addressSelect.options[addressSelect.selectedIndex].text;
     const windows = await chrome.windows.getAll({ populate: true });
     for (let a in windows) {
@@ -238,7 +241,7 @@ async function cartMain() {
               subject: "needInfo",
             }
           );
-          console.log(products)
+          console.log(products);
           await setUpCart(products[0], products[1], senderTabID);
         }
       }
@@ -253,7 +256,7 @@ async function cartMain() {
         sendResponse(true);
         const products = message.data;
         const shipping = message.shipping;
-        console.log(shipping)
+        console.log(shipping);
         await setUpCart(products, shipping, senderTabID);
       }
       return true;
