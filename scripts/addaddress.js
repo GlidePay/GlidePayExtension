@@ -38,9 +38,11 @@ class LogError {
 }
 
 // Sets up the add address button.
-async function setUpAddAddressButton() {
+function setUpAddAddressButton() {
   let countrySelectDropdown = document.getElementById("country-select");
   let stateSelectDropdown = document.getElementById("state-select");
+  console.log(countrySelectDropdown);
+  console.log(stateSelectDropdown);
 
   countrySelectDropdown.selectedIndex = -1;
   stateSelectDropdown.selectedIndex = -1;
@@ -240,7 +242,7 @@ async function addAddressButtonClicked() {
 // Main function that runs.
 async function addressMain() {
   try {
-    await setUpAddAddressButton();
+    setUpAddAddressButton();
   } catch (err) {
     new LogError(
       "Building Address Popup Failed (Uncaught)",
