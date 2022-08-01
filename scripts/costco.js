@@ -29,32 +29,91 @@ class Costco extends ECommerceCart.EcommerceCart {
         this.cryptoButton.style.marginBottom = "5px";
         add_to_cart.after(this.cryptoButton);
     }
-    getProducts() {
+
+    async getCostcoPage() {
+        return new Promise(function (resolve) {
+          let xhr = new XMLHttpRequest();
+          xhr.responseType = "document";
+          let url = "https://www.costco.com/CheckoutCartDisplayView";
+          xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200 /* DONE */) {
+              let html = xhr.response;
+              resolve(
+                html);
+            }
+          };
+          xhr.open("GET", url, true);
+          xhr.send("");
+        });
+      }
+
+    async temp() {
+        return await this.getCostcoPage()
+    }
+    async getProducts() {
         /**
          * Parses Costco's checkout page for the user's selected products.
          * @function getProducts
          * @return  {Object} Contains the products selected by the user.
          */
+        console.log('calling function')
+        let costcoDocument = await this.temp();
+        console.log(costcoDocument)
+
         let productDict = {};
-        let productElements = document.querySelector(
-            "#order-items-regular"
+        let productElements = costcoDocument.getElementById(
+            "order-items-regular"
         );
-        let groceryElements = document.querySelector(
-            "#order-items-grocery"
+        let groceryElements = costcoDocument.getElementById(
+            "order-items-grocery"
         );
-        let productElementsList = Array.from(productElements.children);
-        let groceryElementsList = Array.from(groceryElements.children);
+
+        let productElementsList = undefined;
+        let groceryElementsList = undefined;
+        try {
+        productElementsList = Array.from(productElements.children);}
+        catch{}
+        try {
+        groceryElementsList = Array.from(groceryElements.children);}
+        catch{}
         let index = 0;
+        if (productElementsList !== undefined) {
         productElementsList.forEach(function (part) {
             if (part.tagName === "DIV") {
                 console.log(part)
                 const product = part.querySelector('div > div:nth-child(1)');
                 console.log(product);
                 const productID = product.getAttribute("data-orderitemnumber");
+                console.log("productID: " + productID);
                 const productName = product.querySelector('div:nth-child(1) > div:nth-child(2) > h3 > a').innerText;
-                const unitPrice = product.querySelector('div:nth-child(1) > div:nth-child(2) > div:nth-child(6) > div > div > div:nth-child(1) > span > span').innerHTML;
-                console.log(unitPrice)
+<<<<<<< HEAD
+                console.log("productName: " + productName);
+                if (product.getElementsByClassName("free-gift")) {
+                    console.log("free gift");
+                }
+                const unitPrice = product.querySelector('div:nth-child(1) > div:nth-child(2) > div:nth-child(6) > div > div > div:nth-child(1) > span > span').innerText;
+                console.log("price: " + unitPrice);
                 const quantity = product.querySelector('div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > input').value;
+=======
+                console.log(product.getElementsByClassName('free-gift'))
+                let unitPrice;
+                try{
+                unitPrice = product.querySelector('div:nth-child(1) > div:nth-child(2) > div:nth-child(7) > div > div > div:nth-child(1) > span > span').innerText;}
+                catch {try {
+                    unitPrice = product.querySelector('div:nth-child(1) > div:nth-child(2) > div:nth-child(6) > div > div > div:nth-child(1) > span > span').innerText;
+                } catch{}}
+
+                console.log(unitPrice)
+                let quantity;
+                try {
+                quantity = product.querySelector('div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > input').value;
+            console.log(quantity)}
+                catch{try {
+                    quantity = product.querySelector('div:nth-child(2) > div:nth-child(1) > div:nth-child(2)').innerHTML;
+                    console.log(quantity)
+                }catch{}}
+
+>>>>>>> testing
                 const productImage = product.querySelector('div:nth-child(1) > div:nth-child(1) > a > img').getAttribute("src");
                 productDict[index] = {
                     currency: 'USD',
@@ -66,7 +125,8 @@ class Costco extends ECommerceCart.EcommerceCart {
                 };
                 index++;
             }
-        });
+                });}
+        if (groceryElementsList !== undefined) {
         groceryElementsList.forEach(function (part) {
             if (part.tagName === "DIV") {
                 const product = part.querySelector('div > div:nth-child(1)');
@@ -86,7 +146,7 @@ class Costco extends ECommerceCart.EcommerceCart {
                 };
                 index++;
             }
-        });
+        });}
         console.log(productDict)
         return productDict;
     }
@@ -94,6 +154,23 @@ class Costco extends ECommerceCart.EcommerceCart {
     getRetailer() {
             return 'costco'
     }
+    getShipping(productDict) {
+        let total = 0;
+        let shipping = 0;
+        for (let index in productDict) {
+            total += parseFloat(productDict[index]["unitPrice"]) * parseFloat(productDict[index]["quantity"]);
+        }
+        if (total < 75.00) {
+            shipping = 3.00;
+        } else {
+            shipping = 0;
+        }
+        try {
+        console.log(parseFloat(document.getElementById("order-estimated-shipping").innerHTML.split('automation-id="orderEstimatedShipping">$')[1].split("</")[0]))
+        shipping += parseFloat(document.getElementById("order-estimated-shipping").innerHTML.split('automation-id="orderEstimatedShipping">$')[1].split("</")[0]) }
+        catch{}
+        return shipping
+      }
 }
 
 function main() {
@@ -101,6 +178,7 @@ function main() {
      * Main runner function.
      * @function main
      */
+    console.log('running')
     let costco = new Costco();
     costco.createListeners();
     costco.injectButton();
@@ -113,11 +191,10 @@ function main() {
         console.log(mutations);
         costco.injectButton();
     });
-    /*
-    var container = document.querySelector('#order-summary-body');
+    var container = document.querySelector('#cart');
     console.log(container);
     let config = { attributes: true, subtree: true, characterData: true };
-    observer.observe(container, config); */
+    observer.observe(container, config);
 }
 
 main();

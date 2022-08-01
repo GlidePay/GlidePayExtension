@@ -24,7 +24,7 @@ class Amazon extends ECommerceCart.EcommerceCart {
     document.getElementById("sc-buy-box").style.paddingBottom = "5px";
   }
 
-  getProducts() {
+  async getProducts() {
     /**
      * Parses Amazon's checkout page for the user's selected products.
      * @function getProducts
@@ -78,6 +78,10 @@ class Amazon extends ECommerceCart.EcommerceCart {
     } else {
       return "amazon";
     }
+  }
+
+  getShipping() {
+    return 0;
   }
 }
 

@@ -25,7 +25,7 @@ class Walmart extends ECommerceCart.EcommerceCart {
     buttonLocation.style.paddingBottom = "5px";
   }
 
-  getProducts() {
+  async getProducts() {
     /**
      * Parses Walmart's checkout page for the user's selected products.
      * @function getProducts
@@ -119,6 +119,18 @@ class Walmart extends ECommerceCart.EcommerceCart {
 
   getRetailer() {
     return "walmart";
+  }
+
+  getShipping(productDict) {
+    let total = 0;
+    for (let index in productDict) {
+        total += parseFloat(productDict[index]["unitPrice"]) * parseFloat(productDict[index]["quantity"]);
+    }
+    if (total < 35.00) {
+        return 6.99
+    } else {
+        return 0
+    }
   }
 }
 
