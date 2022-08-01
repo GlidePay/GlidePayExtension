@@ -275,7 +275,7 @@ async function cartMain() {
   chrome.runtime.onMessage.addListener(
     async (message, sender, sendResponse) => {
       if (message.from === "cart" && message.subject === "sendCartInfo") {
-        chrome.runtime.onMessage.removeListener(arguments.callee);
+        // chrome.runtime.onMessage.removeListener(arguments.callee);
         sendResponse(true);
         const products = message.data;
         const shipping = message.shipping;

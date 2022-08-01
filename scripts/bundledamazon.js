@@ -45373,6 +45373,14 @@ class EcommerceCart {
         // We wait for 1 second before checking again.
         await timer(100);
       }
+      if (isPopupOpen) {
+        const cartInfoReceived = await chrome.runtime.sendMessage({
+          from: "cart",
+          subject: "sendCartInfo",
+          data: this.productDict,
+          shipping: this.shipping,
+        });
+      }
 
       // Re-enable the button.
       this.cryptoButton.disabled = false;
