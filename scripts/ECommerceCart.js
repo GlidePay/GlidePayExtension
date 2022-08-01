@@ -88,10 +88,30 @@ class EcommerceCart {
     console.log(currentChain)
     //Switch Chains
     console.log(chain)
-        if (chain == 'eth' && currentChain !== '0x3') {
-          await provider.send('wallet_switchEthereumChain', [{chainId: '0x3'}]);}
+        if (chain == 'eth' && currentChain !== '0x1') {
+          await provider.send('wallet_switchEthereumChain', [{chainId: '0x1'}]);}
         else if (chain == 'matic' && currentChain !== '0x89') {
-          await provider.send('wallet_switchEthereumChain', [{chainId: '0x13881'}]); 
+          try {
+          await provider.send('wallet_switchEthereumChain', [{chainId: '0x89'}]); }catch(err) {
+            try{
+              const params = [{
+                chainId: '0x89',
+                chainName: 'Polygon',
+                nativeCurrency: {
+                  name: 'Matic',
+                  symbol: 'MATIC',
+                  decimals: 18
+                },
+                rpcUrls: ['https://polygon-rpc.com'],
+                blockExplorerUrls: ['https://polygonscan.com/']
+              }]
+            
+              provider.send('wallet_addEthereumChain', params )
+            }
+            catch(err){
+              console.log(err.stack)
+            }
+          }
         }
         else if (chain == 'ftm' && currentChain !== '0xFA') {
           try {
