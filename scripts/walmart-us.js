@@ -46,9 +46,16 @@ class Walmart extends ECommerceCart.EcommerceCart {
                 productCartSectionList.forEach(function (part) {
                     try {
                     let productItem = part.querySelector('div:nth-child(3)');
-                    console.log(productItem) 
-                    let productInfo = productItem.querySelector('div:nth-child(1) > div > div');
-                    let productID = productInfo.querySelector('a').getAttribute('href').split('/ip/seort/')[1];
+                    console.log("PRODUCT ITEM")
+                    console.log(productItem);
+                    let productInfo = productItem.querySelector('div:nth-child(1) > div > div:nth-child(2)');
+                    console.log("PRODUCT INFO1")
+                    console.log(productInfo);
+                    console.log("QUERY TEST");
+                    console.log(productInfo.querySelector('div'));
+                    let productID = productInfo.querySelector('div > div > div:nth-child(2) > a').getAttribute('href').split('/ip/seort/')[1];
+                    console.log("PRODUCT ID1");
+                    console.log(productID);
                     let productName = productInfo.querySelector('a > h4 > div > span').innerText;
                     let unitPrice = productInfo.querySelector('div:nth-child(3) > div > div:nth-child(1) > span').innerText.split('$')[1];
                     let productQuantityString = productItem.querySelector('a').getAttribute('aria-label').split(' in cart')[0];
@@ -67,9 +74,14 @@ class Walmart extends ECommerceCart.EcommerceCart {
                 } catch(err) {
                     try {
                     let productItem = part.querySelector('div:nth-child(2)');
-                    console.log(productItem) 
-                    let productInfo = productItem.querySelector('div:nth-child(1) > div > div');
-                    let productID = productInfo.querySelector('a').getAttribute('href').split('/ip/seort/')[1];
+                    console.log("PRODUCT ITEM");
+                    console.log(productItem)
+                    let productInfo = productItem.querySelector('div:nth-child(1) > div > div:nth-child(2)');
+                    console.log("PRODUCT INFO2")
+                    console.log(productInfo);
+                    console.log("QUERY TEST");
+                    console.log(productInfo.querySelector('div > div'));
+                    let productID = productInfo.querySelector('div > div > div:nth-child(2) > a').getAttribute('href').split('/ip/seort/')[1];
                     let productName = productInfo.querySelector('a > h4 > div > span').innerText;
                     let unitPrice = productInfo.querySelector('div:nth-child(3) > div > div:nth-child(1) > span').innerText.split('$')[1];
                     let productQuantityString = productItem.querySelector('a').getAttribute('aria-label').split(' in cart')[0];
@@ -84,33 +96,95 @@ class Walmart extends ECommerceCart.EcommerceCart {
                         productImage: productImage,
 
                     };
-                    productIndex++; }catch(err){
-                        console.log(err)
+                    productIndex++;
+                    } catch(err){
+                        let productItem = part.querySelector('div:nth-child(3)');
+                        console.log("PRODUCT ITEM")
+                        console.log(productItem);
+                        let productInfo = productItem.querySelector('div:nth-child(1) > div > div.flex.flex-row.relative');
+                        console.log("PRODUCT INFO2.5")
+                        console.log(productInfo);
+                        console.log("QUERY TEST");
+                        console.log(productInfo.querySelector('div'));
+                        let productID = productInfo.querySelector('div > div > div:nth-child(2) > a').getAttribute('href').split('/ip/seort/')[1];
+                        console.log("PRODUCT ID1");
+                        console.log(productID);
+                        let productName = productInfo.querySelector('a > h4 > div > span').innerText;
+                        let unitPrice = productInfo.querySelector('div:nth-child(3) > div > div:nth-child(1) > span').innerText.split('$')[1];
+                        let productQuantityString = productItem.querySelector('a').getAttribute('aria-label').split(' in cart')[0];
+                        let productQuantity = productQuantityString.slice(productQuantityString.length - 1);
+                        let productImage = productInfo.querySelector('a > img').getAttribute('srcset').split(' 1x')[0];
+                        productDict[productIndex] = {
+                            currency: 'USD',
+                            productID: productID,
+                            productName: productName,
+                            unitPrice: parseFloat(unitPrice)/parseFloat(productQuantity),
+                            quantity: productQuantity,
+                            productImage: productImage,
+
+                        };
+                        productIndex++;
                     }
                 }
                 });
             } else {
-                let productCartSection2 = part.querySelector('div > div > ul');
-                let productCartSection2List = Array.from(productCartSection2.children);
-                productCartSection2List.forEach(function (part) {
-                    let productItem = part.querySelector('div:nth-child(2)');
-                    let productInfo = productItem.querySelector('div:nth-child(1) > div > div');
-                    let productID = productInfo.querySelector('a').getAttribute('href').split('/ip/seort/')[1];
-                    let productName = productInfo.querySelector('a > h4 > div > span').innerText;
-                    let unitPrice = productInfo.querySelector('div:nth-child(3) > div > div:nth-child(1) > span').innerText.split('$')[1];
-                    let productQuantityString = productItem.querySelector('a').getAttribute('aria-label').split(' in cart')[0];
-                    let productQuantity = productQuantityString.slice(productQuantityString.length - 1);
-                    let productImage = productInfo.querySelector('a > img').getAttribute('srcset').split(' 1x')[0];
-                    productDict[productIndex] = {
-                        currency: 'USD',
-                        productID: productID,
-                        productName: productName,
-                        unitPrice: parseFloat(unitPrice)/parseFloat(productQuantity),
-                        quantity: productQuantity,
-                        productImage: productImage,
-                    };
-                    productIndex++;
-                });
+                try {
+                    let productCartSection2 = part.querySelector('div > div > ul');
+                    let productCartSection2List = Array.from(productCartSection2.children);
+                    productCartSection2List.forEach(function (part) {
+                        let productItem = part.querySelector('div:nth-child(2)');
+                        console.log("PRODUCT ITEM3");
+                        console.log(productItem);
+                        let productInfo = productItem.querySelector('div:nth-child(1) > div > div:nth-child(2)');
+                        console.log("PRODUCT INFO3");
+                        console.log(productInfo);
+                        console.log("QUERY TEST");
+                        console.log(productInfo.querySelector('div > div'));
+                        let productID = productInfo.querySelector('div > div > div:nth-child(2) > a').getAttribute('href').split('/ip/seort/')[1];
+                        let productName = productInfo.querySelector('a > h4 > div > span').innerText;
+                        let unitPrice = productInfo.querySelector('div:nth-child(3) > div > div:nth-child(1) > span').innerText.split('$')[1];
+                        let productQuantityString = productItem.querySelector('a').getAttribute('aria-label').split(' in cart')[0];
+                        let productQuantity = productQuantityString.slice(productQuantityString.length - 1);
+                        let productImage = productInfo.querySelector('a > img').getAttribute('srcset').split(' 1x')[0];
+                        productDict[productIndex] = {
+                            currency: 'USD',
+                            productID: productID,
+                            productName: productName,
+                            unitPrice: parseFloat(unitPrice)/parseFloat(productQuantity),
+                            quantity: productQuantity,
+                            productImage: productImage,
+                        };
+                        productIndex++;
+                    });
+                } catch(err) {
+                    let productCartSection2 = part.querySelector('div > div > ul');
+                    let productCartSection2List = Array.from(productCartSection2.children);
+                    productCartSection2List.forEach(function (part) {
+                        let productItem = part.querySelector('div:nth-child(3)');
+                        console.log("PRODUCT ITEM3.5");
+                        console.log(productItem);
+                        let productInfo = productItem.querySelector('div:nth-child(1) > div > div:nth-child(2)');
+                        console.log("PRODUCT INFO3.5");
+                        console.log(productInfo);
+                        console.log("QUERY TEST");
+                        console.log(productInfo.querySelector('div > div'));
+                        let productID = productInfo.querySelector('div > div > div:nth-child(2) > a').getAttribute('href').split('/ip/seort/')[1];
+                        let productName = productInfo.querySelector('a > h4 > div > span').innerText;
+                        let unitPrice = productInfo.querySelector('div:nth-child(3) > div > div:nth-child(1) > span').innerText.split('$')[1];
+                        let productQuantityString = productItem.querySelector('a').getAttribute('aria-label').split(' in cart')[0];
+                        let productQuantity = productQuantityString.slice(productQuantityString.length - 1);
+                        let productImage = productInfo.querySelector('a > img').getAttribute('srcset').split(' 1x')[0];
+                        productDict[productIndex] = {
+                            currency: 'USD',
+                            productID: productID,
+                            productName: productName,
+                            unitPrice: parseFloat(unitPrice)/parseFloat(productQuantity),
+                            quantity: productQuantity,
+                            productImage: productImage,
+                        };
+                        productIndex++;
+                    });
+                }
             }
         });
     console.log(productElements);
