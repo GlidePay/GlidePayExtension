@@ -435,7 +435,7 @@ async function getAddresses(payload) {
 async function logError(payload) {
   try {
     let response = await fetch(
-      "https://1c889zfgii.execute-api.us-east-1.amazonaws.com/default/LogErrorRDS",
+      "https://aiyoll5ioc.execute-api.us-east-1.amazonaws.com/default/LogErrorRDS",
       {
         method: "POST",
         body: JSON.stringify(payload),
