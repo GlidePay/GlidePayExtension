@@ -9,7 +9,6 @@ class LogError {
     this.errorOrigin = "Extension";
     this.timestamp = this.getDate();
     handle();
-    console.log("logging1");
     this.logError();
   }
 
@@ -26,8 +25,6 @@ class LogError {
   }
 
   logError() {
-    console.log("logging");
-    console.log(this);
     chrome.runtime.sendMessage({
       from: "cart",
       subject: "logError",
@@ -41,8 +38,6 @@ class LogError {
 function setUpAddAddressButton() {
   let countrySelectDropdown = document.getElementById("country-select");
   let stateSelectDropdown = document.getElementById("state-select");
-  console.log(countrySelectDropdown);
-  console.log(stateSelectDropdown);
 
   countrySelectDropdown.selectedIndex = -1;
   stateSelectDropdown.selectedIndex = -1;
@@ -111,9 +106,12 @@ function setUpAddAddressButton() {
     <option value="NU">Nunavut</option>
     <option value="ON">Ontario</option>
     <option value="PE">Prince Edward Island</option>
-    <option value="QC">Quebec</option>
+    <option value="QC">Quebec</option>+
     <option value="SK">Saskatchewan</option>
     <option value="YT">Yukon</option>`;
+    }
+
+    if (countrySelectDropdown.value === "United Kingdom") {
     }
   });
 

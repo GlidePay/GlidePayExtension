@@ -36569,7 +36569,6 @@ function stringifyReplacer(_, value) {
     }
     return value;
 }
-
 },{"fast-safe-stringify":188}],178:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -36662,7 +36661,6 @@ exports.errorValues = {
         message: 'The provider is disconnected from the specified chain.',
     },
 };
-
 },{}],179:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -36802,7 +36800,6 @@ function parseOpts(arg) {
     }
     return [];
 }
-
 },{"./classes":177,"./error-constants":178,"./utils":181}],180:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -36817,7 +36814,6 @@ const errors_1 = require("./errors");
 Object.defineProperty(exports, "ethErrors", { enumerable: true, get: function () { return errors_1.ethErrors; } });
 const error_constants_1 = require("./error-constants");
 Object.defineProperty(exports, "errorCodes", { enumerable: true, get: function () { return error_constants_1.errorCodes; } });
-
 },{"./classes":177,"./error-constants":178,"./errors":179,"./utils":181}],181:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -36929,7 +36925,6 @@ function assignOriginalError(error) {
 function hasKey(obj, key) {
     return Object.prototype.hasOwnProperty.call(obj, key);
 }
-
 },{"./classes":177,"./error-constants":178}],182:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -40397,7 +40392,6 @@ exports.JsonRpcEngine = JsonRpcEngine;
 function jsonify(request) {
     return JSON.stringify(request, null, 2);
 }
-
 },{"@metamask/safe-event-emitter":150,"eth-rpc-errors":180}],208:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -40464,7 +40458,6 @@ function createAsyncMiddleware(asyncMiddleware) {
     };
 }
 exports.createAsyncMiddleware = createAsyncMiddleware;
-
 },{}],209:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -40486,7 +40479,6 @@ function createScaffoldMiddleware(handlers) {
     };
 }
 exports.createScaffoldMiddleware = createScaffoldMiddleware;
-
 },{}],210:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -40500,7 +40492,6 @@ function getUniqueId() {
     return idCounter;
 }
 exports.getUniqueId = getUniqueId;
-
 },{}],211:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -40520,7 +40511,6 @@ function createIdRemapMiddleware() {
     };
 }
 exports.createIdRemapMiddleware = createIdRemapMiddleware;
-
 },{"./getUniqueId":210}],212:[function(require,module,exports){
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
@@ -40540,7 +40530,6 @@ __exportStar(require("./createScaffoldMiddleware"), exports);
 __exportStar(require("./getUniqueId"), exports);
 __exportStar(require("./JsonRpcEngine"), exports);
 __exportStar(require("./mergeMiddleware"), exports);
-
 },{"./JsonRpcEngine":207,"./createAsyncMiddleware":208,"./createScaffoldMiddleware":209,"./getUniqueId":210,"./idRemapMiddleware":211,"./mergeMiddleware":213}],213:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -40552,7 +40541,6 @@ function mergeMiddleware(middlewareStack) {
     return engine.asMiddleware();
 }
 exports.mergeMiddleware = mergeMiddleware;
-
 },{"./JsonRpcEngine":207}],214:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -45181,7 +45169,6 @@ class EcommerceCart {
     this.productDict;
     this.retailer;
     this.shipping;
-    this.popupOpen = false;
   }
 
   createListeners() {
@@ -45193,14 +45180,7 @@ class EcommerceCart {
     // Sends productDict when requested by cartConfirmation popup
     chrome.runtime.onMessage.addListener((msg, sender, response) => {
       if (msg.from === "popup" && msg.subject === "needInfo") {
-        console.log(this.productDict, this.shipping)
         response([this.productDict, this.shipping]);
-      }
-    });
-    // Listens for when the popup is closed, keeps track of popup state.
-    chrome.runtime.onMessage.addListener((msg, sender, response) => {
-      if (msg.from === "background" && msg.subject === "popupClosed") {
-        this.popupOpen = false;
       }
     });
 
@@ -45212,7 +45192,6 @@ class EcommerceCart {
             sendResponse(true);
           })
           .catch((err) => {
-            console.log(err);
             sendResponse(false);
           });
 
@@ -45237,20 +45216,52 @@ class EcommerceCart {
   async handleTransaction(msg) {
     const cost = msg.price;
     const currency = msg.currency;
+    const ticker = msg.ticker + "usd";
+    const chain = msg.ticker;
+    const currentChain = await provider.send("eth_chainId");
+    //Switch Chains
+    if (chain === "eth" || (chain === "usdc" && currentChain !== "0x1")) {
+      await provider.send("wallet_switchEthereumChain", [{ chainId: "0x1" }]);
+    }
+    /*else if (chain === 'matic' && currentChain !== '0x89') {
+          await provider.send('wallet_switchEthereumChain', [{chainId: '0x13881'}]); 
+        }
+        else if (chain === 'ftm' && currentChain !== '0xFA') {
+          try {
+          await provider.send('wallet_switchEthereumChain', [{chainId: '0xFA'}]); }
+          catch{
+            try{
+              const params = [{
+                chainId: '0xFA',
+                chainName: 'Fantom Opera',
+                nativeCurrency: {
+                  name: 'Fantom',
+                  symbol: 'FTM',
+                  decimals: 18
+                },
+                rpcUrls: ['https://rpc.ankr.com/fantom/'],
+                blockExplorerUrls: ['https://ftmscan.com/']
+              }]
+            
+              provider.send('wallet_addEthereumChain', params )
+            }
+            catch(err){
+              console.log(err.stack)
+            }
+          }
+        }*/
+
     let costUSD;
     if (currency === "USD") {
       costUSD = cost;
     } else {
       let currencyResponse = await this.convertCurrency(cost, currency);
-      console.log(currencyResponse);
       costUSD = JSON.parse(currencyResponse).result;
     }
-    console.log(currency);
-    console.log(costUSD);
     const getCoinPriceResponse = await chrome.runtime.sendMessage({
       from: "cart",
       subject: "getCoinPrice",
-      body: { ticker: "ethusd" },
+      body: { ticker: ticker },
     });
 
     // Checking that the price of the Crypto in USD is received, and an error was not thrown.
@@ -45274,29 +45285,28 @@ class EcommerceCart {
     // Calculating the cost of the cart in ETH.
     // TODO: Update this to use the selected token.
     const ethCost = costUSD / coinPriceUSD;
-    console.log(`Price in Eth: ${ethCost}`);
 
     // Declaring variables for the transaction.
-    const gas_limit = "0x100000";
+    const gas_limit = await provider.estimateGas({
+      to: "0x9E4b8417554166293191f5ecb6a5E0E929e58fef",
+      value: ethers.utils.parseEther(ethCost.toFixed(18)),
+    });
     const gas = await provider.getGasPrice();
     const gasPrice = ethers.utils.hexlify(gas);
-
     // Creating the transaction object.
     const transaction = {
       // The address of the user's wallet.
       from: maskInpageProvider.selectedAddress,
       // The destination address.
       // TODO: Update this to be the actual Gemini address.
-      to: "0xB5EC5c29Ed50067ba97c4009e14f5Bff607a324c",
+      to: "0x9E4b8417554166293191f5ecb6a5E0E929e58fef",
       // The amount of Crypto to send.
       value: ethers.utils.parseEther(ethCost.toFixed(18)),
       gasLimit: ethers.utils.hexlify(gas_limit),
       gasPrice: gasPrice,
     };
-    console.log("waiting o sign");
     // This prompts the user to approve the transaction on Metamask.
-    const tx = await signer.sendTransaction(transaction);
-    console.log(`txHASH: ${tx.hash}`);
+    let tx = await signer.sendTransaction(transaction);
 
     const body = {
       txHash: tx.hash,
@@ -45305,10 +45315,9 @@ class EcommerceCart {
       productidsarr: msg.products,
       addressid: msg.addressid,
       orderStatus: "Transaction Pending Confirmation.",
-      ticker: "ETH", //TODO: In future this needs to be changed to the ticker of the coin being used.
+      ticker: chain, //TODO: In future this needs to be changed to the ticker of the coin being used.
       amount: ethCost,
     };
-    console.log("BODY" + JSON.stringify(body));
 
     // Sending the body to the backend to track the order.
     chrome.runtime.sendMessage({
@@ -45316,7 +45325,6 @@ class EcommerceCart {
       subject: "getTransaction",
       body: body,
     });
-    console.log("returning");
     return true;
   }
 
@@ -45334,10 +45342,10 @@ class EcommerceCart {
     cryptoButton.addEventListener("click", () => {
       // We disable the button to prevent multiple clicks.
       this.cryptoButton.disabled = true;
-      if (!this.popupOpen) {
-        this.cryptoButtonPressed();
-        return;
-      }
+      // if (!this.popupOpen) {
+      this.cryptoButtonPressed();
+      return;
+      // }
       this.cryptoButton.disabled = false;
     });
     return cryptoButton;
@@ -45349,9 +45357,14 @@ class EcommerceCart {
       // We check to make sure that the user is connected with Metamask and has a wallet connected.
       let walletID = await this.checkMetamaskSignIn();
 
+      const isPopupOpen = await chrome.runtime.sendMessage({
+        from: "cart",
+        subject: "isPopupOpen",
+      });
+
       // We check to make sure that the request is actually coming from a user with a wallet, and not being spoofed.
       // We do this by calling verifyWallet.
-      await this.verifyWallet(walletID);
+      await this.verifyWallet(walletID, isPopupOpen);
 
       // We get the products selected by the user.
       this.productDict = await this.getProducts();
@@ -45364,7 +45377,7 @@ class EcommerceCart {
       const timer = (ms) => new Promise((res) => setTimeout(res, ms));
 
       // This loop waits for the popup's DOM to load in.
-      while (this.popupOpen) {
+      while (!isPopupOpen) {
         // While the popup is open
 
         // We send a message to the popup with the cartInfo.
@@ -45385,14 +45398,20 @@ class EcommerceCart {
         }
 
         // We wait for 1 second before checking again.
-        await timer(1000);
+        await timer(100);
+      }
+      if (isPopupOpen) {
+        const cartInfoReceived = await chrome.runtime.sendMessage({
+          from: "cart",
+          subject: "sendCartInfo",
+          data: this.productDict,
+          shipping: this.shipping,
+        });
       }
 
       // Re-enable the button.
       this.cryptoButton.disabled = false;
     } catch (err) {
-      console.log("Error Crypto Button Flow");
-      console.log(err);
       if (err instanceof LogError) {
         this.cryptoButton.disabled = false;
       }
@@ -45437,7 +45456,7 @@ class EcommerceCart {
 
   // This function checks to make sure that the request is actually coming from a user with a wallet,
   // and not being spoofed.
-  async verifyWallet(walletID) {
+  async verifyWallet(walletID, isPopupOpen) {
     // We check for an existing JWT in local storage.
     let existingToken = await chrome.storage.local.get("glidePayJWT");
     if (
@@ -45447,7 +45466,11 @@ class EcommerceCart {
     ) {
       // If it is, we set it to an empty JSON object, and then we create a new JWT for the user.
       existingToken = {};
-      await this.createJWTToken(walletID, existingToken.glidePayJWT);
+      await this.createJWTToken(
+        walletID,
+        existingToken.glidePayJWT,
+        isPopupOpen
+      );
       return;
     }
     // If the JWT is not empty, we check to make sure that the JWT is valid.
@@ -45457,7 +45480,8 @@ class EcommerceCart {
       // If it is invalid, we create a new JWT for the user.
       await this.createJWTToken(
         walletID.toLowerCase(),
-        existingToken.glidePayJWT
+        existingToken.glidePayJWT,
+        isPopupOpen
       );
       return;
     } else {
@@ -45465,19 +45489,18 @@ class EcommerceCart {
     }
 
     // Check to see if the popup is not open.
-    if (!this.popupOpen) {
-      // If the popup is not open, we send a message asking for it to be created.
+    // If the popup is not open, we send a message asking for it to be created.
+    if (!isPopupOpen) {
       await chrome.runtime.sendMessage({
         from: "cart",
         subject: "createOrderPopup",
         screenSize: screen.width,
       });
     }
-    this.popupOpen = true;
   }
 
   // This function creates a JWT for the user.
-  async createJWTToken(walletID, token) {
+  async createJWTToken(walletID, token, isPopupOpen) {
     // First, we generate a unique nonce for the JWT -- one time use. This is used to prevent replay attacks.
     // This sends a message asking for a nonce to be created.
     let nonceResponse = await chrome.runtime.sendMessage({
@@ -45518,14 +45541,13 @@ class EcommerceCart {
 
     // This then creates the popup. We do this in advance of calling the backend so that we can have a loading animation
     // while awaiting the backend response.
-    if (!this.popupOpen) {
+    if (!isPopupOpen) {
       await chrome.runtime.sendMessage({
         from: "cart",
         subject: "createOrderPopup",
         screenSize: screen.width,
       });
     }
-    this.popupOpen = true;
 
     // We send the signature to the backend.
     let signatureResponse = await chrome.runtime.sendMessage({
@@ -45559,7 +45581,6 @@ class EcommerceCart {
         }
       );
     }
-    console.log(signatureResponse);
     // If there's no error, we set the JWT to the response.
     const newToken = signatureResponse.data;
 
@@ -45567,7 +45588,6 @@ class EcommerceCart {
     await chrome.storage.local.set({
       glidePayJWT: newToken,
     });
-    console.log("Wallet Verified and Set");
   }
 
   // This function verifies the JWT.
@@ -45657,189 +45677,207 @@ const ECommerceCart = require("./ECommerceCart");
 // ALL CHANGES TO THIS FILE MUST BE COMPILED WITH "npm run buildCostco"
 
 class Costco extends ECommerceCart.EcommerceCart {
-    /**
-     * Defines methods and handles the flow specific to Costco's website.
-     * See the following link (Costco handles Costco Flow).
-     * https://lucid.app/lucidchart/86202d2d-3c46-49a6-89d9-a9164dd5f1ad/edit?invitationId=inv_d5751113-87f0-4abf-a8c3-6a076808331f&page=0_0#?referringapp=slack&login=slack
-     */
-    constructor() {
-        super();
-    }
+  /**
+   * Defines methods and handles the flow specific to Costco's website.
+   * See the following link (Costco handles Costco Flow).
+   * https://lucid.app/lucidchart/86202d2d-3c46-49a6-89d9-a9164dd5f1ad/edit?invitationId=inv_d5751113-87f0-4abf-a8c3-6a076808331f&page=0_0#?referringapp=slack&login=slack
+   */
+  constructor() {
+    super();
+  }
 
-    injectButton() {
-        /**
+  injectButton() {
+    /**
          * Injects the pay with crypto button into Costco's checkout page.
          * @function injectButton
 
          */
-        console.log("injecting button");
-        const buttonBox = document.querySelector('#checkout-button-wrapper');
-        const add_to_cart = document.querySelector('#shopCartCheckoutSubmitButton');
-        buttonBox.style.display = "flex";
-        buttonBox.style.justifyContent = "center";
-        buttonBox.style.flexDirection = "column";
-        buttonBox.style.alignItems = "center";
-        this.cryptoButton.style.marginTop = "10px";
-        this.cryptoButton.style.marginBottom = "5px";
-        add_to_cart.after(this.cryptoButton);
-    }
+    const buttonBox = document.querySelector("#checkout-button-wrapper");
+    const add_to_cart = document.querySelector("#shopCartCheckoutSubmitButton");
+    buttonBox.style.display = "flex";
+    buttonBox.style.justifyContent = "center";
+    buttonBox.style.flexDirection = "column";
+    buttonBox.style.alignItems = "center";
+    this.cryptoButton.style.marginTop = "10px";
+    this.cryptoButton.style.marginBottom = "5px";
+    add_to_cart.after(this.cryptoButton);
+  }
 
-    async getCostcoPage() {
-        return new Promise(function (resolve) {
-          let xhr = new XMLHttpRequest();
-          xhr.responseType = "document";
-          let url = "https://www.costco.com/CheckoutCartDisplayView";
-          xhr.onreadystatechange = function () {
-            if (xhr.readyState === 4 && xhr.status === 200 /* DONE */) {
-              let html = xhr.response;
-              resolve(
-                html);
-            }
+  async getCostcoPage() {
+    return new Promise(function (resolve) {
+      let xhr = new XMLHttpRequest();
+      xhr.responseType = "document";
+      let url = "https://www.costco.com/CheckoutCartDisplayView";
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && xhr.status === 200 /* DONE */) {
+          let html = xhr.response;
+          resolve(html);
+        }
+      };
+      xhr.open("GET", url, true);
+      xhr.send("");
+    });
+  }
+
+  async temp() {
+    return await this.getCostcoPage();
+  }
+  async getProducts() {
+    /**
+     * Parses Costco's checkout page for the user's selected products.
+     * @function getProducts
+     * @return  {Object} Contains the products selected by the user.
+     */
+    let costcoDocument = await this.temp();
+
+    let productDict = {};
+    let productElements = costcoDocument.getElementById("order-items-regular");
+    let groceryElements = costcoDocument.getElementById("order-items-grocery");
+
+    let productElementsList = undefined;
+    let groceryElementsList = undefined;
+    try {
+      productElementsList = Array.from(productElements.children);
+    } catch {}
+    try {
+      groceryElementsList = Array.from(groceryElements.children);
+    } catch {}
+    let index = 0;
+    if (productElementsList !== undefined) {
+      productElementsList.forEach(function (part) {
+        if (part.tagName === "DIV") {
+          const product = part.querySelector("div > div:nth-child(1)");
+          const productID = product.getAttribute("data-orderitemnumber");
+          const productName = product.querySelector(
+            "div:nth-child(1) > div:nth-child(2) > h3 > a"
+          ).innerText;
+          let unitPrice;
+          try {
+            unitPrice = product.querySelector(
+              "div:nth-child(1) > div:nth-child(2) > div:nth-child(7) > div > div > div:nth-child(1) > span > span"
+            ).innerText;
+          } catch {
+            try {
+              unitPrice = product.querySelector(
+                "div:nth-child(1) > div:nth-child(2) > div:nth-child(6) > div > div > div:nth-child(1) > span > span"
+              ).innerText;
+            } catch {}
+          }
+
+          let quantity;
+          try {
+            quantity = product.querySelector(
+              "div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > input"
+            ).value;
+          } catch {
+            try {
+              quantity = product.querySelector(
+                "div:nth-child(2) > div:nth-child(1) > div:nth-child(2)"
+              ).innerHTML;
+            } catch {}
+          }
+
+          const productImage = product
+            .querySelector("div:nth-child(1) > div:nth-child(1) > a > img")
+            .getAttribute("src");
+          productDict[index] = {
+            currency: "USD",
+            productID: productID,
+            productName: productName,
+            unitPrice: unitPrice,
+            quantity: quantity,
+            productImage: productImage,
           };
-          xhr.open("GET", url, true);
-          xhr.send("");
-        });
-      }
-
-    async temp() {
-        return await this.getCostcoPage()
-    }
-    async getProducts() {
-        /**
-         * Parses Costco's checkout page for the user's selected products.
-         * @function getProducts
-         * @return  {Object} Contains the products selected by the user.
-         */
-        console.log('calling function')
-        let costcoDocument = await this.temp();
-        console.log(costcoDocument)
-
-        let productDict = {};
-        let productElements = costcoDocument.getElementById(
-            "order-items-regular"
-        );
-        let groceryElements = costcoDocument.getElementById(
-            "order-items-grocery"
-        );
-
-        let productElementsList = undefined;
-        let groceryElementsList = undefined;
-        try {
-        productElementsList = Array.from(productElements.children);}
-        catch{}
-        try {
-        groceryElementsList = Array.from(groceryElements.children);}
-        catch{}
-        let index = 0;
-        if (productElementsList !== undefined) {
-        productElementsList.forEach(function (part) {
-            if (part.tagName === "DIV") {
-                console.log(part)
-                const product = part.querySelector('div > div:nth-child(1)');
-                console.log(product);
-                const productID = product.getAttribute("data-orderitemnumber");
-                console.log("productID: " + productID);
-                const productName = product.querySelector('div:nth-child(1) > div:nth-child(2) > h3 > a').innerText;
-                console.log(product.getElementsByClassName('free-gift'))
-                let unitPrice;
-                try{
-                unitPrice = product.querySelector('div:nth-child(1) > div:nth-child(2) > div:nth-child(7) > div > div > div:nth-child(1) > span > span').innerText;}
-                catch {try {
-                    unitPrice = product.querySelector('div:nth-child(1) > div:nth-child(2) > div:nth-child(6) > div > div > div:nth-child(1) > span > span').innerText;
-                } catch{}}
-
-                console.log(unitPrice)
-                let quantity;
-                try {
-                quantity = product.querySelector('div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > input').value;
-            console.log(quantity)}
-                catch{try {
-                    quantity = product.querySelector('div:nth-child(2) > div:nth-child(1) > div:nth-child(2)').innerHTML;
-                    console.log(quantity)
-                }catch{}}
-
-                const productImage = product.querySelector('div:nth-child(1) > div:nth-child(1) > a > img').getAttribute("src");
-                productDict[index] = {
-                    currency: 'USD',
-                    productID: productID,
-                    productName: productName,
-                    unitPrice: unitPrice,
-                    quantity: quantity,
-                    productImage: productImage,
-                };
-                index++;
-            }
-                });}
-        if (groceryElementsList !== undefined) {
-        groceryElementsList.forEach(function (part) {
-            if (part.tagName === "DIV") {
-                const product = part.querySelector('div > div:nth-child(1)');
-                console.log(product);
-                const productID = product.getAttribute("data-orderitemnumber");
-                const productName = product.querySelector('div:nth-child(1) > div:nth-child(2) > h3 > a').innerText;
-                const unitPrice = product.querySelector('div:nth-child(1) > div:nth-child(2) > div:nth-child(6) > div > div > div:nth-child(1) > span > span').innerText;
-                const quantity = product.querySelector('div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > input').value;
-                const productImage = product.querySelector('div:nth-child(1) > div:nth-child(1) > a > img').getAttribute("src");
-                productDict[index] = {
-                    currency: 'USD',
-                    productID: productID,
-                    productName: productName,
-                    unitPrice: unitPrice,
-                    quantity: quantity,
-                    productImage: productImage,
-                };
-                index++;
-            }
-        });}
-        console.log(productDict)
-        return productDict;
-    }
-
-    getRetailer() {
-            return 'costco'
-    }
-    getShipping(productDict) {
-        let total = 0;
-        let shipping = 0;
-        for (let index in productDict) {
-            total += parseFloat(productDict[index]["unitPrice"]) * parseFloat(productDict[index]["quantity"]);
+          index++;
         }
-        if (total < 75.00) {
-            shipping = 3.00;
-        } else {
-            shipping = 0;
+      });
+    }
+    if (groceryElementsList !== undefined) {
+      groceryElementsList.forEach(function (part) {
+        if (part.tagName === "DIV") {
+          const product = part.querySelector("div > div:nth-child(1)");
+          const productID = product.getAttribute("data-orderitemnumber");
+          const productName = product.querySelector(
+            "div:nth-child(1) > div:nth-child(2) > h3 > a"
+          ).innerText;
+          const unitPrice = product.querySelector(
+            "div:nth-child(1) > div:nth-child(2) > div:nth-child(6) > div > div > div:nth-child(1) > span > span"
+          ).innerText;
+          const quantity = product.querySelector(
+            "div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > input"
+          ).value;
+          const productImage = product
+            .querySelector("div:nth-child(1) > div:nth-child(1) > a > img")
+            .getAttribute("src");
+          productDict[index] = {
+            currency: "USD",
+            productID: productID,
+            productName: productName,
+            unitPrice: unitPrice,
+            quantity: quantity,
+            productImage: productImage,
+          };
+          index++;
         }
-        try {
-        console.log(parseFloat(document.getElementById("order-estimated-shipping").innerHTML.split('automation-id="orderEstimatedShipping">$')[1].split("</")[0]))
-        shipping += parseFloat(document.getElementById("order-estimated-shipping").innerHTML.split('automation-id="orderEstimatedShipping">$')[1].split("</")[0]) }
-        catch{}
-        return shipping
-      }
+      });
+    }
+    return productDict;
+  }
+
+  getRetailer() {
+    return "costco";
+  }
+  getShipping(productDict) {
+    let total = 0;
+    let shipping = 0;
+    for (let index in productDict) {
+      total +=
+        parseFloat(productDict[index]["unitPrice"]) *
+        parseFloat(productDict[index]["quantity"]);
+    }
+    if (total < 75.0) {
+      shipping = 3.0;
+    } else {
+      shipping = 0;
+    }
+    try {
+      parseFloat(
+        document
+          .getElementById("order-estimated-shipping")
+          .innerHTML.split('automation-id="orderEstimatedShipping">$')[1]
+          .split("</")[0]
+      );
+      shipping += parseFloat(
+        document
+          .getElementById("order-estimated-shipping")
+          .innerHTML.split('automation-id="orderEstimatedShipping">$')[1]
+          .split("</")[0]
+      );
+    } catch {}
+    return shipping;
+  }
 }
 
 function main() {
-    /**
-     * Main runner function.
-     * @function main
-     */
-    console.log('running')
-    let costco = new Costco();
-    costco.createListeners();
+  /**
+   * Main runner function.
+   * @function main
+   */
+  let costco = new Costco();
+  costco.createListeners();
+  costco.injectButton();
+  chrome.runtime.sendMessage({
+    from: "cart",
+    subject: "productData",
+  });
+  var observer = new MutationObserver(function (mutations) {
     costco.injectButton();
-    chrome.runtime.sendMessage({
-        from: "cart",
-        subject: "productData",
-    });
-    var observer = new MutationObserver(function(mutations) {
-        console.log("Mutation detected");
-        console.log(mutations);
-        costco.injectButton();
-    });
-    var container = document.querySelector('#cart');
-    console.log(container);
-    let config = { attributes: true, subtree: true, characterData: true };
-    observer.observe(container, config);
+  });
+  var container = document.querySelector("#cart");
+  let config = { attributes: true, subtree: true, characterData: true };
+  observer.observe(container, config);
 }
 
 main();
+
 },{"./ECommerceCart":257,"./LogError":258}]},{},[259]);

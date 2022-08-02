@@ -36,7 +36,6 @@ class EcommerceCart {
     // Sends productDict when requested by cartConfirmation popup
     chrome.runtime.onMessage.addListener((msg, sender, response) => {
       if (msg.from === "popup" && msg.subject === "needInfo") {
-        console.log(this.productDict, this.shipping);
         response([this.productDict, this.shipping]);
       }
     });
@@ -49,7 +48,6 @@ class EcommerceCart {
             sendResponse(true);
           })
           .catch((err) => {
-            console.log(err);
             sendResponse(false);
           });
 
@@ -72,20 +70,16 @@ class EcommerceCart {
   }
 
   async handleTransaction(msg) {
-
-
     const cost = msg.price;
     const currency = msg.currency;
-    const ticker = msg.ticker + 'usd';
-    const chain = msg.ticker
-    console.log(ticker)
-    const currentChain = await provider.send('eth_chainId');
-    console.log(currentChain)
+    const ticker = msg.ticker + "usd";
+    const chain = msg.ticker;
+    const currentChain = await provider.send("eth_chainId");
     //Switch Chains
-    console.log(chain)
-        if (chain === 'eth' || chain === 'usdc' && currentChain !== '0x1') {
-          await provider.send('wallet_switchEthereumChain', [{chainId: '0x1'}]);}
-        /*else if (chain === 'matic' && currentChain !== '0x89') {
+    if (chain === "eth" || (chain === "usdc" && currentChain !== "0x1")) {
+      await provider.send("wallet_switchEthereumChain", [{ chainId: "0x1" }]);
+    }
+    /*else if (chain === 'matic' && currentChain !== '0x89') {
           await provider.send('wallet_switchEthereumChain', [{chainId: '0x13881'}]); 
         }
         else if (chain === 'ftm' && currentChain !== '0xFA') {
@@ -112,16 +106,14 @@ class EcommerceCart {
             }
           }
         }*/
+
     let costUSD;
     if (currency === "USD") {
       costUSD = cost;
     } else {
       let currencyResponse = await this.convertCurrency(cost, currency);
-      console.log(currencyResponse);
       costUSD = JSON.parse(currencyResponse).result;
     }
-    console.log(currency);
-    console.log(costUSD);
     const getCoinPriceResponse = await chrome.runtime.sendMessage({
       from: "cart",
       subject: "getCoinPrice",
@@ -143,17 +135,18 @@ class EcommerceCart {
       );
     }
 
-
     // Getting the price of the Crypto in USD.
     const coinPriceUSD = getCoinPriceResponse.data;
 
     // Calculating the cost of the cart in ETH.
     // TODO: Update this to use the selected token.
     const ethCost = costUSD / coinPriceUSD;
-    console.log(`Price in Eth: ${ethCost}`);
-    
+
     // Declaring variables for the transaction.
-    const gas_limit = await provider.estimateGas({to: "0x9E4b8417554166293191f5ecb6a5E0E929e58fef", value: ethers.utils.parseEther(ethCost.toFixed(18))});
+    const gas_limit = await provider.estimateGas({
+      to: "0x9E4b8417554166293191f5ecb6a5E0E929e58fef",
+      value: ethers.utils.parseEther(ethCost.toFixed(18)),
+    });
     const gas = await provider.getGasPrice();
     const gasPrice = ethers.utils.hexlify(gas);
     // Creating the transaction object.
@@ -168,13 +161,8 @@ class EcommerceCart {
       gasLimit: ethers.utils.hexlify(gas_limit),
       gasPrice: gasPrice,
     };
-    console.log("waiting o sign");
     // This prompts the user to approve the transaction on Metamask.
     let tx = await signer.sendTransaction(transaction);
-
-    console.log(`txHASH: ${tx.hash}`);
-
- 
 
     const body = {
       txHash: tx.hash,
@@ -186,7 +174,6 @@ class EcommerceCart {
       ticker: chain, //TODO: In future this needs to be changed to the ticker of the coin being used.
       amount: ethCost,
     };
-    console.log("BODY" + JSON.stringify(body));
 
     // Sending the body to the backend to track the order.
     chrome.runtime.sendMessage({
@@ -194,7 +181,6 @@ class EcommerceCart {
       subject: "getTransaction",
       body: body,
     });
-    console.log("returning");
     return true;
   }
 
@@ -282,8 +268,6 @@ class EcommerceCart {
       // Re-enable the button.
       this.cryptoButton.disabled = false;
     } catch (err) {
-      console.log("Error Crypto Button Flow");
-      console.log(err);
       if (err instanceof LogError) {
         this.cryptoButton.disabled = false;
       }
@@ -453,7 +437,6 @@ class EcommerceCart {
         }
       );
     }
-    console.log(signatureResponse);
     // If there's no error, we set the JWT to the response.
     const newToken = signatureResponse.data;
 
@@ -461,7 +444,6 @@ class EcommerceCart {
     await chrome.storage.local.set({
       glidePayJWT: newToken,
     });
-    console.log("Wallet Verified and Set");
   }
 
   // This function verifies the JWT.

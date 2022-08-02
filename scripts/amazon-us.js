@@ -30,8 +30,6 @@ class Amazon extends ECommerceCart.EcommerceCart {
      * @function getProducts
      * @return  {Object} Contains the products selected by the user.
      */
-    console.log("getProducts");
-    console.log(document.querySelector("#activeCartViewForm"));
     let productDict = {};
     let productElements = document.querySelectorAll(
       "#activeCartViewForm > div.a-section.a-spacing-mini.sc-list-body.sc-java-remote-feature > div.a-row.sc-list-item.sc-list-item-border.sc-java-remote-feature"
@@ -47,7 +45,6 @@ class Amazon extends ECommerceCart.EcommerceCart {
       }
       const currency = JSON.parse(part.getAttribute("data-subtotal")).subtotal
         .code;
-      console.log(currency);
       const ASIN = theArray[index].getAttribute("data-asin");
       const productName = imageElement.getAttribute("alt");
       const unitPrice = theArray[index].getAttribute("data-price");

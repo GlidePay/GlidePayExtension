@@ -196,15 +196,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 chrome.runtime.onConnect.addListener(function (port) {
   if (port.name === "cartView") {
     isPopupOpen = true;
-    console.log("is open: " + isPopupOpen);
     port.onDisconnect.addListener(function () {
       chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-        // chrome.tabs.sendMessage(senderID, {
-        //   from: "background",
-        //   subject: "popupClosed",
-        // });
         isPopupOpen = false;
-        console.log("is open: " + isPopupOpen);
       });
     });
   }
@@ -219,11 +213,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (msg.from === "popup" && msg.subject === "setPopupTabID") {
-    console.log(msg.body);
-    console.log(msg.body.popupID);
-    console.log("The popup id was: " + popupID);
     popupID = msg.body.popupID;
-    console.log("The popup id is: " + popupID);
   }
 });
 
