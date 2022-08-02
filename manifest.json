@@ -21,7 +21,7 @@
         "js": ["scripts/bundledcostco.js"]
     },
     {
-      "matches": ["http://localhost/*", "https://localhost/*"],
+      "matches": ["*://glidepay.com/*", "*://www.glidepay.com/*"],
       "js": ["scripts/localtest.js"]
     }
   ],

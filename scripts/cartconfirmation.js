@@ -102,7 +102,7 @@ async function setProductInfo(products, shipping, sender) {
     const itemRow = document.createElement("tr");
     const itemImgEntry = document.createElement("td");
     itemImgEntry.setAttribute("class", "ps-4");
-    let priceString = productDict["unitPrice"];
+    let priceString = productDict["unitPrice"].toString();
     if (priceString.includes(",")) {
         priceString = priceString.replace(/,/g, "");
     }
