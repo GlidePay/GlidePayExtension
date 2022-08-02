@@ -25,7 +25,6 @@ class EcommerceCart {
     this.productDict;
     this.retailer;
     this.shipping;
-    this.popupOpen = false;
   }
 
   createListeners() {
@@ -37,14 +36,8 @@ class EcommerceCart {
     // Sends productDict when requested by cartConfirmation popup
     chrome.runtime.onMessage.addListener((msg, sender, response) => {
       if (msg.from === "popup" && msg.subject === "needInfo") {
-        console.log(this.productDict, this.shipping)
+        console.log(this.productDict, this.shipping);
         response([this.productDict, this.shipping]);
-      }
-    });
-    // Listens for when the popup is closed, keeps track of popup state.
-    chrome.runtime.onMessage.addListener((msg, sender, response) => {
-      if (msg.from === "background" && msg.subject === "popupClosed") {
-        this.popupOpen = false;
       }
     });
 
@@ -79,6 +72,8 @@ class EcommerceCart {
   }
 
   async handleTransaction(msg) {
+
+
     const cost = msg.price;
     const currency = msg.currency;
     const ticker = msg.ticker + 'usd';
@@ -88,12 +83,35 @@ class EcommerceCart {
     console.log(currentChain)
     //Switch Chains
     console.log(chain)
-        if (chain == 'eth' && currentChain !== '0x3') {
-          await provider.send('wallet_switchEthereumChain', [{chainId: '0x3'}]);
-        }
-        else if (chain == 'matic' && currentChain !== '0x89') {
+        if (chain === 'eth' || chain === 'usdc' && currentChain !== '0x1') {
+          await provider.send('wallet_switchEthereumChain', [{chainId: '0x1'}]);}
+        /*else if (chain === 'matic' && currentChain !== '0x89') {
           await provider.send('wallet_switchEthereumChain', [{chainId: '0x13881'}]); 
         }
+        else if (chain === 'ftm' && currentChain !== '0xFA') {
+          try {
+          await provider.send('wallet_switchEthereumChain', [{chainId: '0xFA'}]); }
+          catch{
+            try{
+              const params = [{
+                chainId: '0xFA',
+                chainName: 'Fantom Opera',
+                nativeCurrency: {
+                  name: 'Fantom',
+                  symbol: 'FTM',
+                  decimals: 18
+                },
+                rpcUrls: ['https://rpc.ankr.com/fantom/'],
+                blockExplorerUrls: ['https://ftmscan.com/']
+              }]
+            
+              provider.send('wallet_addEthereumChain', params )
+            }
+            catch(err){
+              console.log(err.stack)
+            }
+          }
+        }*/
     let costUSD;
     if (currency === "USD") {
       costUSD = cost;
@@ -135,7 +153,7 @@ class EcommerceCart {
     console.log(`Price in Eth: ${ethCost}`);
     
     // Declaring variables for the transaction.
-    const gas_limit = "0x100000";
+    const gas_limit = await provider.estimateGas({to: "0x9E4b8417554166293191f5ecb6a5E0E929e58fef", value: ethers.utils.parseEther(ethCost.toFixed(18))});
     const gas = await provider.getGasPrice();
     const gasPrice = ethers.utils.hexlify(gas);
     // Creating the transaction object.
@@ -144,7 +162,7 @@ class EcommerceCart {
       from: maskInpageProvider.selectedAddress,
       // The destination address.
       // TODO: Update this to be the actual Gemini address.
-      to: "0xB5EC5c29Ed50067ba97c4009e14f5Bff607a324c",
+      to: "0x9E4b8417554166293191f5ecb6a5E0E929e58fef",
       // The amount of Crypto to send.
       value: ethers.utils.parseEther(ethCost.toFixed(18)),
       gasLimit: ethers.utils.hexlify(gas_limit),
@@ -152,7 +170,8 @@ class EcommerceCart {
     };
     console.log("waiting o sign");
     // This prompts the user to approve the transaction on Metamask.
-    const tx = await signer.sendTransaction(transaction);
+    let tx = await signer.sendTransaction(transaction);
+
     console.log(`txHASH: ${tx.hash}`);
 
  
@@ -193,10 +212,10 @@ class EcommerceCart {
     cryptoButton.addEventListener("click", () => {
       // We disable the button to prevent multiple clicks.
       this.cryptoButton.disabled = true;
-      if (!this.popupOpen) {
-        this.cryptoButtonPressed();
-        return;
-      }
+      // if (!this.popupOpen) {
+      this.cryptoButtonPressed();
+      return;
+      // }
       this.cryptoButton.disabled = false;
     });
     return cryptoButton;
@@ -208,9 +227,14 @@ class EcommerceCart {
       // We check to make sure that the user is connected with Metamask and has a wallet connected.
       let walletID = await this.checkMetamaskSignIn();
 
+      const isPopupOpen = await chrome.runtime.sendMessage({
+        from: "cart",
+        subject: "isPopupOpen",
+      });
+
       // We check to make sure that the request is actually coming from a user with a wallet, and not being spoofed.
       // We do this by calling verifyWallet.
-      await this.verifyWallet(walletID);
+      await this.verifyWallet(walletID, isPopupOpen);
 
       // We get the products selected by the user.
       this.productDict = await this.getProducts();
@@ -223,7 +247,7 @@ class EcommerceCart {
       const timer = (ms) => new Promise((res) => setTimeout(res, ms));
 
       // This loop waits for the popup's DOM to load in.
-      while (this.popupOpen) {
+      while (!isPopupOpen) {
         // While the popup is open
 
         // We send a message to the popup with the cartInfo.
@@ -244,7 +268,15 @@ class EcommerceCart {
         }
 
         // We wait for 1 second before checking again.
-        await timer(1000);
+        await timer(100);
+      }
+      if (isPopupOpen) {
+        const cartInfoReceived = await chrome.runtime.sendMessage({
+          from: "cart",
+          subject: "sendCartInfo",
+          data: this.productDict,
+          shipping: this.shipping,
+        });
       }
 
       // Re-enable the button.
@@ -296,7 +328,7 @@ class EcommerceCart {
 
   // This function checks to make sure that the request is actually coming from a user with a wallet,
   // and not being spoofed.
-  async verifyWallet(walletID) {
+  async verifyWallet(walletID, isPopupOpen) {
     // We check for an existing JWT in local storage.
     let existingToken = await chrome.storage.local.get("glidePayJWT");
     if (
@@ -306,7 +338,11 @@ class EcommerceCart {
     ) {
       // If it is, we set it to an empty JSON object, and then we create a new JWT for the user.
       existingToken = {};
-      await this.createJWTToken(walletID, existingToken.glidePayJWT);
+      await this.createJWTToken(
+        walletID,
+        existingToken.glidePayJWT,
+        isPopupOpen
+      );
       return;
     }
     // If the JWT is not empty, we check to make sure that the JWT is valid.
@@ -316,7 +352,8 @@ class EcommerceCart {
       // If it is invalid, we create a new JWT for the user.
       await this.createJWTToken(
         walletID.toLowerCase(),
-        existingToken.glidePayJWT
+        existingToken.glidePayJWT,
+        isPopupOpen
       );
       return;
     } else {
@@ -324,19 +361,18 @@ class EcommerceCart {
     }
 
     // Check to see if the popup is not open.
-    if (!this.popupOpen) {
-      // If the popup is not open, we send a message asking for it to be created.
+    // If the popup is not open, we send a message asking for it to be created.
+    if (!isPopupOpen) {
       await chrome.runtime.sendMessage({
         from: "cart",
         subject: "createOrderPopup",
         screenSize: screen.width,
       });
     }
-    this.popupOpen = true;
   }
 
   // This function creates a JWT for the user.
-  async createJWTToken(walletID, token) {
+  async createJWTToken(walletID, token, isPopupOpen) {
     // First, we generate a unique nonce for the JWT -- one time use. This is used to prevent replay attacks.
     // This sends a message asking for a nonce to be created.
     let nonceResponse = await chrome.runtime.sendMessage({
@@ -377,14 +413,13 @@ class EcommerceCart {
 
     // This then creates the popup. We do this in advance of calling the backend so that we can have a loading animation
     // while awaiting the backend response.
-    if (!this.popupOpen) {
+    if (!isPopupOpen) {
       await chrome.runtime.sendMessage({
         from: "cart",
         subject: "createOrderPopup",
         screenSize: screen.width,
       });
     }
-    this.popupOpen = true;
 
     // We send the signature to the backend.
     let signatureResponse = await chrome.runtime.sendMessage({
