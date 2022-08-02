@@ -25,7 +25,6 @@
         />
       </div>
       <div class="row d-flex justify-content-center align-items-center">
-        <script src="/scripts/cartconfirmation.js"></script>
         <div class ="row d-flex flex-row">
           <h5
             class="text-center my-1"
@@ -39,8 +38,8 @@
             aria-label="Select Chain"
             id="currencySelect"
           >
-            <option value="">Etherium</option>
-            <option value="polygon">Polygon</option>
+            <option value="eth">Ethereum</option>
+            <option value="usdc">USDC</option>
           </select>
         </div>
         <div class="col">
@@ -71,7 +70,7 @@
           aria-label="Choose Address"
           id="addressSelect"
         ></select>
-        <a class="text-center" href="addaddress.html" style="color: blue"
+        <a class="text-center mt-2" href="addaddress.html" style="color: blue"
           >Add a new address</a
         >
       </div>
@@ -84,7 +83,6 @@
         >
           Confirm Order
         </button>
-        <script src="/scripts/addaddress.js"></script>
       </div>
     </div>
     <div id="loading-view" style="display: block">
@@ -105,5 +103,6 @@
       </div>
     </div>
   </body>
+  <script src="/scripts/cartconfirmation.js"></script>
 </html>
-Footer
+

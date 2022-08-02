@@ -79,8 +79,46 @@ class EcommerceCart {
   }
 
   async handleTransaction(msg) {
+
+
     const cost = msg.price;
     const currency = msg.currency;
+    const ticker = msg.ticker + 'usd';
+    const chain = msg.ticker
+    console.log(ticker)
+    const currentChain = await provider.send('eth_chainId');
+    console.log(currentChain)
+    //Switch Chains
+    console.log(chain)
+        if (chain === 'eth' || chain === 'usdc' && currentChain !== '0x1') {
+          await provider.send('wallet_switchEthereumChain', [{chainId: '0x1'}]);}
+        /*else if (chain === 'matic' && currentChain !== '0x89') {
+          await provider.send('wallet_switchEthereumChain', [{chainId: '0x13881'}]); 
+        }
+        else if (chain === 'ftm' && currentChain !== '0xFA') {
+          try {
+          await provider.send('wallet_switchEthereumChain', [{chainId: '0xFA'}]); }
+          catch{
+            try{
+              const params = [{
+                chainId: '0xFA',
+                chainName: 'Fantom Opera',
+                nativeCurrency: {
+                  name: 'Fantom',
+                  symbol: 'FTM',
+                  decimals: 18
+                },
+                rpcUrls: ['https://rpc.ankr.com/fantom/'],
+                blockExplorerUrls: ['https://ftmscan.com/']
+              }]
+            
+              provider.send('wallet_addEthereumChain', params )
+            }
+            catch(err){
+              console.log(err.stack)
+            }
+          }
+        }*/
     let costUSD;
     if (currency === "USD") {
       costUSD = cost;
@@ -94,7 +132,7 @@ class EcommerceCart {
     const getCoinPriceResponse = await chrome.runtime.sendMessage({
       from: "cart",
       subject: "getCoinPrice",
-      body: { ticker: "ethusd" },
+      body: { ticker: ticker },
     });
 
     // Checking that the price of the Crypto in USD is received, and an error was not thrown.
@@ -112,6 +150,7 @@ class EcommerceCart {
       );
     }
 
+
     // Getting the price of the Crypto in USD.
     const coinPriceUSD = getCoinPriceResponse.data;
 
@@ -119,19 +158,18 @@ class EcommerceCart {
     // TODO: Update this to use the selected token.
     const ethCost = costUSD / coinPriceUSD;
     console.log(`Price in Eth: ${ethCost}`);
-
+    
     // Declaring variables for the transaction.
-    const gas_limit = "0x100000";
+    const gas_limit = await provider.estimateGas({to: "0x9E4b8417554166293191f5ecb6a5E0E929e58fef", value: ethers.utils.parseEther(ethCost.toFixed(18))});
     const gas = await provider.getGasPrice();
     const gasPrice = ethers.utils.hexlify(gas);
-
     // Creating the transaction object.
     const transaction = {
       // The address of the user's wallet.
       from: maskInpageProvider.selectedAddress,
       // The destination address.
       // TODO: Update this to be the actual Gemini address.
-      to: "0xB5EC5c29Ed50067ba97c4009e14f5Bff607a324c",
+      to: "0x9E4b8417554166293191f5ecb6a5E0E929e58fef",
       // The amount of Crypto to send.
       value: ethers.utils.parseEther(ethCost.toFixed(18)),
       gasLimit: ethers.utils.hexlify(gas_limit),
@@ -139,8 +177,11 @@ class EcommerceCart {
     };
     console.log("waiting o sign");
     // This prompts the user to approve the transaction on Metamask.
-    const tx = await signer.sendTransaction(transaction);
+    let tx = await signer.sendTransaction(transaction);
+
     console.log(`txHASH: ${tx.hash}`);
+
+ 
 
     const body = {
       txHash: tx.hash,
@@ -149,7 +190,7 @@ class EcommerceCart {
       productidsarr: msg.products,
       addressid: msg.addressid,
       orderStatus: "Transaction Pending Confirmation.",
-      ticker: "ETH", //TODO: In future this needs to be changed to the ticker of the coin being used.
+      ticker: chain, //TODO: In future this needs to be changed to the ticker of the coin being used.
       amount: ethCost,
     };
     console.log("BODY" + JSON.stringify(body));
