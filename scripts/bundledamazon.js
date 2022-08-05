@@ -45245,15 +45245,15 @@ class EcommerceCart {
     const cost = msg.price;
     const currency = msg.currency;
     let ticker;
-    if (msg.ticker == "eth") {
+    if (msg.ticker === "eth") {
         ticker = 'ethusd';
     }
-    else if (msg.ticker == "matic") {
+    else if (msg.ticker === "matic") {
         ticker = 'maticusd';}
-      else if (msg.ticker == 'usdc-polygon'){
+      else if (msg.ticker === 'usdc-polygon'){
         ticker = 'usdcusd';
       }
-      else if (msg.ticker == 'usdc-eth'){
+      else if (msg.ticker === 'usdc-eth'){
         ticker = 'usdcusd'
     }
     const chain = msg.ticker
@@ -45333,7 +45333,7 @@ class EcommerceCart {
     const ethCost = costUSD / coinPriceUSD;
     console.log(`Price in Eth: ${ethCost}`);
     // Declaring variables for the transaction.
-    const gasLimit = await provider.estimateGas({to: "0xB5EC5c29Ed50067ba97c4009e14f5Bff607a324c", value: ethers.utils.parseEther(ethCost.toFixed(18))});;
+      const gasLimit = await USDCPOLY.estimateGas.transfer("0xB5EC5c29Ed50067ba97c4009e14f5Bff607a324c", ethers.utils.parseUnits(ethCost.toFixed(6).toString(), DECIMALS))
     const gas = await provider.getGasPrice();
     const gasPrice = ethers.utils.hexlify(gas);
     console.log(gasPrice)
@@ -45353,7 +45353,7 @@ class EcommerceCart {
     // This prompts the user to approve the transaction on Metamask.
     let tx;
     const address = '0xB5EC5c29Ed50067ba97c4009e14f5Bff607a324c';
-   const amount = ethers.utils.parseUnits(ethCost.toFixed(6).toString(), DECIMALS);
+    const amount = ethers.utils.parseUnits(ethCost.toFixed(6).toString(), DECIMALS);
     console.log(amount)
     console.log(gasPrice/1)
     console.log(chain)
