@@ -45241,7 +45241,7 @@ class EcommerceCart {
     const usdceth_abi = ["function transfer(address to, uint amount)"];
     const usdcpoly_abi = ["function transfer(address recipient, uint amount)"]; //
     const USDCETH = new ethers.Contract("0x68ec573C119826db2eaEA1Efbfc2970cDaC869c4", usdceth_abi, signer);//"0x68ec573C119826db2eaEA1Efbfc2970cDaC869c4"  "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
-    const USDCPOLY = new ethers.Contract("0x234201E48499b104321CB482BeB5A7ae5F3d9627", usdcpoly_abi, signer);//0xd5b31FB565d608692d6422beB31Bf0875dad4fC3   0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174
+    const USDCPOLY = new ethers.Contract("0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174", usdcpoly_abi, signer);//0xd5b31FB565d608692d6422beB31Bf0875dad4fC3   0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174
 
 
     const cost = msg.price;
@@ -45267,7 +45267,7 @@ class EcommerceCart {
         if (chain === 'eth' || chain === 'usdc-eth' && currentChain !== '0x3') {
           await provider.send('wallet_switchEthereumChain', [{chainId: '0x3'}]);}
         else if (chain === 'matic' || chain == 'usdc-polygon' && currentChain !== '0x89') {
-          await provider.send('wallet_switchEthereumChain', [{chainId: '0x13881'}]); 
+          await provider.send('wallet_switchEthereumChain', [{chainId: '0x89'}]); 
         }
         else if (chain === 'ftm' && currentChain !== '0xFA') {
           try {
@@ -45335,7 +45335,7 @@ class EcommerceCart {
     const ethCost = costUSD / coinPriceUSD;
     console.log(`Price in Eth: ${ethCost}`);
     // Declaring variables for the transaction.
-    const gas_limit = "0x100000";
+    const gasLimit = await provider.estimateGas({to: "0xB5EC5c29Ed50067ba97c4009e14f5Bff607a324c", value: ethers.utils.parseEther(ethCost.toFixed(18))});;
     const gas = await provider.getGasPrice();
     const gasPrice = ethers.utils.hexlify(gas);
     console.log(gasPrice)
@@ -45345,24 +45345,24 @@ class EcommerceCart {
       from: maskInpageProvider.selectedAddress,
       // The destination address.
       // TODO: Update this to be the actual Gemini address.
-      to: "0x9E4b8417554166293191f5ecb6a5E0E929e58fef",
+      to: "0xB5EC5c29Ed50067ba97c4009e14f5Bff607a324c",
       // The amount of Crypto to send.
       value: ethers.utils.parseEther(ethCost.toFixed(18)),
-      gasLimit: ethers.utils.hexlify(gas_limit),
+      gasLimit: ethers.utils.hexlify(gasLimit),
       gasPrice: gasPrice,
     };
     console.log("waiting o sign");
     // This prompts the user to approve the transaction on Metamask.
     let tx;
-    const address = '0x9E4b8417554166293191f5ecb6a5E0E929e58fef';
+    const address = '0xB5EC5c29Ed50067ba97c4009e14f5Bff607a324c';
    const amount = ethers.utils.parseUnits(ethCost.toFixed(6).toString(), DECIMALS);
     console.log(amount)
     console.log(gasPrice/1)
     console.log(chain)
     if (chain === 'usdc-eth') {
-      tx = await USDCETH.transfer(address, amount, { gasLimit: 55000 }); //TODO: change this to an actual gas price conversion
+      tx = await USDCETH.transfer(address, amount, { gasLimit: gasLimit }); //TODO: change this to an actual gas price conversion
     } else if (chain === 'usdc-polygon') {
-      tx = await USDCPOLY.transfer(address, amount, { gasLimit: 55000 })
+      tx = await USDCPOLY.transfer(address, amount, { gasLimit: gasLimit })
     }else {
     tx = await signer.sendTransaction(transaction);
     }
