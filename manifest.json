@@ -1,12 +1,16 @@
 {
   "manifest_version": 3,
-  "name": "Glide Pay",
+  "name": "GlidePay",
   "version": "1.0.0",
-  "description": "Enables Web 2 payments with Cryptocurrency",
+  "description": "Enables you to purchase ECommerce goods using Cryptocurrency.",
   "background": {
     "service_worker": "scripts/background.js"
   },
-  "key": "hpgooldjdnhkoplnmlfgfkbmkomhomcl",
+  "icons": {
+    "32": "resources/icons/32.png",
+    "48": "resources/icons/48.png",
+    "128": "resources/icons/128.png"
+  },
   "content_scripts": [
     {
       "matches": ["*://www.amazon.com/gp/cart/*"],
@@ -26,14 +30,11 @@
     }
   ],
   "permissions": [
-    "cookies",
     "tabs",
     "activeTab",
-    "notifications",
     "storage",
     "windows"
   ],
-  "host_permissions": ["https://www.amazon.com/*"],
   "action": {
     "default_popup": "views/popup.html",
     "default_title": "Glide Pay"
