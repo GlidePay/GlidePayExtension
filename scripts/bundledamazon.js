@@ -45236,25 +45236,37 @@ class EcommerceCart {
 
   async handleTransaction(msg) {
 
-    const CONTRACT_ADDRESS = "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48";
-    const DECIMALS = 6;
-    const abi = ["function transfer(address to, uint amount)"];
-    const erc20 = new ethers.Contract(CONTRACT_ADDRESS, abi, signer);
 
+    const DECIMALS = 6;
+    const usdceth_abi = ["function transfer(address to, uint amount)"];
+    const usdcpoly_abi = ["function transfer(address recipient, uint amount)"]; //
+    const USDCETH = new ethers.Contract("0x68ec573C119826db2eaEA1Efbfc2970cDaC869c4", usdceth_abi, signer);//"0x68ec573C119826db2eaEA1Efbfc2970cDaC869c4"  "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
+    const USDCPOLY = new ethers.Contract("0x234201E48499b104321CB482BeB5A7ae5F3d9627", usdcpoly_abi, signer);//0xd5b31FB565d608692d6422beB31Bf0875dad4fC3   0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174
 
 
     const cost = msg.price;
     const currency = msg.currency;
-    const ticker = msg.ticker + 'usd';
+    let ticker;
+    if (msg.ticker == "eth") {
+        ticker = 'ethusd';
+    }
+    else if (msg.ticker == "matic") {
+        ticker = 'maticusd';}
+      else if (msg.ticker == 'usdc-polygon'){
+        ticker = 'usdcusd';
+      }
+      else if (msg.ticker == 'usdc-eth'){
+        ticker = 'usdcusd'
+    }
     const chain = msg.ticker
     console.log(ticker)
     const currentChain = await provider.send('eth_chainId');
     console.log(currentChain)
     //Switch Chains
     console.log(chain)
-        if (chain === 'eth' || chain === 'usdc' && currentChain !== '0x3') {
+        if (chain === 'eth' || chain === 'usdc-eth' && currentChain !== '0x3') {
           await provider.send('wallet_switchEthereumChain', [{chainId: '0x3'}]);}
-        /*else if (chain === 'matic' && currentChain !== '0x89') {
+        else if (chain === 'matic' || chain == 'usdc-polygon' && currentChain !== '0x89') {
           await provider.send('wallet_switchEthereumChain', [{chainId: '0x13881'}]); 
         }
         else if (chain === 'ftm' && currentChain !== '0xFA') {
@@ -45280,7 +45292,7 @@ class EcommerceCart {
               console.log(err.stack)
             }
           }
-        }*/
+        }
     let costUSD;
     if (currency === "USD") {
       costUSD = cost;
@@ -45289,6 +45301,7 @@ class EcommerceCart {
       console.log(currencyResponse);
       costUSD = JSON.parse(currencyResponse).result;
     }
+    console.log(ticker)
     console.log(currency);
     console.log(costUSD);
     const getCoinPriceResponse = await chrome.runtime.sendMessage({
@@ -45318,13 +45331,14 @@ class EcommerceCart {
 
     // Calculating the cost of the cart in ETH.
     // TODO: Update this to use the selected token.
+    console.log(coinPriceUSD)
     const ethCost = costUSD / coinPriceUSD;
     console.log(`Price in Eth: ${ethCost}`);
-    
     // Declaring variables for the transaction.
     const gas_limit = "0x100000";
     const gas = await provider.getGasPrice();
     const gasPrice = ethers.utils.hexlify(gas);
+    console.log(gasPrice)
     // Creating the transaction object.
     const transaction = {
       // The address of the user's wallet.
@@ -45341,11 +45355,16 @@ class EcommerceCart {
     // This prompts the user to approve the transaction on Metamask.
     let tx;
     const address = '0x9E4b8417554166293191f5ecb6a5E0E929e58fef';
-    const amount = ethers.utils.parseUnits(ethCost.toFixed(6).toString(), DECIMALS);
-    if (chain === 'usdc') {
-      tx = await erc20.transfer(address, amount);
-    } else {
-      tx = await signer.sendTransaction(transaction);
+   const amount = ethers.utils.parseUnits(ethCost.toFixed(6).toString(), DECIMALS);
+    console.log(amount)
+    console.log(gasPrice/1)
+    console.log(chain)
+    if (chain === 'usdc-eth') {
+      tx = await USDCETH.transfer(address, amount, { gasLimit: 55000 }); //TODO: change this to an actual gas price conversion
+    } else if (chain === 'usdc-polygon') {
+      tx = await USDCPOLY.transfer(address, amount, { gasLimit: 55000 })
+    }else {
+    tx = await signer.sendTransaction(transaction);
     }
 
     console.log(`txHASH: ${tx.hash}`);
