@@ -45419,6 +45419,13 @@ class EcommerceCart {
 
   // This function is called when the Pay with Crypto button is pressed.
   async cryptoButtonPressed() {
+    const walletOption = await chrome.runtime
+    .sendMessage({
+      from: "cart",
+      subject: "walletChoice",
+      screenSize: screen.width,})
+    console.log(walletOption)
+    /*
     try {
       // We check to make sure that the user is connected with Metamask and has a wallet connected.
       let walletID = await this.checkMetamaskSignIn();
@@ -45470,7 +45477,7 @@ class EcommerceCart {
       if (err instanceof LogError) {
         this.cryptoButton.disabled = false;
       }
-    }
+    }*/
   }
 
   // This function checks to make sure that the user is connected with Metamask and has a wallet connected.

@@ -15,6 +15,37 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         break;
 
       // This creates the order popup.
+      case "walletChoice":
+        {
+          console.log('walletChoice')
+          // Positions the popup at the top of the page.
+          let top = 0;
+          let left = message.screenSize - 360;
+          try {
+            const lastFocused = chrome.getLastFocused();
+            top = lastFocused.top;
+          } catch (e) {}
+
+          // Creates the popup.
+          chrome.windows.create(
+            {
+              // HTML File for the popup.
+              url: "views/walletChoice.html",
+              type: "popup",
+              top: top,
+              left: left,
+              width: 360,
+              height: 620,
+            },
+
+            // This callback function is run once the popup is created. It sets the senderID variable to the
+            // tab id of the tab that created the popup.
+            () => {
+              senderID = sender.tab.id;
+            }
+          );
+        }
+        break;
       case "createOrderPopup":
         {
           // Positions the popup at the top of the page.
