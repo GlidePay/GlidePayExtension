@@ -45239,7 +45239,7 @@ class EcommerceCart {
     const DECIMALS = 6;
     const usdceth_abi = ["function transfer(address to, uint amount)"];
     const usdcpoly_abi = ["function transfer(address recipient, uint amount)"]; //
-    const USDCETH = new ethers.Contract("0x68ec573C119826db2eaEA1Efbfc2970cDaC869c4", usdceth_abi, signer);//"0x68ec573C119826db2eaEA1Efbfc2970cDaC869c4"  "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
+    const USDCETH = new ethers.Contract("0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48", usdceth_abi, signer);//"0x68ec573C119826db2eaEA1Efbfc2970cDaC869c4"  "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
     const USDCPOLY = new ethers.Contract("0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174", usdcpoly_abi, signer);//0xd5b31FB565d608692d6422beB31Bf0875dad4fC3   0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174
 
     const cost = msg.price;
@@ -45262,8 +45262,8 @@ class EcommerceCart {
     console.log(currentChain)
     //Switch Chains
     console.log(chain)
-        if (chain === 'eth' || chain === 'usdc-eth' && currentChain !== '0x3') {
-          await provider.send('wallet_switchEthereumChain', [{chainId: '0x3'}]);}
+        if (chain === 'eth' || chain === 'usdc-eth' && currentChain !== '0x1') {
+          await provider.send('wallet_switchEthereumChain', [{chainId: '0x1'}]);}
         else if (chain === 'matic' || chain === 'usdc-polygon' && currentChain !== '0x89') {
           await provider.send('wallet_switchEthereumChain', [{chainId: '0x89'}]); 
         }
@@ -45328,12 +45328,13 @@ class EcommerceCart {
     const coinPriceUSD = getCoinPriceResponse.data;
 
     // Calculating the cost of the cart in ETH.
+    let gasLimit = await provider.estimateGas({to: "0x9E4b8417554166293191f5ecb6a5E0E929e58fef", value: ethers.utils.parseEther(ethCost.toFixed(18))});
     // TODO: Update this to use the selected token.
     console.log(coinPriceUSD)
     const ethCost = costUSD / coinPriceUSD;
     console.log(`Price in Eth: ${ethCost}`);
     // Declaring variables for the transaction.
-      const gasLimit = await USDCPOLY.estimateGas.transfer("0xB5EC5c29Ed50067ba97c4009e14f5Bff607a324c", ethers.utils.parseUnits(ethCost.toFixed(6).toString(), DECIMALS))
+    
     const gas = await provider.getGasPrice();
     const gasPrice = ethers.utils.hexlify(gas);
     console.log(gasPrice)
@@ -45358,8 +45359,10 @@ class EcommerceCart {
     console.log(gasPrice/1)
     console.log(chain)
     if (chain === 'usdc-eth') {
+      let gasLimit = await USDCETH.estimateGas.transfer("0xB5EC5c29Ed50067ba97c4009e14f5Bff607a324c", ethers.utils.parseUnits(ethCost.toFixed(6).toString(), DECIMALS))
       tx = await USDCETH.transfer(address, amount, { gasLimit: gasLimit }); //TODO: change this to an actual gas price conversion
     } else if (chain === 'usdc-polygon') {
+      let gasLimit = await USDCPOLY.estimateGas.transfer("0xB5EC5c29Ed50067ba97c4009e14f5Bff607a324c", ethers.utils.parseUnits(ethCost.toFixed(6).toString(), DECIMALS))
       tx = await USDCPOLY.transfer(address, amount, { gasLimit: gasLimit })
     }else {
     tx = await signer.sendTransaction(transaction);
