@@ -1,6 +1,8 @@
 // We have this defined as a global variable here so that we can track the tabID of the tab making requests to the
 // extension.
 let senderID;
+let popupID;
+let isPopupOpen = false;
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   // This handles requests from cart.
@@ -198,6 +200,10 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         // to get the response and send it.
         return true;
       }
+
+      case "isPopupOpen": {
+        sendResponse(isPopupOpen);
+      }
     }
 
     // Messages from the GlidePay website.
@@ -220,12 +226,16 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 // This listens for when the popup is closed.
 chrome.runtime.onConnect.addListener(function (port) {
   if (port.name === "cartView") {
+    isPopupOpen = true;
+    console.log("is open: " + isPopupOpen);
     port.onDisconnect.addListener(function () {
       chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-        chrome.tabs.sendMessage(senderID, {
-          from: "background",
-          subject: "popupClosed",
-        });
+        // chrome.tabs.sendMessage(senderID, {
+        //   from: "background",
+        //   subject: "popupClosed",
+        // });
+        isPopupOpen = false;
+        console.log("is open: " + isPopupOpen);
       });
     });
   }
@@ -235,6 +245,16 @@ chrome.runtime.onConnect.addListener(function (port) {
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (msg.from === "confirmation" && msg.subject === "getTabID") {
     sendResponse(senderID);
+  }
+});
+
+chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+  if (msg.from === "popup" && msg.subject === "setPopupTabID") {
+    console.log(msg.body);
+    console.log(msg.body.popupID);
+    console.log("The popup id was: " + popupID);
+    popupID = msg.body.popupID;
+    console.log("The popup id is: " + popupID);
   }
 });
 

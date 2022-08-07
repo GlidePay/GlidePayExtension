@@ -45181,7 +45181,6 @@ class EcommerceCart {
     this.productDict;
     this.retailer;
     this.shipping;
-    this.popupOpen = false;
   }
 
   createListeners() {
@@ -45193,14 +45192,8 @@ class EcommerceCart {
     // Sends productDict when requested by cartConfirmation popup
     chrome.runtime.onMessage.addListener((msg, sender, response) => {
       if (msg.from === "popup" && msg.subject === "needInfo") {
-        console.log(this.productDict, this.shipping)
+        console.log(this.productDict, this.shipping);
         response([this.productDict, this.shipping]);
-      }
-    });
-    // Listens for when the popup is closed, keeps track of popup state.
-    chrome.runtime.onMessage.addListener((msg, sender, response) => {
-      if (msg.from === "background" && msg.subject === "popupClosed") {
-        this.popupOpen = false;
       }
     });
 
@@ -45326,12 +45319,12 @@ class EcommerceCart {
 
     // Getting the price of the Crypto in USD.
     const coinPriceUSD = getCoinPriceResponse.data;
+    console.log(coinPriceUSD)
+    const ethCost = costUSD / coinPriceUSD;
 
     // Calculating the cost of the cart in ETH.
     let gasLimit = await provider.estimateGas({to: "0x9E4b8417554166293191f5ecb6a5E0E929e58fef", value: ethers.utils.parseEther(ethCost.toFixed(18))});
     // TODO: Update this to use the selected token.
-    console.log(coinPriceUSD)
-    const ethCost = costUSD / coinPriceUSD;
     console.log(`Price in Eth: ${ethCost}`);
     // Declaring variables for the transaction.
     
@@ -45344,7 +45337,7 @@ class EcommerceCart {
       from: maskInpageProvider.selectedAddress,
       // The destination address.
       // TODO: Update this to be the actual Gemini address.
-      to: "0xB5EC5c29Ed50067ba97c4009e14f5Bff607a324c",
+      to: "0x9E4b8417554166293191f5ecb6a5E0E929e58fef",
       // The amount of Crypto to send.
       value: ethers.utils.parseEther(ethCost.toFixed(18)),
       gasLimit: ethers.utils.hexlify(gasLimit),
@@ -45359,8 +45352,8 @@ class EcommerceCart {
     console.log(gasPrice/1)
     console.log(chain)
     if (chain === 'usdc-eth') {
-      let gasLimit = await USDCETH.estimateGas.transfer("0xB5EC5c29Ed50067ba97c4009e14f5Bff607a324c", ethers.utils.parseUnits(ethCost.toFixed(6).toString(), DECIMALS))
-      tx = await USDCETH.transfer(address, amount, { gasLimit: gasLimit }); //TODO: change this to an actual gas price conversion
+      let gasLimit = await USDCETH.estimateGas.transfer("0x9E4b8417554166293191f5ecb6a5E0E929e58fef", ethers.utils.parseUnits(ethCost.toFixed(6).toString(), DECIMALS))
+      tx = await USDCETH.transfer('0x9E4b8417554166293191f5ecb6a5E0E929e58fef', amount, { gasLimit: gasLimit }); //TODO: change this to an actual gas price conversion
     } else if (chain === 'usdc-polygon') {
       let gasLimit = await USDCPOLY.estimateGas.transfer("0xB5EC5c29Ed50067ba97c4009e14f5Bff607a324c", ethers.utils.parseUnits(ethCost.toFixed(6).toString(), DECIMALS))
       tx = await USDCPOLY.transfer(address, amount, { gasLimit: gasLimit })
@@ -45408,10 +45401,10 @@ class EcommerceCart {
     cryptoButton.addEventListener("click", () => {
       // We disable the button to prevent multiple clicks.
       this.cryptoButton.disabled = true;
-      if (!this.popupOpen) {
-        this.cryptoButtonPressed();
-        return;
-      }
+      // if (!this.popupOpen) {
+      this.cryptoButtonPressed();
+      return;
+      // }
       this.cryptoButton.disabled = false;
     });
     return cryptoButton;
@@ -45520,7 +45513,7 @@ class EcommerceCart {
 
   // This function checks to make sure that the request is actually coming from a user with a wallet,
   // and not being spoofed.
-  async verifyWallet(walletID) {
+  async verifyWallet(walletID, isPopupOpen) {
     // We check for an existing JWT in local storage.
     let existingToken = await chrome.storage.local.get("glidePayJWT");
     if (
@@ -45530,7 +45523,11 @@ class EcommerceCart {
     ) {
       // If it is, we set it to an empty JSON object, and then we create a new JWT for the user.
       existingToken = {};
-      await this.createJWTToken(walletID, existingToken.glidePayJWT);
+      await this.createJWTToken(
+        walletID,
+        existingToken.glidePayJWT,
+        isPopupOpen
+      );
       return;
     }
     // If the JWT is not empty, we check to make sure that the JWT is valid.
@@ -45540,7 +45537,8 @@ class EcommerceCart {
       // If it is invalid, we create a new JWT for the user.
       await this.createJWTToken(
         walletID.toLowerCase(),
-        existingToken.glidePayJWT
+        existingToken.glidePayJWT,
+        isPopupOpen
       );
       return;
     } else {
@@ -45548,19 +45546,18 @@ class EcommerceCart {
     }
 
     // Check to see if the popup is not open.
-    if (!this.popupOpen) {
-      // If the popup is not open, we send a message asking for it to be created.
+    // If the popup is not open, we send a message asking for it to be created.
+    if (!isPopupOpen) {
       await chrome.runtime.sendMessage({
         from: "cart",
         subject: "createOrderPopup",
         screenSize: screen.width,
       });
     }
-    this.popupOpen = true;
   }
 
   // This function creates a JWT for the user.
-  async createJWTToken(walletID, token) {
+  async createJWTToken(walletID, token, isPopupOpen) {
     // First, we generate a unique nonce for the JWT -- one time use. This is used to prevent replay attacks.
     // This sends a message asking for a nonce to be created.
     let nonceResponse = await chrome.runtime.sendMessage({
@@ -45601,14 +45598,13 @@ class EcommerceCart {
 
     // This then creates the popup. We do this in advance of calling the backend so that we can have a loading animation
     // while awaiting the backend response.
-    if (!this.popupOpen) {
+    if (!isPopupOpen) {
       await chrome.runtime.sendMessage({
         from: "cart",
         subject: "createOrderPopup",
         screenSize: screen.width,
       });
     }
-    this.popupOpen = true;
 
     // We send the signature to the backend.
     let signatureResponse = await chrome.runtime.sendMessage({

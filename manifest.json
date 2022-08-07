@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "GlidePay",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "Enables you to purchase ECommerce goods using Cryptocurrency.",
   "background": {
     "service_worker": "scripts/background.js"
@@ -30,10 +30,7 @@
     }
   ],
   "permissions": [
-    "tabs",
-    "activeTab",
-    "storage",
-    "windows"
+    "storage"
   ],
   "action": {
     "default_popup": "views/popup.html",

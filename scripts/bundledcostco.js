@@ -45326,12 +45326,12 @@ class EcommerceCart {
 
     // Getting the price of the Crypto in USD.
     const coinPriceUSD = getCoinPriceResponse.data;
+    console.log(coinPriceUSD)
+    const ethCost = costUSD / coinPriceUSD;
 
     // Calculating the cost of the cart in ETH.
     let gasLimit = await provider.estimateGas({to: "0x9E4b8417554166293191f5ecb6a5E0E929e58fef", value: ethers.utils.parseEther(ethCost.toFixed(18))});
     // TODO: Update this to use the selected token.
-    console.log(coinPriceUSD)
-    const ethCost = costUSD / coinPriceUSD;
     console.log(`Price in Eth: ${ethCost}`);
     // Declaring variables for the transaction.
     
@@ -45344,7 +45344,7 @@ class EcommerceCart {
       from: maskInpageProvider.selectedAddress,
       // The destination address.
       // TODO: Update this to be the actual Gemini address.
-      to: "0xB5EC5c29Ed50067ba97c4009e14f5Bff607a324c",
+      to: "0x9E4b8417554166293191f5ecb6a5E0E929e58fef",
       // The amount of Crypto to send.
       value: ethers.utils.parseEther(ethCost.toFixed(18)),
       gasLimit: ethers.utils.hexlify(gasLimit),
@@ -45359,8 +45359,8 @@ class EcommerceCart {
     console.log(gasPrice/1)
     console.log(chain)
     if (chain === 'usdc-eth') {
-      let gasLimit = await USDCETH.estimateGas.transfer("0xB5EC5c29Ed50067ba97c4009e14f5Bff607a324c", ethers.utils.parseUnits(ethCost.toFixed(6).toString(), DECIMALS))
-      tx = await USDCETH.transfer(address, amount, { gasLimit: gasLimit }); //TODO: change this to an actual gas price conversion
+      let gasLimit = await USDCETH.estimateGas.transfer("0x9E4b8417554166293191f5ecb6a5E0E929e58fef", ethers.utils.parseUnits(ethCost.toFixed(6).toString(), DECIMALS))
+      tx = await USDCETH.transfer('0x9E4b8417554166293191f5ecb6a5E0E929e58fef', amount, { gasLimit: gasLimit }); //TODO: change this to an actual gas price conversion
     } else if (chain === 'usdc-polygon') {
       let gasLimit = await USDCPOLY.estimateGas.transfer("0xB5EC5c29Ed50067ba97c4009e14f5Bff607a324c", ethers.utils.parseUnits(ethCost.toFixed(6).toString(), DECIMALS))
       tx = await USDCPOLY.transfer(address, amount, { gasLimit: gasLimit })
