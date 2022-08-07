@@ -102,8 +102,15 @@ async function setProductInfo(products, shipping, sender) {
     const itemRow = document.createElement("tr");
     const itemImgEntry = document.createElement("td");
     itemImgEntry.setAttribute("class", "ps-4");
-    subtotal +=
-      parseFloat(productDict["unitPrice"]) * parseInt(productDict["quantity"]);
+    let priceString = productDict["unitPrice"].toString();
+    if (priceString.includes(",")) {
+        priceString = priceString.replace(/,/g, "");
+    }
+    subtotal += parseFloat(priceString) * productDict["quantity"];
+    console.log("LOGGING");
+    console.log(parseFloat(productDict["unitPrice"]));
+    console.log(productDict["quantity"]);
+    console.log(subtotal);
     currency = productDict["currency"];
     const itemImage = document.createElement("img");
     itemImage.src = productDict["productImage"];
@@ -127,17 +134,28 @@ async function setProductInfo(products, shipping, sender) {
     i++;
   }
 
+  let tax = (subtotal + shipping) * 0.095;
+  let totalPrice = tax + subtotal + shipping;
+  //let value = addressSelect.options[addressSelect.selectedIndex].text;
+
+  document.getElementById("shipping-total").innerHTML =
+    "Shipping: $" + shipping.toFixed(2).toString();
+  document.getElementById("tax-total").innerHTML =
+    "Tax: $" + tax.toFixed(2).toString();
+  document.getElementById("sub-total").innerHTML =
+    "Subtotal: $" + subtotal.toFixed(2).toString();
+  document.getElementById("final-total").innerHTML =
+    "Total: $" + totalPrice.toFixed(2).toString();
+
   const confirmButton = document.getElementById("submit-button");
   confirmButton.addEventListener("click", async () => {
     const addressSelect = document.getElementById("addressSelect");
+    const chain = document.getElementById("currencySelect").value
     if (addressSelect.selectedIndex === -1) {
       //TODO: Add text or popup or something that says this
       return;
     }
-    let tax = (subtotal + shipping) * 0.095;
-    console.log(shipping);
-    let totalPrice = tax + subtotal + shipping;
-    let value = addressSelect.options[addressSelect.selectedIndex].text;
+    console.log(chain)
     const windows = await chrome.windows.getAll({ populate: true });
     for (let a in windows) {
       for (let b in windows[a].tabs) {
@@ -153,6 +171,7 @@ async function setProductInfo(products, shipping, sender) {
               addressid:
                 addressSelect.options[addressSelect.selectedIndex].value,
               products: products,
+              ticker: chain
             },
             (response) => {
               if (response) {
@@ -221,11 +240,24 @@ async function setUpCart(products, shipping, senderTabID) {
 }
 
 async function cartMain() {
+  console.log("hi");
+  const popupTabID = await chrome.tabs.query({
+    currentWindow: true,
+    active: true,
+  });
+  console.log(popupTabID[0].id);
+  await chrome.runtime.sendMessage({
+    from: "popup",
+    subject: "setPopupTabID",
+    body: { popupID: popupTabID[0].id },
+  });
+
   chrome.runtime.connect({ name: "cartView" });
   const senderTabID = await chrome.runtime.sendMessage({
     from: "confirmation",
     subject: "getTabID",
   });
+  console.log("sender id: " + senderTabID);
 
   if (GetURLParameter("from") === "addaddress") {
     console.log("From address");
@@ -252,7 +284,7 @@ async function cartMain() {
   chrome.runtime.onMessage.addListener(
     async (message, sender, sendResponse) => {
       if (message.from === "cart" && message.subject === "sendCartInfo") {
-        chrome.runtime.onMessage.removeListener(arguments.callee);
+        // chrome.runtime.onMessage.removeListener(arguments.callee);
         sendResponse(true);
         const products = message.data;
         const shipping = message.shipping;

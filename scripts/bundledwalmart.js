@@ -36569,7 +36569,6 @@ function stringifyReplacer(_, value) {
     }
     return value;
 }
-
 },{"fast-safe-stringify":188}],178:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -36662,7 +36661,6 @@ exports.errorValues = {
         message: 'The provider is disconnected from the specified chain.',
     },
 };
-
 },{}],179:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -36802,7 +36800,6 @@ function parseOpts(arg) {
     }
     return [];
 }
-
 },{"./classes":177,"./error-constants":178,"./utils":181}],180:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -36817,7 +36814,6 @@ const errors_1 = require("./errors");
 Object.defineProperty(exports, "ethErrors", { enumerable: true, get: function () { return errors_1.ethErrors; } });
 const error_constants_1 = require("./error-constants");
 Object.defineProperty(exports, "errorCodes", { enumerable: true, get: function () { return error_constants_1.errorCodes; } });
-
 },{"./classes":177,"./error-constants":178,"./errors":179,"./utils":181}],181:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -36929,7 +36925,6 @@ function assignOriginalError(error) {
 function hasKey(obj, key) {
     return Object.prototype.hasOwnProperty.call(obj, key);
 }
-
 },{"./classes":177,"./error-constants":178}],182:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -40397,7 +40392,6 @@ exports.JsonRpcEngine = JsonRpcEngine;
 function jsonify(request) {
     return JSON.stringify(request, null, 2);
 }
-
 },{"@metamask/safe-event-emitter":150,"eth-rpc-errors":180}],208:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -40464,7 +40458,6 @@ function createAsyncMiddleware(asyncMiddleware) {
     };
 }
 exports.createAsyncMiddleware = createAsyncMiddleware;
-
 },{}],209:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -40486,7 +40479,6 @@ function createScaffoldMiddleware(handlers) {
     };
 }
 exports.createScaffoldMiddleware = createScaffoldMiddleware;
-
 },{}],210:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -40500,7 +40492,6 @@ function getUniqueId() {
     return idCounter;
 }
 exports.getUniqueId = getUniqueId;
-
 },{}],211:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -40520,7 +40511,6 @@ function createIdRemapMiddleware() {
     };
 }
 exports.createIdRemapMiddleware = createIdRemapMiddleware;
-
 },{"./getUniqueId":210}],212:[function(require,module,exports){
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
@@ -40540,7 +40530,6 @@ __exportStar(require("./createScaffoldMiddleware"), exports);
 __exportStar(require("./getUniqueId"), exports);
 __exportStar(require("./JsonRpcEngine"), exports);
 __exportStar(require("./mergeMiddleware"), exports);
-
 },{"./JsonRpcEngine":207,"./createAsyncMiddleware":208,"./createScaffoldMiddleware":209,"./getUniqueId":210,"./idRemapMiddleware":211,"./mergeMiddleware":213}],213:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -40552,7 +40541,6 @@ function mergeMiddleware(middlewareStack) {
     return engine.asMiddleware();
 }
 exports.mergeMiddleware = mergeMiddleware;
-
 },{"./JsonRpcEngine":207}],214:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -45205,17 +45193,18 @@ class EcommerceCart {
     });
 
     // Sends message prompting Metamask transaction.
-    chrome.runtime.onMessage.addListener((msg) => {
+    chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
       if (msg.from === "popup" && msg.subject === "promptTransaction") {
-        try {
-          this.handleTransaction(msg);
-        } catch (err) {
-          console.log("Transaction Error");
-          console.log(err);
-          if (err instanceof LogError) {
-            err.logError();
-          }
-        }
+        this.handleTransaction(msg)
+          .then((response) => {
+            sendResponse(true);
+          })
+          .catch((err) => {
+            console.log(err);
+            sendResponse(false);
+          });
+
+        return true;
       }
     });
   }
@@ -45234,8 +45223,62 @@ class EcommerceCart {
   }
 
   async handleTransaction(msg) {
+
+    const DECIMALS = 6;
+    const usdceth_abi = ["function transfer(address to, uint amount)"];
+    const usdcpoly_abi = ["function transfer(address recipient, uint amount)"]; //
+    const USDCETH = new ethers.Contract("0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48", usdceth_abi, signer);//"0x68ec573C119826db2eaEA1Efbfc2970cDaC869c4"  "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
+    const USDCPOLY = new ethers.Contract("0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174", usdcpoly_abi, signer);//0xd5b31FB565d608692d6422beB31Bf0875dad4fC3   0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174
+
     const cost = msg.price;
     const currency = msg.currency;
+    let ticker;
+    if (msg.ticker === "eth") {
+        ticker = 'ethusd';
+    }
+    else if (msg.ticker === "matic") {
+        ticker = 'maticusd';}
+      else if (msg.ticker === 'usdc-polygon'){
+        ticker = 'usdcusd';
+      }
+      else if (msg.ticker === 'usdc-eth'){
+        ticker = 'usdcusd'
+    }
+    const chain = msg.ticker
+    console.log(ticker)
+    const currentChain = await provider.send('eth_chainId');
+    console.log(currentChain)
+    //Switch Chains
+    console.log(chain)
+        if (chain === 'eth' || chain === 'usdc-eth' && currentChain !== '0x1') {
+          await provider.send('wallet_switchEthereumChain', [{chainId: '0x1'}]);}
+        else if (chain === 'matic' || chain === 'usdc-polygon' && currentChain !== '0x89') {
+          await provider.send('wallet_switchEthereumChain', [{chainId: '0x89'}]); 
+        }
+        else if (chain === 'ftm' && currentChain !== '0xFA') {
+          try {
+          await provider.send('wallet_switchEthereumChain', [{chainId: '0xFA'}]); }
+          catch{
+            try{
+              const params = [{
+                chainId: '0xFA',
+                chainName: 'Fantom Opera',
+                nativeCurrency: {
+                  name: 'Fantom',
+                  symbol: 'FTM',
+                  decimals: 18
+                },
+                rpcUrls: ['https://rpc.ankr.com/fantom/'],
+                blockExplorerUrls: ['https://ftmscan.com/']
+              }]
+            
+              provider.send('wallet_addEthereumChain', params )
+            }
+            catch(err){
+              console.log(err.stack)
+            }
+          }
+        }
     let costUSD;
     if (currency === "USD") {
       costUSD = cost;
@@ -45244,12 +45287,13 @@ class EcommerceCart {
       console.log(currencyResponse);
       costUSD = JSON.parse(currencyResponse).result;
     }
+    console.log(ticker)
     console.log(currency);
     console.log(costUSD);
     const getCoinPriceResponse = await chrome.runtime.sendMessage({
       from: "cart",
       subject: "getCoinPrice",
-      body: { ticker: "ethusd" },
+      body: { ticker: ticker },
     });
 
     // Checking that the price of the Crypto in USD is received, and an error was not thrown.
@@ -45267,35 +45311,55 @@ class EcommerceCart {
       );
     }
 
+
     // Getting the price of the Crypto in USD.
     const coinPriceUSD = getCoinPriceResponse.data;
+    console.log(coinPriceUSD)
+    const ethCost = costUSD / coinPriceUSD;
 
     // Calculating the cost of the cart in ETH.
+    let gasLimit = await provider.estimateGas({to: "0x9E4b8417554166293191f5ecb6a5E0E929e58fef", value: ethers.utils.parseEther(ethCost.toFixed(18))});
     // TODO: Update this to use the selected token.
-    const ethCost = costUSD / coinPriceUSD;
     console.log(`Price in Eth: ${ethCost}`);
-
     // Declaring variables for the transaction.
-    const gas_limit = "0x100000";
+    
     const gas = await provider.getGasPrice();
     const gasPrice = ethers.utils.hexlify(gas);
-
+    console.log(gasPrice)
     // Creating the transaction object.
     const transaction = {
       // The address of the user's wallet.
       from: maskInpageProvider.selectedAddress,
       // The destination address.
       // TODO: Update this to be the actual Gemini address.
-      to: "0xB5EC5c29Ed50067ba97c4009e14f5Bff607a324c",
+      to: "0x9E4b8417554166293191f5ecb6a5E0E929e58fef",
       // The amount of Crypto to send.
       value: ethers.utils.parseEther(ethCost.toFixed(18)),
-      gasLimit: ethers.utils.hexlify(gas_limit),
+      gasLimit: ethers.utils.hexlify(gasLimit),
       gasPrice: gasPrice,
     };
-
+    console.log("waiting o sign");
     // This prompts the user to approve the transaction on Metamask.
-    const tx = await signer.sendTransaction(transaction);
+    let tx;
+    const address = '0xB5EC5c29Ed50067ba97c4009e14f5Bff607a324c';
+    const amount = ethers.utils.parseUnits(ethCost.toFixed(6).toString(), DECIMALS);
+    console.log(amount)
+    console.log(gasPrice/1)
+    console.log(chain)
+    if (chain === 'usdc-eth') {
+      let gasLimit = await USDCETH.estimateGas.transfer("0x9E4b8417554166293191f5ecb6a5E0E929e58fef", ethers.utils.parseUnits(ethCost.toFixed(6).toString(), DECIMALS))
+      tx = await USDCETH.transfer('0x9E4b8417554166293191f5ecb6a5E0E929e58fef', amount, { gasLimit: gasLimit }); //TODO: change this to an actual gas price conversion
+    } else if (chain === 'usdc-polygon') {
+      let gasLimit = await USDCPOLY.estimateGas.transfer("0xB5EC5c29Ed50067ba97c4009e14f5Bff607a324c", ethers.utils.parseUnits(ethCost.toFixed(6).toString(), DECIMALS))
+      tx = await USDCPOLY.transfer(address, amount, { gasLimit: gasLimit })
+    }else {
+    tx = await signer.sendTransaction(transaction);
+    }
+
     console.log(`txHASH: ${tx.hash}`);
+
+ 
+
     const body = {
       txHash: tx.hash,
       retailer: this.retailer,
@@ -45303,7 +45367,7 @@ class EcommerceCart {
       productidsarr: msg.products,
       addressid: msg.addressid,
       orderStatus: "Transaction Pending Confirmation.",
-      ticker: "ETH", //TODO: In future this needs to be changed to the ticker of the coin being used.
+      ticker: chain, //TODO: In future this needs to be changed to the ticker of the coin being used.
       amount: ethCost,
     };
     console.log("BODY" + JSON.stringify(body));
@@ -45314,6 +45378,8 @@ class EcommerceCart {
       subject: "getTransaction",
       body: body,
     });
+    console.log("returning");
+    return true;
   }
 
   // This defines the Pay with Crypto button and its functionality.
@@ -45634,6 +45700,11 @@ class LogError {
   }
 
   logError() {
+    chrome.runtime.sendMessage({
+      from: "cart",
+      subject: "logError",
+      body: { logError: this },
+    });
     // TODO: Logs error to database
   }
 }
@@ -45691,9 +45762,16 @@ class Walmart extends ECommerceCart.EcommerceCart {
                 productCartSectionList.forEach(function (part) {
                     try {
                     let productItem = part.querySelector('div:nth-child(3)');
-                    console.log(productItem) 
-                    let productInfo = productItem.querySelector('div:nth-child(1) > div > div');
-                    let productID = productInfo.querySelector('a').getAttribute('href').split('/ip/seort/')[1];
+                    console.log("PRODUCT ITEM")
+                    console.log(productItem);
+                    let productInfo = productItem.querySelector('div:nth-child(1) > div > div:nth-child(2)');
+                    console.log("PRODUCT INFO1")
+                    console.log(productInfo);
+                    console.log("QUERY TEST");
+                    console.log(productInfo.querySelector('div'));
+                    let productID = productInfo.querySelector('div > div > div:nth-child(2) > a').getAttribute('href').split('/ip/seort/')[1];
+                    console.log("PRODUCT ID1");
+                    console.log(productID);
                     let productName = productInfo.querySelector('a > h4 > div > span').innerText;
                     let unitPrice = productInfo.querySelector('div:nth-child(3) > div > div:nth-child(1) > span').innerText.split('$')[1];
                     let productQuantityString = productItem.querySelector('a').getAttribute('aria-label').split(' in cart')[0];
@@ -45712,9 +45790,14 @@ class Walmart extends ECommerceCart.EcommerceCart {
                 } catch(err) {
                     try {
                     let productItem = part.querySelector('div:nth-child(2)');
-                    console.log(productItem) 
-                    let productInfo = productItem.querySelector('div:nth-child(1) > div > div');
-                    let productID = productInfo.querySelector('a').getAttribute('href').split('/ip/seort/')[1];
+                    console.log("PRODUCT ITEM");
+                    console.log(productItem)
+                    let productInfo = productItem.querySelector('div:nth-child(1) > div > div:nth-child(2)');
+                    console.log("PRODUCT INFO2")
+                    console.log(productInfo);
+                    console.log("QUERY TEST");
+                    console.log(productInfo.querySelector('div > div'));
+                    let productID = productInfo.querySelector('div > div > div:nth-child(2) > a').getAttribute('href').split('/ip/seort/')[1];
                     let productName = productInfo.querySelector('a > h4 > div > span').innerText;
                     let unitPrice = productInfo.querySelector('div:nth-child(3) > div > div:nth-child(1) > span').innerText.split('$')[1];
                     let productQuantityString = productItem.querySelector('a').getAttribute('aria-label').split(' in cart')[0];
@@ -45729,33 +45812,220 @@ class Walmart extends ECommerceCart.EcommerceCart {
                         productImage: productImage,
 
                     };
-                    productIndex++; }catch(err){
-                        console.log(err)
+                    productIndex++;
+                    } catch(err) {
+                        try {
+                        let productItem = part.querySelector('div:nth-child(3)');
+                        console.log("PRODUCT ITEM")
+                        console.log(productItem);
+                        let productInfo = productItem.querySelector('div:nth-child(1) > div > div.flex.flex-row.relative');
+                        console.log("PRODUCT INFO2.5")
+                        console.log(productInfo);
+                        console.log("QUERY TEST");
+                        console.log(productInfo.querySelector('div'));
+                        let productID = productInfo.querySelector('div > div > div:nth-child(2) > a').getAttribute('href').split('/ip/seort/')[1];
+                        console.log("PRODUCT ID1");
+                        console.log(productID);
+                        let productName = productInfo.querySelector('a > h4 > div > span').innerText;
+                        let unitPrice = productInfo.querySelector('div:nth-child(3) > div > div:nth-child(1) > span').innerText.split('$')[1];
+                        let productQuantityString = productItem.querySelector('a').getAttribute('aria-label').split(' in cart')[0];
+                        let productQuantity = productQuantityString.slice(productQuantityString.length - 1);
+                        let productImage = productInfo.querySelector('a > img').getAttribute('srcset').split(' 1x')[0];
+                        productDict[productIndex] = {
+                            currency: 'USD',
+                            productID: productID,
+                            productName: productName,
+                            unitPrice: parseFloat(unitPrice) / parseFloat(productQuantity),
+                            quantity: productQuantity,
+                            productImage: productImage,
+
+                        };
+                        productIndex++;
+                    } catch (err) {
+                            try {
+                                let productItem = part.querySelector('div:nth-child(2)');
+                                console.log("PRODUCT ITEM")
+                                console.log(productItem);
+                                let productInfo = productItem.querySelector('div:nth-child(1) > div > div.flex.flex-row.relative');
+                                console.log("PRODUCT INFO2.91")
+                                console.log(productInfo);
+                                let productID = productInfo.querySelector('a').getAttribute('href').split('/ip/seort/')[1];
+                                console.log("PRODUCT ID1");
+                                console.log(productID);
+                                let productName = productInfo.querySelector('a > h4 > div > span').innerText;
+                                let unitPrice = productInfo.querySelector('div:nth-child(3) > div > div:nth-child(1) > span').innerText.split('$')[1];
+                                let productQuantityString = productItem.querySelector('a').getAttribute('aria-label').split(' in cart')[0];
+                                let productQuantity = productQuantityString.slice(productQuantityString.length - 1);
+                                let productImage = productInfo.querySelector('a > img').getAttribute('srcset').split(' 1x')[0];
+                                productDict[productIndex] = {
+                                    currency: 'USD',
+                                    productID: productID,
+                                    productName: productName,
+                                    unitPrice: parseFloat(unitPrice) / parseFloat(productQuantity),
+                                    quantity: productQuantity,
+                                    productImage: productImage,
+
+                                };
+                                productIndex++;
+                            } catch (err) {
+                                let productItem = part.querySelector('div:nth-child(3)');
+                                console.log("PRODUCT ITEM")
+                                console.log(productItem);
+                                let productInfo = productItem.querySelector('div:nth-child(1) > div > div.flex.flex-row.relative');
+                                console.log("PRODUCT INFO2.92")
+                                console.log(productInfo);
+                                let productID = productInfo.querySelector('a').getAttribute('href').split('/ip/seort/')[1];
+                                console.log("PRODUCT ID1");
+                                console.log(productID);
+                                let productName = productInfo.querySelector('a > h4 > div > span').innerText;
+                                let unitPrice = productInfo.querySelector('div:nth-child(3) > div > div:nth-child(1) > span').innerText.split('$')[1];
+                                let productQuantityString = productItem.querySelector('a').getAttribute('aria-label').split(' in cart')[0];
+                                let productQuantity = productQuantityString.slice(productQuantityString.length - 1);
+                                let productImage = productInfo.querySelector('a > img').getAttribute('srcset').split(' 1x')[0];
+                                productDict[productIndex] = {
+                                    currency: 'USD',
+                                    productID: productID,
+                                    productName: productName,
+                                    unitPrice: parseFloat(unitPrice) / parseFloat(productQuantity),
+                                    quantity: productQuantity,
+                                    productImage: productImage,
+
+                                };
+                                productIndex++;
+                            }
+                    }
                     }
                 }
                 });
             } else {
-                let productCartSection2 = part.querySelector('div > div > ul');
-                let productCartSection2List = Array.from(productCartSection2.children);
-                productCartSection2List.forEach(function (part) {
-                    let productItem = part.querySelector('div:nth-child(2)');
-                    let productInfo = productItem.querySelector('div:nth-child(1) > div > div');
-                    let productID = productInfo.querySelector('a').getAttribute('href').split('/ip/seort/')[1];
-                    let productName = productInfo.querySelector('a > h4 > div > span').innerText;
-                    let unitPrice = productInfo.querySelector('div:nth-child(3) > div > div:nth-child(1) > span').innerText.split('$')[1];
-                    let productQuantityString = productItem.querySelector('a').getAttribute('aria-label').split(' in cart')[0];
-                    let productQuantity = productQuantityString.slice(productQuantityString.length - 1);
-                    let productImage = productInfo.querySelector('a > img').getAttribute('srcset').split(' 1x')[0];
-                    productDict[productIndex] = {
-                        currency: 'USD',
-                        productID: productID,
-                        productName: productName,
-                        unitPrice: parseFloat(unitPrice)/parseFloat(productQuantity),
-                        quantity: productQuantity,
-                        productImage: productImage,
-                    };
-                    productIndex++;
-                });
+                try {
+                    let productCartSection2 = part.querySelector('div > div > ul');
+                    let productCartSection2List = Array.from(productCartSection2.children);
+                    productCartSection2List.forEach(function (part) {
+                        let productItem = part.querySelector('div:nth-child(2)');
+                        console.log("PRODUCT ITEM3");
+                        console.log(productItem);
+                        let productInfo = productItem.querySelector('div:nth-child(1) > div > div:nth-child(2)');
+                        console.log("PRODUCT INFO3");
+                        console.log(productInfo);
+                        console.log("QUERY TEST");
+                        console.log(productInfo.querySelector('div > div'));
+                        let productID = productInfo.querySelector('div > div > div:nth-child(2) > a').getAttribute('href').split('/ip/seort/')[1];
+                        let productName = productInfo.querySelector('a > h4 > div > span').innerText;
+                        let unitPrice = productInfo.querySelector('div:nth-child(3) > div > div:nth-child(1) > span').innerText.split('$')[1];
+                        let productQuantityString = productItem.querySelector('a').getAttribute('aria-label').split(' in cart')[0];
+                        let productQuantity = productQuantityString.slice(productQuantityString.length - 1);
+                        let productImage = productInfo.querySelector('a > img').getAttribute('srcset').split(' 1x')[0];
+                        productDict[productIndex] = {
+                            currency: 'USD',
+                            productID: productID,
+                            productName: productName,
+                            unitPrice: parseFloat(unitPrice)/parseFloat(productQuantity),
+                            quantity: productQuantity,
+                            productImage: productImage,
+                        };
+                        productIndex++;
+                    });
+                } catch(err) {
+                    try {
+                        let productCartSection2 = part.querySelector('div > div > ul');
+                        let productCartSection2List = Array.from(productCartSection2.children);
+                        productCartSection2List.forEach(function (part) {
+                            let productItem = part.querySelector('div:nth-child(3)');
+                            console.log("PRODUCT ITEM3.5");
+                            console.log(productItem);
+                            let productInfo = productItem.querySelector('div:nth-child(1) > div > div:nth-child(2)');
+                            console.log("PRODUCT INFO3.5");
+                            console.log(productInfo);
+                            console.log("QUERY TEST");
+                            console.log(productInfo.querySelector('div > div'));
+                            let productID = productInfo.querySelector('div > div > div:nth-child(2) > a').getAttribute('href').split('/ip/seort/')[1];
+                            let productName = productInfo.querySelector('a > h4 > div > span').innerText;
+                            let unitPrice = productInfo.querySelector('div:nth-child(3) > div > div:nth-child(1) > span').innerText.split('$')[1];
+                            let productQuantityString = productItem.querySelector('a').getAttribute('aria-label').split(' in cart')[0];
+                            let productQuantity = productQuantityString.slice(productQuantityString.length - 1);
+                            let productImage = productInfo.querySelector('a > img').getAttribute('srcset').split(' 1x')[0];
+                            productDict[productIndex] = {
+                                currency: 'USD',
+                                productID: productID,
+                                productName: productName,
+                                unitPrice: parseFloat(unitPrice)/parseFloat(productQuantity),
+                                quantity: productQuantity,
+                                productImage: productImage,
+                            };
+                            productIndex++;
+                        });
+                    } catch(err) {
+                        try {
+                            let productCartSection2 = part.querySelector('div:nth-child(2) > div > ul');
+                            let productCartSection2List = Array.from(productCartSection2.children);
+                            productCartSection2List.forEach(function (part) {
+                                let productItem = part.querySelector('div:nth-child(3)');
+                                console.log("PRODUCT ITEM3.9");
+                                console.log(productItem);
+                                let productInfo = productItem.querySelector('div:nth-child(1) > div > div:nth-child(2)');
+                                console.log("PRODUCT INFO3.9");
+                                console.log(productInfo);
+                                console.log("QUERY TEST");
+                                console.log("TEST AAAAAA");
+                                let productID = productInfo.querySelector('div.flex.flex-column.sans-serif.pt1.relative > div.flex.mt1.w-100 > div > div > div.flex.w-60 > div > div > a').getAttribute('href').split('/ip/seort/')[1]
+                                console.log(productID);
+                                let productName = productInfo.querySelector('a > h4 > div > span').innerText;
+                                console.log("productName3.9 " + productName);
+                                let unitPrice = productItem.querySelector('div:nth-child(1) > div > div:nth-child(3) > div > div > span').innerText.split('$')[1];
+                                console.log("unitPrice3.9 " + unitPrice);
+                                let productQuantityString = productItem.querySelector('a').getAttribute('aria-label').split(' in cart')[0];
+                                console.log("productQuantityString3.9 " + productQuantityString);
+                                let productQuantity = productQuantityString.slice(productQuantityString.length - 1);
+                                console.log("productQuantity3.9 " + productQuantity);
+                                let productImage = productItem.querySelector('div.flex.flex-column.sans-serif.pt1.relative > div.flex.mt1.w-100 > div > div > a > img').getAttribute('srcset').split(' 1x')[0];
+                                console.log("productImage3.9 " + productImage);
+                                productDict[productIndex] = {
+                                    currency: 'USD',
+                                    productID: productID,
+                                    productName: productName,
+                                    unitPrice: parseFloat(unitPrice)/parseFloat(productQuantity),
+                                    quantity: productQuantity,
+                                    productImage: productImage,
+                                };
+                                productIndex++;
+                            });
+                        } catch(err) {
+                            try {
+                                let productCartSection2 = part.querySelector('div > div > ul');
+                                let productCartSection2List = Array.from(productCartSection2.children);
+                                productCartSection2List.forEach(function (part) {
+                                    let productItem = part.querySelector('div.flex.flex-column.sans-serif.pt1.relative');
+                                    console.log("PRODUCT ITEM4.0");
+                                    console.log(productItem);
+                                    let productInfo = productItem.querySelector('div.flex.mt1.w-100 > div > div.flex.flex-row.relative');
+                                    console.log("PRODUCT INFO4.0");
+                                    console.log(productInfo);
+                                    console.log("QUERY TEST");
+                                    console.log(productInfo.querySelector('div > div'));
+                                    let productID = productInfo.querySelector('div > div > div:nth-child(2) > a').getAttribute('href').split('/ip/seort/')[1];
+                                    let productName = productInfo.querySelector('a > h4 > div > span').innerText;
+                                    let unitPrice = productInfo.querySelector('div:nth-child(3) > div > div:nth-child(1) > span').innerText.split('$')[1];
+                                    let productQuantityString = productItem.querySelector('a').getAttribute('aria-label').split(' in cart')[0];
+                                    let productQuantity = productQuantityString.slice(productQuantityString.length - 1);
+                                    let productImage = productInfo.querySelector('a > img').getAttribute('srcset').split(' 1x')[0];
+                                    productDict[productIndex] = {
+                                        currency: 'USD',
+                                        productID: productID,
+                                        productName: productName,
+                                        unitPrice: parseFloat(unitPrice)/parseFloat(productQuantity),
+                                        quantity: productQuantity,
+                                        productImage: productImage,
+                                    };
+                                    productIndex++;
+                                });
+                            } catch(err) {
+                                console.log("ERROR4.0");
+                                console.log(err);
+                            }
+                        }
+                    }
+                }
             }
         });
     console.log(productElements);

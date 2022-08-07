@@ -25,23 +25,44 @@
         />
       </div>
       <div class="row d-flex justify-content-center align-items-center">
-        <script src="/scripts/cartconfirmation.js"></script>
-        <h5
-          class="text-center my-1"
-          style="padding-top: 1rem; padding-bottom: 0.5rem"
-        >
-          Confirm Order
-        </h5>
-        <div class="col" id="column-label-row">
-          <table class="table m-0 mb-3" id="cartTable">
-            <thead>
-              <tr>
-                <th class="ps-5">Item</th>
-                <th class="text-center">Qty</th>
-                <th class="text-center">Price</th>
-              </tr>
-            </thead>
-          </table>
+        <div class ="row d-flex flex-row">
+          <h5
+            class="text-center my-1"
+            style="padding-top: 1rem; padding-bottom: 0.5rem"
+          >
+            Confirm Order
+          </h5>
+          <label for="currencySelect"></label>
+          <select
+            class="form-select px-2 text-center"
+            aria-label="Select Chain"
+            id="currencySelect"
+          >
+            <option value="eth">ETH</option>
+            <option value="usdc-eth">USDC on Ethereum</option>
+            <option value="usdc-polygon">USDC on Polygon</option>
+          </select>
+        </div>
+        <div class="col">
+          <div class="col" id="column-label-row">
+            <table class="table m-0 mb-3" id="cartTable">
+              <thead>
+                <tr>
+                  <th class="ps-5">Item</th>
+                  <th class="text-center">Qty</th>
+                  <th class="text-center">Price</th>
+                </tr>
+              </thead>
+            </table>
+          </div>
+          <div class="col" id="totals-column" style="border-bottom: solid 2px rgb(216, 216, 216); margin-bottom: 10;">
+            <p align="right" style="padding-right: 0.5rem; margin-top: -10; margin-bottom: -10" id="sub-total"></p>
+            <p align="right" style="padding-right: 0.5rem; margin-top: -10; margin-bottom: -10" id="shipping-total"></p>
+            <p align="right" style="padding-right: 0.5rem; margin-top: -10; margin-bottom: -10" id="tax-total"></p>
+          </div>
+          <div>
+            <p align="right" style="padding-right: 0.5rem; margin-top: -10; margin-bottom: -10" id="final-total"></p>
+          </div>
         </div>
         <h7 class="text-center mb-2">Select a shipping address</h7>
         <label for="addressSelect"></label>
@@ -50,7 +71,7 @@
           aria-label="Choose Address"
           id="addressSelect"
         ></select>
-        <a class="text-center" href="addaddress.html" style="color: blue"
+        <a class="text-center mt-2" href="addaddress.html" style="color: blue"
           >Add a new address</a
         >
       </div>
@@ -63,7 +84,6 @@
         >
           Confirm Order
         </button>
-        <script src="/scripts/addaddress.js"></script>
       </div>
     </div>
     <div id="loading-view" style="display: block">
@@ -84,4 +104,6 @@
       </div>
     </div>
   </body>
+  <script src="/scripts/cartconfirmation.js"></script>
 </html>
+
