@@ -36569,7 +36569,6 @@ function stringifyReplacer(_, value) {
     }
     return value;
 }
-
 },{"fast-safe-stringify":188}],178:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -36662,7 +36661,6 @@ exports.errorValues = {
         message: 'The provider is disconnected from the specified chain.',
     },
 };
-
 },{}],179:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -36802,7 +36800,6 @@ function parseOpts(arg) {
     }
     return [];
 }
-
 },{"./classes":177,"./error-constants":178,"./utils":181}],180:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -36817,7 +36814,6 @@ const errors_1 = require("./errors");
 Object.defineProperty(exports, "ethErrors", { enumerable: true, get: function () { return errors_1.ethErrors; } });
 const error_constants_1 = require("./error-constants");
 Object.defineProperty(exports, "errorCodes", { enumerable: true, get: function () { return error_constants_1.errorCodes; } });
-
 },{"./classes":177,"./error-constants":178,"./errors":179,"./utils":181}],181:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -36929,7 +36925,6 @@ function assignOriginalError(error) {
 function hasKey(obj, key) {
     return Object.prototype.hasOwnProperty.call(obj, key);
 }
-
 },{"./classes":177,"./error-constants":178}],182:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -40397,7 +40392,6 @@ exports.JsonRpcEngine = JsonRpcEngine;
 function jsonify(request) {
     return JSON.stringify(request, null, 2);
 }
-
 },{"@metamask/safe-event-emitter":150,"eth-rpc-errors":180}],208:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -40464,7 +40458,6 @@ function createAsyncMiddleware(asyncMiddleware) {
     };
 }
 exports.createAsyncMiddleware = createAsyncMiddleware;
-
 },{}],209:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -40486,7 +40479,6 @@ function createScaffoldMiddleware(handlers) {
     };
 }
 exports.createScaffoldMiddleware = createScaffoldMiddleware;
-
 },{}],210:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -40500,7 +40492,6 @@ function getUniqueId() {
     return idCounter;
 }
 exports.getUniqueId = getUniqueId;
-
 },{}],211:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -40520,7 +40511,6 @@ function createIdRemapMiddleware() {
     };
 }
 exports.createIdRemapMiddleware = createIdRemapMiddleware;
-
 },{"./getUniqueId":210}],212:[function(require,module,exports){
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
@@ -40540,7 +40530,6 @@ __exportStar(require("./createScaffoldMiddleware"), exports);
 __exportStar(require("./getUniqueId"), exports);
 __exportStar(require("./JsonRpcEngine"), exports);
 __exportStar(require("./mergeMiddleware"), exports);
-
 },{"./JsonRpcEngine":207,"./createAsyncMiddleware":208,"./createScaffoldMiddleware":209,"./getUniqueId":210,"./idRemapMiddleware":211,"./mergeMiddleware":213}],213:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -40552,7 +40541,6 @@ function mergeMiddleware(middlewareStack) {
     return engine.asMiddleware();
 }
 exports.mergeMiddleware = mergeMiddleware;
-
 },{"./JsonRpcEngine":207}],214:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -45181,7 +45169,6 @@ class EcommerceCart {
     this.productDict;
     this.retailer;
     this.shipping;
-    this.popupOpen = false;
   }
 
   createListeners() {
@@ -45193,14 +45180,8 @@ class EcommerceCart {
     // Sends productDict when requested by cartConfirmation popup
     chrome.runtime.onMessage.addListener((msg, sender, response) => {
       if (msg.from === "popup" && msg.subject === "needInfo") {
-        console.log(this.productDict, this.shipping)
+        console.log(this.productDict, this.shipping);
         response([this.productDict, this.shipping]);
-      }
-    });
-    // Listens for when the popup is closed, keeps track of popup state.
-    chrome.runtime.onMessage.addListener((msg, sender, response) => {
-      if (msg.from === "background" && msg.subject === "popupClosed") {
-        this.popupOpen = false;
       }
     });
 
@@ -45408,10 +45389,10 @@ class EcommerceCart {
     cryptoButton.addEventListener("click", () => {
       // We disable the button to prevent multiple clicks.
       this.cryptoButton.disabled = true;
-      if (!this.popupOpen) {
-        this.cryptoButtonPressed();
-        return;
-      }
+      // if (!this.popupOpen) {
+      this.cryptoButtonPressed();
+      return;
+      // }
       this.cryptoButton.disabled = false;
     });
     return cryptoButton;
@@ -45423,9 +45404,14 @@ class EcommerceCart {
       // We check to make sure that the user is connected with Metamask and has a wallet connected.
       let walletID = await this.checkMetamaskSignIn();
 
+      const isPopupOpen = await chrome.runtime.sendMessage({
+        from: "cart",
+        subject: "isPopupOpen",
+      });
+
       // We check to make sure that the request is actually coming from a user with a wallet, and not being spoofed.
       // We do this by calling verifyWallet.
-      await this.verifyWallet(walletID);
+      await this.verifyWallet(walletID, isPopupOpen);
 
       // We get the products selected by the user.
       this.productDict = await this.getProducts();
@@ -45438,7 +45424,7 @@ class EcommerceCart {
       const timer = (ms) => new Promise((res) => setTimeout(res, ms));
 
       // This loop waits for the popup's DOM to load in.
-      while (this.popupOpen) {
+      while (!isPopupOpen) {
         // While the popup is open
 
         // We send a message to the popup with the cartInfo.
@@ -45459,7 +45445,15 @@ class EcommerceCart {
         }
 
         // We wait for 1 second before checking again.
-        await timer(1000);
+        await timer(100);
+      }
+      if (isPopupOpen) {
+        const cartInfoReceived = await chrome.runtime.sendMessage({
+          from: "cart",
+          subject: "sendCartInfo",
+          data: this.productDict,
+          shipping: this.shipping,
+        });
       }
 
       // Re-enable the button.
@@ -45511,7 +45505,7 @@ class EcommerceCart {
 
   // This function checks to make sure that the request is actually coming from a user with a wallet,
   // and not being spoofed.
-  async verifyWallet(walletID) {
+  async verifyWallet(walletID, isPopupOpen) {
     // We check for an existing JWT in local storage.
     let existingToken = await chrome.storage.local.get("glidePayJWT");
     if (
@@ -45521,7 +45515,11 @@ class EcommerceCart {
     ) {
       // If it is, we set it to an empty JSON object, and then we create a new JWT for the user.
       existingToken = {};
-      await this.createJWTToken(walletID, existingToken.glidePayJWT);
+      await this.createJWTToken(
+        walletID,
+        existingToken.glidePayJWT,
+        isPopupOpen
+      );
       return;
     }
     // If the JWT is not empty, we check to make sure that the JWT is valid.
@@ -45531,7 +45529,8 @@ class EcommerceCart {
       // If it is invalid, we create a new JWT for the user.
       await this.createJWTToken(
         walletID.toLowerCase(),
-        existingToken.glidePayJWT
+        existingToken.glidePayJWT,
+        isPopupOpen
       );
       return;
     } else {
@@ -45539,19 +45538,18 @@ class EcommerceCart {
     }
 
     // Check to see if the popup is not open.
-    if (!this.popupOpen) {
-      // If the popup is not open, we send a message asking for it to be created.
+    // If the popup is not open, we send a message asking for it to be created.
+    if (!isPopupOpen) {
       await chrome.runtime.sendMessage({
         from: "cart",
         subject: "createOrderPopup",
         screenSize: screen.width,
       });
     }
-    this.popupOpen = true;
   }
 
   // This function creates a JWT for the user.
-  async createJWTToken(walletID, token) {
+  async createJWTToken(walletID, token, isPopupOpen) {
     // First, we generate a unique nonce for the JWT -- one time use. This is used to prevent replay attacks.
     // This sends a message asking for a nonce to be created.
     let nonceResponse = await chrome.runtime.sendMessage({
@@ -45592,14 +45590,13 @@ class EcommerceCart {
 
     // This then creates the popup. We do this in advance of calling the backend so that we can have a loading animation
     // while awaiting the backend response.
-    if (!this.popupOpen) {
+    if (!isPopupOpen) {
       await chrome.runtime.sendMessage({
         from: "cart",
         subject: "createOrderPopup",
         screenSize: screen.width,
       });
     }
-    this.popupOpen = true;
 
     // We send the signature to the backend.
     let signatureResponse = await chrome.runtime.sendMessage({
