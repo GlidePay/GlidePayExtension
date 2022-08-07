@@ -268,10 +268,9 @@ class EcommerceCart {
       from: "cart",
       subject: "walletChoice",
       screenSize: screen.width,})
-      chrome.runtime.onMessage.addListener((msg, sender) => {
+      chrome.runtime.onMessage.addListener(async (msg, sender) => {
         if (msg.from === "popup" && msg.subject === "walletChoice") {
             try {
-              if (msg.wallet === 'metamask') {
                 // We check to make sure that the user is connected with Metamask and has a wallet connected.
                 let walletID = await this.checkMetamaskSignIn();
           
@@ -316,7 +315,7 @@ class EcommerceCart {
           
                 // Re-enable the button.
                 this.cryptoButton.disabled = false;
-            }} catch(err) {
+            } catch(err) {
               console.log("Error Crypto Button Flow");
               console.log(err);
               if (err instanceof LogError) {
