@@ -1,6 +1,7 @@
 // This is a metamask library that allows us to connect to the metamask extension from our extension.
 const createProvider = require("metamask-extension-provider");
-
+const walletConnect = require("@walletconnect/client")
+const Web3Modal = require("web3modal")
 const { ethers } = require("ethers");
 const maskInpageProvider = createProvider();
 const provider = new ethers.providers.Web3Provider(maskInpageProvider, "any");
@@ -263,6 +264,8 @@ class EcommerceCart {
       screenSize: screen.width,})
       chrome.runtime.onMessage.addListener(async (msg, sender) => {
         if (msg.from === "popup" && msg.subject === "walletChoice") {
+          console.log(msg.wallet)
+          if (msg.wallet == 'metamask') {
             try {
                 // We check to make sure that the user is connected with Metamask and has a wallet connected.
                 let walletID = await this.checkMetamaskSignIn();
@@ -305,16 +308,16 @@ class EcommerceCart {
                   // We wait for 1 second before checking again.
                   await timer(1000);
                 }
-          
                 // Re-enable the button.
                 this.cryptoButton.disabled = false;
-            } catch(err) {
+            }catch(err) {
               console.log("Error Crypto Button Flow");
               console.log(err);
               if (err instanceof LogError) {
                 this.cryptoButton.disabled = false;
               }
             }
+          }}else if (msg.wallet = 'walletConnect') {
           }
       });
   }
