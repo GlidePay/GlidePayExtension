@@ -1,9 +1,5 @@
 // This is a metamask library that allows us to connect to the metamask extension from our extension.
 const createProvider = require("metamask-extension-provider");
-const walletConnect = require("@walletconnect/client")
-const WalletConnectQRCodeModal = require("@walletconnect/qrcode-modal")
-const NodeWalletConnect = require("@walletconnect/node");
-const Web3Modal = require("web3modal")
 const { ethers } = require("ethers");
 const maskInpageProvider = createProvider();
 const provider = new ethers.providers.Web3Provider(maskInpageProvider, "any");

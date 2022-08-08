@@ -8,6 +8,7 @@
     "browserify": "^17.0.0",
     "crypto-js": "^4.1.1",
     "dotenv": "^16.0.1",
+    "esmify": "^2.1.1",
     "ethers": "^5.6.9",
     "etherscan-api": "^10.0.9",
     "ethjs-unit": "^0.1.6",
@@ -17,17 +18,25 @@
     "web3modal": "^1.9.8",
     "xhr2": "^0.2.1"
   },
+  "browserify": {
+    "transform": [
+      "babelify"
+    ]
+  },
   "scripts": {
     "buildMask": "browserify scripts/metamask-controller.js -o scripts/metamaskbundled.js",
-    "buildAmazon": "browserify scripts/amazon-us.js -o scripts/bundledamazon.js -t [ babelify ]",
+    "buildAmazon": "browserify scripts/amazon-us.js -o scripts/bundledamazon.js -t [ babelify --presets [ @babel/preset-env @babel/preset-react ] --plugins [ transform-class-properties ] ]",
     "buildWalmart": "browserify scripts/walmart-us.js -o scripts/bundledwalmart.js",
     "buildAliExpress": "browserify scripts/aliexpress.js -o scripts/bundledaliexpress.js",
     "buildCostco": "browserify scripts/costco.js -o scripts/bundledcostco.js",
-    "buildWalletChoice": "browserify scripts/walletChoice.js -o scripts/bundledwalletchoice.js"
+    "buildWalletChoice": "browserify scripts/walletChoice.js -p esmify > scripts/bundledwalletchoice.js"
   },
   "devDependencies": {
     "@babel/core": "^7.18.10",
     "@babel/plugin-proposal-class-properties": "^7.18.6",
+    "@babel/preset-env": "^7.18.10",
+    "@babel/preset-react": "^7.18.6",
+    "babel-plugin-transform-class-properties": "^6.24.1",
     "babelify": "^10.0.0"
   }
 }
