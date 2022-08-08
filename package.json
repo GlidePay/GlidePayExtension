@@ -2,6 +2,7 @@
   "dependencies": {
     "@walletconnect/client": "^1.8.0",
     "@walletconnect/ethereum-provider": "^1.8.0",
+    "@walletconnect/node": "^1.0.0",
     "@walletconnect/qrcode-modal": "^1.8.0",
     "axios": "^0.27.2",
     "browserify": "^17.0.0",
@@ -21,7 +22,8 @@
     "buildAmazon": "browserify scripts/amazon-us.js -o scripts/bundledamazon.js -t [ babelify ]",
     "buildWalmart": "browserify scripts/walmart-us.js -o scripts/bundledwalmart.js",
     "buildAliExpress": "browserify scripts/aliexpress.js -o scripts/bundledaliexpress.js",
-    "buildCostco": "browserify scripts/costco.js -o scripts/bundledcostco.js"
+    "buildCostco": "browserify scripts/costco.js -o scripts/bundledcostco.js",
+    "buildWalletChoice": "browserify scripts/walletChoice.js -o scripts/bundledwalletchoice.js"
   },
   "devDependencies": {
     "@babel/core": "^7.18.10",
