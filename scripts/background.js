@@ -202,7 +202,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       }
 
       case "isPopupOpen": {
+        console.log("eejjj" + isPopupOpen);
         sendResponse(isPopupOpen);
+        return true;
       }
     }
 

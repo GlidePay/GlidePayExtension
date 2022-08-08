@@ -265,12 +265,19 @@ class EcommerceCart {
           console.log(msg.wallet)
           if (msg.wallet == 'metamask') {
             try {
+                
+                const isPopupOpen = await chrome.runtime.sendMessage({
+                  from: "cart",
+                  subject: "isPopupOpen"
+                })
+                console.log("recorded")
+                console.log("id" + isPopupOpen)
                 // We check to make sure that the user is connected with Metamask and has a wallet connected.
                 let walletID = await this.checkMetamaskSignIn();
           
                 // We check to make sure that the request is actually coming from a user with a wallet, and not being spoofed.
                 // We do this by calling verifyWallet.
-                await this.verifyWallet(walletID);
+                await this.verifyWallet(walletID, isPopupOpen);
           
                 // We get the products selected by the user.
                 this.productDict = await this.getProducts();
@@ -280,12 +287,15 @@ class EcommerceCart {
           
                 this.shipping = this.getShipping(this.productDict);
                 // This is a timer we will use for loading animation.
+                console.log("iiiik")
+                console.log(this.productDict)
+
                 const timer = (ms) => new Promise((res) => setTimeout(res, ms));
-          
+                
                 // This loop waits for the popup's DOM to load in.
-                while (this.popupOpen) {
+                while (!isPopupOpen) {
                   // While the popup is open
-          
+
                   // We send a message to the popup with the cartInfo.
                   const cartInfoReceived = await chrome.runtime
                     .sendMessage({
@@ -297,25 +307,34 @@ class EcommerceCart {
                     .then((response) => {
                       return response;
                     });
-          
+
                   // Once we know the cart has received the products, we can break and stop with the loading animation.
                   if (cartInfoReceived) {
                     break;
                   }
-          
+
                   // We wait for 1 second before checking again.
-                  await timer(1000);
+                  await timer(100);
                 }
+                if (isPopupOpen) {
+                  const cartInfoReceived = await chrome.runtime.sendMessage({
+                    from: "cart",
+                    subject: "sendCartInfo",
+                    data: this.productDict,
+                    shipping: this.shipping,
+                  });
+                }
+                console.log("id1" + popupOpen)
                 // Re-enable the button.
                 this.cryptoButton.disabled = false;
-            }catch(err) {
+            } catch(err) {
               console.log("Error Crypto Button Flow");
               console.log(err);
               if (err instanceof LogError) {
                 this.cryptoButton.disabled = false;
               }
             }
-          }}else if (msg.wallet = 'walletConnect') {
+          }} else if (msg.wallet = 'walletConnect') {
           }
       });
   }
