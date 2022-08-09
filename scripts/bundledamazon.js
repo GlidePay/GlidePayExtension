@@ -36569,6 +36569,7 @@ function stringifyReplacer(_, value) {
     }
     return value;
 }
+
 },{"fast-safe-stringify":188}],178:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -36661,6 +36662,7 @@ exports.errorValues = {
         message: 'The provider is disconnected from the specified chain.',
     },
 };
+
 },{}],179:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -36800,6 +36802,7 @@ function parseOpts(arg) {
     }
     return [];
 }
+
 },{"./classes":177,"./error-constants":178,"./utils":181}],180:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -36814,6 +36817,7 @@ const errors_1 = require("./errors");
 Object.defineProperty(exports, "ethErrors", { enumerable: true, get: function () { return errors_1.ethErrors; } });
 const error_constants_1 = require("./error-constants");
 Object.defineProperty(exports, "errorCodes", { enumerable: true, get: function () { return error_constants_1.errorCodes; } });
+
 },{"./classes":177,"./error-constants":178,"./errors":179,"./utils":181}],181:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -36925,6 +36929,7 @@ function assignOriginalError(error) {
 function hasKey(obj, key) {
     return Object.prototype.hasOwnProperty.call(obj, key);
 }
+
 },{"./classes":177,"./error-constants":178}],182:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -40392,6 +40397,7 @@ exports.JsonRpcEngine = JsonRpcEngine;
 function jsonify(request) {
     return JSON.stringify(request, null, 2);
 }
+
 },{"@metamask/safe-event-emitter":150,"eth-rpc-errors":180}],208:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -40458,6 +40464,7 @@ function createAsyncMiddleware(asyncMiddleware) {
     };
 }
 exports.createAsyncMiddleware = createAsyncMiddleware;
+
 },{}],209:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -40479,6 +40486,7 @@ function createScaffoldMiddleware(handlers) {
     };
 }
 exports.createScaffoldMiddleware = createScaffoldMiddleware;
+
 },{}],210:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -40492,6 +40500,7 @@ function getUniqueId() {
     return idCounter;
 }
 exports.getUniqueId = getUniqueId;
+
 },{}],211:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -40511,6 +40520,7 @@ function createIdRemapMiddleware() {
     };
 }
 exports.createIdRemapMiddleware = createIdRemapMiddleware;
+
 },{"./getUniqueId":210}],212:[function(require,module,exports){
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
@@ -40530,6 +40540,7 @@ __exportStar(require("./createScaffoldMiddleware"), exports);
 __exportStar(require("./getUniqueId"), exports);
 __exportStar(require("./JsonRpcEngine"), exports);
 __exportStar(require("./mergeMiddleware"), exports);
+
 },{"./JsonRpcEngine":207,"./createAsyncMiddleware":208,"./createScaffoldMiddleware":209,"./getUniqueId":210,"./idRemapMiddleware":211,"./mergeMiddleware":213}],213:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -40541,6 +40552,7 @@ function mergeMiddleware(middlewareStack) {
     return engine.asMiddleware();
 }
 exports.mergeMiddleware = mergeMiddleware;
+
 },{"./JsonRpcEngine":207}],214:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -45972,21 +45984,21 @@ var EcommerceCart = /*#__PURE__*/function () {
                 });
                 chrome.runtime.onMessage.addListener( /*#__PURE__*/function () {
                   var _ref = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2(msg, sender) {
-                    var isPopupOpen, walletID, timer, cartInfoReceived, _cartInfoReceived;
+                    var isPopupOpen, walletID, timer, cartInfoReceived, _cartInfoReceived, _isPopupOpen, _timer, _cartInfoReceived2, _cartInfoReceived3;
 
                     return _regeneratorRuntime().wrap(function _callee2$(_context2) {
                       while (1) {
                         switch (_context2.prev = _context2.next) {
                           case 0:
                             if (!(msg.from === "popup" && msg.subject === "walletChoice")) {
-                              _context2.next = 47;
+                              _context2.next = 86;
                               break;
                             }
 
                             console.log(msg.wallet);
 
                             if (!(msg.wallet == 'metamask')) {
-                              _context2.next = 45;
+                              _context2.next = 47;
                               break;
                             }
 
@@ -46100,18 +46112,122 @@ var EcommerceCart = /*#__PURE__*/function () {
                             }
 
                           case 45:
-                            _context2.next = 48;
+                            _context2.next = 86;
                             break;
 
                           case 47:
-                            if (msg.wallet = 'walletConnect') {}
+                            if (!(msg.wallet = 'walletConnect')) {
+                              _context2.next = 86;
+                              break;
+                            }
 
-                          case 48:
+                            _context2.prev = 48;
+                            _context2.next = 51;
+                            return chrome.runtime.sendMessage({
+                              from: "cart",
+                              subject: "isPopupOpen"
+                            });
+
+                          case 51:
+                            _isPopupOpen = _context2.sent;
+                            console.log("recorded");
+                            console.log("id" + _isPopupOpen); // We get the products selected by the user.
+
+                            _context2.next = 56;
+                            return _this4.getProducts();
+
+                          case 56:
+                            _this4.productDict = _context2.sent; // We get the retailer of the products.
+
+                            _this4.retailer = _this4.getRetailer();
+                            _this4.shipping = _this4.getShipping(_this4.productDict); // This is a timer we will use for loading animation.
+
+                            console.log("iiiik");
+                            console.log(_this4.productDict);
+
+                            _timer = function _timer(ms) {
+                              return new Promise(function (res) {
+                                return setTimeout(res, ms);
+                              });
+                            };
+
+                            console.log(_isPopupOpen);
+                          // This loop waits for the popup's DOM to load in.
+
+                          case 63:
+                            if (_isPopupOpen) {
+                              _context2.next = 73;
+                              break;
+                            }
+
+                            _context2.next = 66;
+                            return chrome.runtime.sendMessage({
+                              from: "cart",
+                              subject: "sendCartInfo",
+                              data: _this4.productDict,
+                              shipping: _this4.shipping
+                            }).then(function (response) {
+                              return response;
+                            });
+
+                          case 66:
+                            _cartInfoReceived2 = _context2.sent;
+
+                            if (!_cartInfoReceived2) {
+                              _context2.next = 69;
+                              break;
+                            }
+
+                            return _context2.abrupt("break", 73);
+
+                          case 69:
+                            _context2.next = 71;
+                            return _timer(100);
+
+                          case 71:
+                            _context2.next = 63;
+                            break;
+
+                          case 73:
+                            if (!_isPopupOpen) {
+                              _context2.next = 77;
+                              break;
+                            }
+
+                            _context2.next = 76;
+                            return chrome.runtime.sendMessage({
+                              from: "cart",
+                              subject: "sendCartInfo",
+                              data: _this4.productDict,
+                              shipping: _this4.shipping
+                            });
+
+                          case 76:
+                            _cartInfoReceived3 = _context2.sent;
+
+                          case 77:
+                            console.log("id1" + popupOpen); // Re-enable the button.
+
+                            _this4.cryptoButton.disabled = false;
+                            _context2.next = 86;
+                            break;
+
+                          case 81:
+                            _context2.prev = 81;
+                            _context2.t1 = _context2["catch"](48);
+                            console.log("Error Crypto Button Flow");
+                            console.log(_context2.t1);
+
+                            if (_context2.t1 instanceof LogError) {
+                              _this4.cryptoButton.disabled = false;
+                            }
+
+                          case 86:
                           case "end":
                             return _context2.stop();
                         }
                       }
-                    }, _callee2, null, [[3, 40]]);
+                    }, _callee2, null, [[3, 40], [48, 81]]);
                   }));
 
                   return function (_x2, _x3) {
@@ -47059,7 +47175,7 @@ var Amazon = /*#__PURE__*/function (_ECommerceCart$Ecomme) {
       /**
            * Injects the pay with crypto button into Amazon's checkout page.
            * @function injectButton
-             */
+            */
       var add_to_cart = document.getElementById("gutterCartViewForm");
       add_to_cart.after(this.cryptoButton);
       document.getElementById("gutterCartViewForm").style.marginBottom = "10px";
