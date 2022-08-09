@@ -38,7 +38,6 @@ walletConnect.addEventListener("click", async() => {
       bridge: "https://bridge.walletconnect.org", // Required
       qrcodeModal: QRCodeModal,
     });
-    console.log(connector)
     // Check if connection is already established
     if (!connector.connected) {
       // create new session
@@ -53,13 +52,14 @@ walletConnect.addEventListener("click", async() => {
               {
                 from: "popup",
                 subject: "walletChoice",
-                wallet: 'walletConnect'
+                wallet: 'walletConnect',
+                connector: connector
               }
               
     )
     console.log(response);}}
     }
-    window.close();
+    //window.close();
     }
     console.log('connected')
     // Subscribe to connection events

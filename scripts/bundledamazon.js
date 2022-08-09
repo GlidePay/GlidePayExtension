@@ -45991,14 +45991,14 @@ var EcommerceCart = /*#__PURE__*/function () {
                         switch (_context2.prev = _context2.next) {
                           case 0:
                             if (!(msg.from === "popup" && msg.subject === "walletChoice")) {
-                              _context2.next = 86;
+                              _context2.next = 87;
                               break;
                             }
 
                             console.log(msg.wallet);
 
                             if (!(msg.wallet == 'metamask')) {
-                              _context2.next = 47;
+                              _context2.next = 46;
                               break;
                             }
 
@@ -46095,14 +46095,13 @@ var EcommerceCart = /*#__PURE__*/function () {
                             _cartInfoReceived = _context2.sent;
 
                           case 36:
-                            console.log("id1" + popupOpen); // Re-enable the button.
-
+                            // Re-enable the button.
                             _this4.cryptoButton.disabled = false;
-                            _context2.next = 45;
+                            _context2.next = 44;
                             break;
 
-                          case 40:
-                            _context2.prev = 40;
+                          case 39:
+                            _context2.prev = 39;
                             _context2.t0 = _context2["catch"](3);
                             console.log("Error Crypto Button Flow");
                             console.log(_context2.t0);
@@ -46111,32 +46110,46 @@ var EcommerceCart = /*#__PURE__*/function () {
                               _this4.cryptoButton.disabled = false;
                             }
 
-                          case 45:
-                            _context2.next = 86;
+                          case 44:
+                            _context2.next = 87;
                             break;
 
-                          case 47:
+                          case 46:
                             if (!(msg.wallet = 'walletConnect')) {
-                              _context2.next = 86;
+                              _context2.next = 87;
                               break;
                             }
 
-                            _context2.prev = 48;
-                            _context2.next = 51;
+                            _context2.prev = 47;
+                            _context2.next = 50;
                             return chrome.runtime.sendMessage({
                               from: "cart",
                               subject: "isPopupOpen"
                             });
 
-                          case 51:
+                          case 50:
                             _isPopupOpen = _context2.sent;
+
+                            if (_isPopupOpen) {
+                              _context2.next = 54;
+                              break;
+                            }
+
+                            _context2.next = 54;
+                            return chrome.runtime.sendMessage({
+                              from: "cart",
+                              subject: "createOrderPopup",
+                              screenSize: screen.width
+                            });
+
+                          case 54:
                             console.log("recorded");
                             console.log("id" + _isPopupOpen); // We get the products selected by the user.
 
-                            _context2.next = 56;
+                            _context2.next = 58;
                             return _this4.getProducts();
 
-                          case 56:
+                          case 58:
                             _this4.productDict = _context2.sent; // We get the retailer of the products.
 
                             _this4.retailer = _this4.getRetailer();
@@ -46154,13 +46167,13 @@ var EcommerceCart = /*#__PURE__*/function () {
                             console.log(_isPopupOpen);
                           // This loop waits for the popup's DOM to load in.
 
-                          case 63:
+                          case 65:
                             if (_isPopupOpen) {
-                              _context2.next = 73;
+                              _context2.next = 75;
                               break;
                             }
 
-                            _context2.next = 66;
+                            _context2.next = 68;
                             return chrome.runtime.sendMessage({
                               from: "cart",
                               subject: "sendCartInfo",
@@ -46170,31 +46183,31 @@ var EcommerceCart = /*#__PURE__*/function () {
                               return response;
                             });
 
-                          case 66:
+                          case 68:
                             _cartInfoReceived2 = _context2.sent;
 
                             if (!_cartInfoReceived2) {
-                              _context2.next = 69;
+                              _context2.next = 71;
                               break;
                             }
 
-                            return _context2.abrupt("break", 73);
-
-                          case 69:
-                            _context2.next = 71;
-                            return _timer(100);
+                            return _context2.abrupt("break", 75);
 
                           case 71:
-                            _context2.next = 63;
-                            break;
+                            _context2.next = 73;
+                            return _timer(100);
 
                           case 73:
+                            _context2.next = 65;
+                            break;
+
+                          case 75:
                             if (!_isPopupOpen) {
-                              _context2.next = 77;
+                              _context2.next = 79;
                               break;
                             }
 
-                            _context2.next = 76;
+                            _context2.next = 78;
                             return chrome.runtime.sendMessage({
                               from: "cart",
                               subject: "sendCartInfo",
@@ -46202,19 +46215,18 @@ var EcommerceCart = /*#__PURE__*/function () {
                               shipping: _this4.shipping
                             });
 
-                          case 76:
+                          case 78:
                             _cartInfoReceived3 = _context2.sent;
 
-                          case 77:
-                            console.log("id1" + popupOpen); // Re-enable the button.
-
+                          case 79:
+                            // Re-enable the button.
                             _this4.cryptoButton.disabled = false;
-                            _context2.next = 86;
+                            _context2.next = 87;
                             break;
 
-                          case 81:
-                            _context2.prev = 81;
-                            _context2.t1 = _context2["catch"](48);
+                          case 82:
+                            _context2.prev = 82;
+                            _context2.t1 = _context2["catch"](47);
                             console.log("Error Crypto Button Flow");
                             console.log(_context2.t1);
 
@@ -46222,12 +46234,12 @@ var EcommerceCart = /*#__PURE__*/function () {
                               _this4.cryptoButton.disabled = false;
                             }
 
-                          case 86:
+                          case 87:
                           case "end":
                             return _context2.stop();
                         }
                       }
-                    }, _callee2, null, [[3, 40], [48, 81]]);
+                    }, _callee2, null, [[3, 39], [47, 82]]);
                   }));
 
                   return function (_x2, _x3) {

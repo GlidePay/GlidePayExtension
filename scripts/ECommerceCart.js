@@ -324,7 +324,6 @@ class EcommerceCart {
                     shipping: this.shipping,
                   });
                 }
-                console.log("id1" + popupOpen)
                 // Re-enable the button.
                 this.cryptoButton.disabled = false;
             } catch(err) {
@@ -340,6 +339,15 @@ class EcommerceCart {
                 from: "cart",
                 subject: "isPopupOpen"
               })
+
+              if (!isPopupOpen) {
+                await chrome.runtime.sendMessage({
+                  from: "cart",
+                  subject: "createOrderPopup",
+                  screenSize: screen.width,
+                });
+              }
+              
               console.log("recorded")
               console.log("id" + isPopupOpen)
       // We get the products selected by the user.
@@ -387,7 +395,6 @@ class EcommerceCart {
           shipping: this.shipping,
         });
       }
-      console.log("id1" + popupOpen)
       // Re-enable the button.
       this.cryptoButton.disabled = false;
       } catch(err) {

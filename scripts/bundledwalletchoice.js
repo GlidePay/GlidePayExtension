@@ -16982,7 +16982,7 @@ async function main() {
       // Required
       qrcodeModal: _qrcodeModal.default
     });
-    console.log(connector); // Check if connection is already established
+    console.log(connector._accounts); // Check if connection is already established
 
     if (!connector.connected) {
       // create new session
@@ -17003,9 +17003,8 @@ async function main() {
             console.log(response);
           }
         }
-      }
+      } //window.close();
 
-      window.close();
     }
 
     console.log('connected'); // Subscribe to connection events
