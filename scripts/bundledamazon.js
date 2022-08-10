@@ -10986,7 +10986,7 @@ function encrypt(account, password, options, progressCallback) {
 }
 exports.encrypt = encrypt;
 
-},{"./_version":48,"./utils":53,"@ethersproject/address":22,"@ethersproject/bytes":32,"@ethersproject/hdnode":47,"@ethersproject/keccak256":54,"@ethersproject/logger":56,"@ethersproject/pbkdf2":60,"@ethersproject/properties":62,"@ethersproject/random":84,"@ethersproject/transactions":103,"aes-js":151,"scrypt-js":251}],53:[function(require,module,exports){
+},{"./_version":48,"./utils":53,"@ethersproject/address":22,"@ethersproject/bytes":32,"@ethersproject/hdnode":47,"@ethersproject/keccak256":54,"@ethersproject/logger":56,"@ethersproject/pbkdf2":60,"@ethersproject/properties":62,"@ethersproject/random":84,"@ethersproject/transactions":103,"aes-js":151,"scrypt-js":252}],53:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.uuidV4 = exports.searchPath = exports.getPassword = exports.zpad = exports.looseArrayify = void 0;
@@ -11071,7 +11071,7 @@ function keccak256(data) {
 }
 exports.keccak256 = keccak256;
 
-},{"@ethersproject/bytes":32,"js-sha3":206}],55:[function(require,module,exports){
+},{"@ethersproject/bytes":32,"js-sha3":207}],55:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.version = void 0;
@@ -18822,7 +18822,7 @@ function computeHmac(algorithm, key, data) {
 }
 exports.computeHmac = computeHmac;
 
-},{"./_version":88,"./types":91,"@ethersproject/bytes":32,"@ethersproject/logger":56,"hash.js":189}],90:[function(require,module,exports){
+},{"./_version":88,"./types":91,"@ethersproject/bytes":32,"@ethersproject/logger":56,"hash.js":190}],90:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SupportedAlgorithm = exports.sha512 = exports.sha256 = exports.ripemd160 = exports.computeHmac = void 0;
@@ -18862,7 +18862,7 @@ var elliptic_1 = __importDefault(require("elliptic"));
 var EC = elliptic_1.default.ec;
 exports.EC = EC;
 
-},{"elliptic":160}],94:[function(require,module,exports){
+},{"elliptic":161}],94:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.computePublicKey = exports.recoverPublicKey = exports.SigningKey = void 0;
@@ -21989,7 +21989,7 @@ BaseProvider._defaultState = {
     isPermanentlyDisconnected: false,
 };
 
-},{"./messages":129,"./utils":132,"@metamask/object-multiplex":138,"@metamask/safe-event-emitter":150,"eth-rpc-errors":180,"fast-deep-equal":134,"is-stream":135,"json-rpc-engine":212,"json-rpc-middleware-stream":216,"pump":235}],124:[function(require,module,exports){
+},{"./messages":129,"./utils":132,"@metamask/object-multiplex":138,"@metamask/safe-event-emitter":150,"eth-rpc-errors":181,"fast-deep-equal":134,"is-stream":135,"json-rpc-engine":213,"json-rpc-middleware-stream":217,"pump":236}],124:[function(require,module,exports){
 "use strict";
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
@@ -22250,7 +22250,7 @@ class MetaMaskInpageProvider extends BaseProvider_1.default {
 }
 exports.default = MetaMaskInpageProvider;
 
-},{"./BaseProvider":123,"./messages":129,"./siteMetadata":131,"./utils":132,"eth-rpc-errors":180}],125:[function(require,module,exports){
+},{"./BaseProvider":123,"./messages":129,"./siteMetadata":131,"./utils":132,"eth-rpc-errors":181}],125:[function(require,module,exports){
 "use strict";
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
@@ -22287,7 +22287,7 @@ function getMetaMaskId() {
     }
 }
 
-},{"../BaseProvider":123,"./external-extension-config.json":126,"detect-browser":133,"extension-port-stream":187}],126:[function(require,module,exports){
+},{"../BaseProvider":123,"./external-extension-config.json":126,"detect-browser":133,"extension-port-stream":188}],126:[function(require,module,exports){
 module.exports={
     "CHROME_ID": "nkbihfbeogaeaoehlefnkodbefgpgknn",
     "FIREFOX_ID": "webextension@metamask.io"
@@ -22622,7 +22622,7 @@ exports.EMITTED_NOTIFICATIONS = [
     'eth_subscription',
 ];
 
-},{"eth-rpc-errors":180}],133:[function(require,module,exports){
+},{"eth-rpc-errors":181}],133:[function(require,module,exports){
 (function (process){(function (){
 "use strict";
 var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
@@ -22848,7 +22848,7 @@ function createVersionParts(count) {
 }
 
 }).call(this)}).call(this,require('_process'))
-},{"_process":234}],134:[function(require,module,exports){
+},{"_process":235}],134:[function(require,module,exports){
 'use strict';
 
 var isArray = Array.isArray;
@@ -23019,7 +23019,7 @@ function anyStreamEnd(stream, _cb) {
     end_of_stream_1.default(stream, { writable: false }, cb);
 }
 
-},{"./Substream":137,"end-of-stream":176,"once":232,"readable-stream":147}],137:[function(require,module,exports){
+},{"./Substream":137,"end-of-stream":177,"once":233,"readable-stream":147}],137:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Substream = void 0;
@@ -23190,7 +23190,7 @@ Duplex.prototype._destroy = function (err, cb) {
 
   pna.nextTick(cb, err);
 };
-},{"./_stream_readable":141,"./_stream_writable":143,"core-util-is":158,"inherits":203,"process-nextick-args":233}],140:[function(require,module,exports){
+},{"./_stream_readable":141,"./_stream_writable":143,"core-util-is":158,"inherits":204,"process-nextick-args":234}],140:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -23238,7 +23238,7 @@ function PassThrough(options) {
 PassThrough.prototype._transform = function (chunk, encoding, cb) {
   cb(null, chunk);
 };
-},{"./_stream_transform":142,"core-util-is":158,"inherits":203}],141:[function(require,module,exports){
+},{"./_stream_transform":142,"core-util-is":158,"inherits":204}],141:[function(require,module,exports){
 (function (process,global){(function (){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -24260,7 +24260,7 @@ function indexOf(xs, x) {
   return -1;
 }
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./_stream_duplex":139,"./internal/streams/BufferList":144,"./internal/streams/destroy":145,"./internal/streams/stream":146,"_process":234,"core-util-is":158,"events":186,"inherits":203,"isarray":205,"process-nextick-args":233,"safe-buffer":148,"string_decoder/":149,"util":156}],142:[function(require,module,exports){
+},{"./_stream_duplex":139,"./internal/streams/BufferList":144,"./internal/streams/destroy":145,"./internal/streams/stream":146,"_process":235,"core-util-is":158,"events":187,"inherits":204,"isarray":206,"process-nextick-args":234,"safe-buffer":148,"string_decoder/":149,"util":156}],142:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -24475,7 +24475,7 @@ function done(stream, er, data) {
 
   return stream.push(null);
 }
-},{"./_stream_duplex":139,"core-util-is":158,"inherits":203}],143:[function(require,module,exports){
+},{"./_stream_duplex":139,"core-util-is":158,"inherits":204}],143:[function(require,module,exports){
 (function (process,global,setImmediate){(function (){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -25165,7 +25165,7 @@ Writable.prototype._destroy = function (err, cb) {
   cb(err);
 };
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("timers").setImmediate)
-},{"./_stream_duplex":139,"./internal/streams/destroy":145,"./internal/streams/stream":146,"_process":234,"core-util-is":158,"inherits":203,"process-nextick-args":233,"safe-buffer":148,"timers":254,"util-deprecate":255}],144:[function(require,module,exports){
+},{"./_stream_duplex":139,"./internal/streams/destroy":145,"./internal/streams/stream":146,"_process":235,"core-util-is":158,"inherits":204,"process-nextick-args":234,"safe-buffer":148,"timers":255,"util-deprecate":256}],144:[function(require,module,exports){
 'use strict';
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -25320,10 +25320,10 @@ module.exports = {
   destroy: destroy,
   undestroy: undestroy
 };
-},{"process-nextick-args":233}],146:[function(require,module,exports){
+},{"process-nextick-args":234}],146:[function(require,module,exports){
 module.exports = require('events').EventEmitter;
 
-},{"events":186}],147:[function(require,module,exports){
+},{"events":187}],147:[function(require,module,exports){
 exports = module.exports = require('./lib/_stream_readable.js');
 exports.Stream = exports;
 exports.Readable = exports;
@@ -25761,7 +25761,7 @@ class SafeEventEmitter extends events_1.EventEmitter {
 }
 exports.default = SafeEventEmitter;
 
-},{"events":186}],151:[function(require,module,exports){
+},{"events":187}],151:[function(require,module,exports){
 "use strict";
 
 (function(root) {
@@ -32195,7 +32195,7 @@ function numberIsNaN (obj) {
 }
 
 }).call(this)}).call(this,require("buffer").Buffer)
-},{"base64-js":152,"buffer":157,"ieee754":202}],158:[function(require,module,exports){
+},{"base64-js":152,"buffer":157,"ieee754":203}],158:[function(require,module,exports){
 (function (Buffer){(function (){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -32306,7 +32306,817 @@ function objectToString(o) {
 }
 
 }).call(this)}).call(this,{"isBuffer":require("../../is-buffer/index.js")})
-},{"../../is-buffer/index.js":204}],159:[function(require,module,exports){
+},{"../../is-buffer/index.js":205}],159:[function(require,module,exports){
+(function (global){(function (){
+;(function (root, factory) {
+	if (typeof exports === "object") {
+		// CommonJS
+		module.exports = exports = factory();
+	}
+	else if (typeof define === "function" && define.amd) {
+		// AMD
+		define([], factory);
+	}
+	else {
+		// Global (browser)
+		root.CryptoJS = factory();
+	}
+}(this, function () {
+
+	/*globals window, global, require*/
+
+	/**
+	 * CryptoJS core components.
+	 */
+	var CryptoJS = CryptoJS || (function (Math, undefined) {
+
+	    var crypto;
+
+	    // Native crypto from window (Browser)
+	    if (typeof window !== 'undefined' && window.crypto) {
+	        crypto = window.crypto;
+	    }
+
+	    // Native crypto in web worker (Browser)
+	    if (typeof self !== 'undefined' && self.crypto) {
+	        crypto = self.crypto;
+	    }
+
+	    // Native crypto from worker
+	    if (typeof globalThis !== 'undefined' && globalThis.crypto) {
+	        crypto = globalThis.crypto;
+	    }
+
+	    // Native (experimental IE 11) crypto from window (Browser)
+	    if (!crypto && typeof window !== 'undefined' && window.msCrypto) {
+	        crypto = window.msCrypto;
+	    }
+
+	    // Native crypto from global (NodeJS)
+	    if (!crypto && typeof global !== 'undefined' && global.crypto) {
+	        crypto = global.crypto;
+	    }
+
+	    // Native crypto import via require (NodeJS)
+	    if (!crypto && typeof require === 'function') {
+	        try {
+	            crypto = require('crypto');
+	        } catch (err) {}
+	    }
+
+	    /*
+	     * Cryptographically secure pseudorandom number generator
+	     *
+	     * As Math.random() is cryptographically not safe to use
+	     */
+	    var cryptoSecureRandomInt = function () {
+	        if (crypto) {
+	            // Use getRandomValues method (Browser)
+	            if (typeof crypto.getRandomValues === 'function') {
+	                try {
+	                    return crypto.getRandomValues(new Uint32Array(1))[0];
+	                } catch (err) {}
+	            }
+
+	            // Use randomBytes method (NodeJS)
+	            if (typeof crypto.randomBytes === 'function') {
+	                try {
+	                    return crypto.randomBytes(4).readInt32LE();
+	                } catch (err) {}
+	            }
+	        }
+
+	        throw new Error('Native crypto module could not be used to get secure random number.');
+	    };
+
+	    /*
+	     * Local polyfill of Object.create
+
+	     */
+	    var create = Object.create || (function () {
+	        function F() {}
+
+	        return function (obj) {
+	            var subtype;
+
+	            F.prototype = obj;
+
+	            subtype = new F();
+
+	            F.prototype = null;
+
+	            return subtype;
+	        };
+	    }());
+
+	    /**
+	     * CryptoJS namespace.
+	     */
+	    var C = {};
+
+	    /**
+	     * Library namespace.
+	     */
+	    var C_lib = C.lib = {};
+
+	    /**
+	     * Base object for prototypal inheritance.
+	     */
+	    var Base = C_lib.Base = (function () {
+
+
+	        return {
+	            /**
+	             * Creates a new object that inherits from this object.
+	             *
+	             * @param {Object} overrides Properties to copy into the new object.
+	             *
+	             * @return {Object} The new object.
+	             *
+	             * @static
+	             *
+	             * @example
+	             *
+	             *     var MyType = CryptoJS.lib.Base.extend({
+	             *         field: 'value',
+	             *
+	             *         method: function () {
+	             *         }
+	             *     });
+	             */
+	            extend: function (overrides) {
+	                // Spawn
+	                var subtype = create(this);
+
+	                // Augment
+	                if (overrides) {
+	                    subtype.mixIn(overrides);
+	                }
+
+	                // Create default initializer
+	                if (!subtype.hasOwnProperty('init') || this.init === subtype.init) {
+	                    subtype.init = function () {
+	                        subtype.$super.init.apply(this, arguments);
+	                    };
+	                }
+
+	                // Initializer's prototype is the subtype object
+	                subtype.init.prototype = subtype;
+
+	                // Reference supertype
+	                subtype.$super = this;
+
+	                return subtype;
+	            },
+
+	            /**
+	             * Extends this object and runs the init method.
+	             * Arguments to create() will be passed to init().
+	             *
+	             * @return {Object} The new object.
+	             *
+	             * @static
+	             *
+	             * @example
+	             *
+	             *     var instance = MyType.create();
+	             */
+	            create: function () {
+	                var instance = this.extend();
+	                instance.init.apply(instance, arguments);
+
+	                return instance;
+	            },
+
+	            /**
+	             * Initializes a newly created object.
+	             * Override this method to add some logic when your objects are created.
+	             *
+	             * @example
+	             *
+	             *     var MyType = CryptoJS.lib.Base.extend({
+	             *         init: function () {
+	             *             // ...
+	             *         }
+	             *     });
+	             */
+	            init: function () {
+	            },
+
+	            /**
+	             * Copies properties into this object.
+	             *
+	             * @param {Object} properties The properties to mix in.
+	             *
+	             * @example
+	             *
+	             *     MyType.mixIn({
+	             *         field: 'value'
+	             *     });
+	             */
+	            mixIn: function (properties) {
+	                for (var propertyName in properties) {
+	                    if (properties.hasOwnProperty(propertyName)) {
+	                        this[propertyName] = properties[propertyName];
+	                    }
+	                }
+
+	                // IE won't copy toString using the loop above
+	                if (properties.hasOwnProperty('toString')) {
+	                    this.toString = properties.toString;
+	                }
+	            },
+
+	            /**
+	             * Creates a copy of this object.
+	             *
+	             * @return {Object} The clone.
+	             *
+	             * @example
+	             *
+	             *     var clone = instance.clone();
+	             */
+	            clone: function () {
+	                return this.init.prototype.extend(this);
+	            }
+	        };
+	    }());
+
+	    /**
+	     * An array of 32-bit words.
+	     *
+	     * @property {Array} words The array of 32-bit words.
+	     * @property {number} sigBytes The number of significant bytes in this word array.
+	     */
+	    var WordArray = C_lib.WordArray = Base.extend({
+	        /**
+	         * Initializes a newly created word array.
+	         *
+	         * @param {Array} words (Optional) An array of 32-bit words.
+	         * @param {number} sigBytes (Optional) The number of significant bytes in the words.
+	         *
+	         * @example
+	         *
+	         *     var wordArray = CryptoJS.lib.WordArray.create();
+	         *     var wordArray = CryptoJS.lib.WordArray.create([0x00010203, 0x04050607]);
+	         *     var wordArray = CryptoJS.lib.WordArray.create([0x00010203, 0x04050607], 6);
+	         */
+	        init: function (words, sigBytes) {
+	            words = this.words = words || [];
+
+	            if (sigBytes != undefined) {
+	                this.sigBytes = sigBytes;
+	            } else {
+	                this.sigBytes = words.length * 4;
+	            }
+	        },
+
+	        /**
+	         * Converts this word array to a string.
+	         *
+	         * @param {Encoder} encoder (Optional) The encoding strategy to use. Default: CryptoJS.enc.Hex
+	         *
+	         * @return {string} The stringified word array.
+	         *
+	         * @example
+	         *
+	         *     var string = wordArray + '';
+	         *     var string = wordArray.toString();
+	         *     var string = wordArray.toString(CryptoJS.enc.Utf8);
+	         */
+	        toString: function (encoder) {
+	            return (encoder || Hex).stringify(this);
+	        },
+
+	        /**
+	         * Concatenates a word array to this word array.
+	         *
+	         * @param {WordArray} wordArray The word array to append.
+	         *
+	         * @return {WordArray} This word array.
+	         *
+	         * @example
+	         *
+	         *     wordArray1.concat(wordArray2);
+	         */
+	        concat: function (wordArray) {
+	            // Shortcuts
+	            var thisWords = this.words;
+	            var thatWords = wordArray.words;
+	            var thisSigBytes = this.sigBytes;
+	            var thatSigBytes = wordArray.sigBytes;
+
+	            // Clamp excess bits
+	            this.clamp();
+
+	            // Concat
+	            if (thisSigBytes % 4) {
+	                // Copy one byte at a time
+	                for (var i = 0; i < thatSigBytes; i++) {
+	                    var thatByte = (thatWords[i >>> 2] >>> (24 - (i % 4) * 8)) & 0xff;
+	                    thisWords[(thisSigBytes + i) >>> 2] |= thatByte << (24 - ((thisSigBytes + i) % 4) * 8);
+	                }
+	            } else {
+	                // Copy one word at a time
+	                for (var j = 0; j < thatSigBytes; j += 4) {
+	                    thisWords[(thisSigBytes + j) >>> 2] = thatWords[j >>> 2];
+	                }
+	            }
+	            this.sigBytes += thatSigBytes;
+
+	            // Chainable
+	            return this;
+	        },
+
+	        /**
+	         * Removes insignificant bits.
+	         *
+	         * @example
+	         *
+	         *     wordArray.clamp();
+	         */
+	        clamp: function () {
+	            // Shortcuts
+	            var words = this.words;
+	            var sigBytes = this.sigBytes;
+
+	            // Clamp
+	            words[sigBytes >>> 2] &= 0xffffffff << (32 - (sigBytes % 4) * 8);
+	            words.length = Math.ceil(sigBytes / 4);
+	        },
+
+	        /**
+	         * Creates a copy of this word array.
+	         *
+	         * @return {WordArray} The clone.
+	         *
+	         * @example
+	         *
+	         *     var clone = wordArray.clone();
+	         */
+	        clone: function () {
+	            var clone = Base.clone.call(this);
+	            clone.words = this.words.slice(0);
+
+	            return clone;
+	        },
+
+	        /**
+	         * Creates a word array filled with random bytes.
+	         *
+	         * @param {number} nBytes The number of random bytes to generate.
+	         *
+	         * @return {WordArray} The random word array.
+	         *
+	         * @static
+	         *
+	         * @example
+	         *
+	         *     var wordArray = CryptoJS.lib.WordArray.random(16);
+	         */
+	        random: function (nBytes) {
+	            var words = [];
+
+	            for (var i = 0; i < nBytes; i += 4) {
+	                words.push(cryptoSecureRandomInt());
+	            }
+
+	            return new WordArray.init(words, nBytes);
+	        }
+	    });
+
+	    /**
+	     * Encoder namespace.
+	     */
+	    var C_enc = C.enc = {};
+
+	    /**
+	     * Hex encoding strategy.
+	     */
+	    var Hex = C_enc.Hex = {
+	        /**
+	         * Converts a word array to a hex string.
+	         *
+	         * @param {WordArray} wordArray The word array.
+	         *
+	         * @return {string} The hex string.
+	         *
+	         * @static
+	         *
+	         * @example
+	         *
+	         *     var hexString = CryptoJS.enc.Hex.stringify(wordArray);
+	         */
+	        stringify: function (wordArray) {
+	            // Shortcuts
+	            var words = wordArray.words;
+	            var sigBytes = wordArray.sigBytes;
+
+	            // Convert
+	            var hexChars = [];
+	            for (var i = 0; i < sigBytes; i++) {
+	                var bite = (words[i >>> 2] >>> (24 - (i % 4) * 8)) & 0xff;
+	                hexChars.push((bite >>> 4).toString(16));
+	                hexChars.push((bite & 0x0f).toString(16));
+	            }
+
+	            return hexChars.join('');
+	        },
+
+	        /**
+	         * Converts a hex string to a word array.
+	         *
+	         * @param {string} hexStr The hex string.
+	         *
+	         * @return {WordArray} The word array.
+	         *
+	         * @static
+	         *
+	         * @example
+	         *
+	         *     var wordArray = CryptoJS.enc.Hex.parse(hexString);
+	         */
+	        parse: function (hexStr) {
+	            // Shortcut
+	            var hexStrLength = hexStr.length;
+
+	            // Convert
+	            var words = [];
+	            for (var i = 0; i < hexStrLength; i += 2) {
+	                words[i >>> 3] |= parseInt(hexStr.substr(i, 2), 16) << (24 - (i % 8) * 4);
+	            }
+
+	            return new WordArray.init(words, hexStrLength / 2);
+	        }
+	    };
+
+	    /**
+	     * Latin1 encoding strategy.
+	     */
+	    var Latin1 = C_enc.Latin1 = {
+	        /**
+	         * Converts a word array to a Latin1 string.
+	         *
+	         * @param {WordArray} wordArray The word array.
+	         *
+	         * @return {string} The Latin1 string.
+	         *
+	         * @static
+	         *
+	         * @example
+	         *
+	         *     var latin1String = CryptoJS.enc.Latin1.stringify(wordArray);
+	         */
+	        stringify: function (wordArray) {
+	            // Shortcuts
+	            var words = wordArray.words;
+	            var sigBytes = wordArray.sigBytes;
+
+	            // Convert
+	            var latin1Chars = [];
+	            for (var i = 0; i < sigBytes; i++) {
+	                var bite = (words[i >>> 2] >>> (24 - (i % 4) * 8)) & 0xff;
+	                latin1Chars.push(String.fromCharCode(bite));
+	            }
+
+	            return latin1Chars.join('');
+	        },
+
+	        /**
+	         * Converts a Latin1 string to a word array.
+	         *
+	         * @param {string} latin1Str The Latin1 string.
+	         *
+	         * @return {WordArray} The word array.
+	         *
+	         * @static
+	         *
+	         * @example
+	         *
+	         *     var wordArray = CryptoJS.enc.Latin1.parse(latin1String);
+	         */
+	        parse: function (latin1Str) {
+	            // Shortcut
+	            var latin1StrLength = latin1Str.length;
+
+	            // Convert
+	            var words = [];
+	            for (var i = 0; i < latin1StrLength; i++) {
+	                words[i >>> 2] |= (latin1Str.charCodeAt(i) & 0xff) << (24 - (i % 4) * 8);
+	            }
+
+	            return new WordArray.init(words, latin1StrLength);
+	        }
+	    };
+
+	    /**
+	     * UTF-8 encoding strategy.
+	     */
+	    var Utf8 = C_enc.Utf8 = {
+	        /**
+	         * Converts a word array to a UTF-8 string.
+	         *
+	         * @param {WordArray} wordArray The word array.
+	         *
+	         * @return {string} The UTF-8 string.
+	         *
+	         * @static
+	         *
+	         * @example
+	         *
+	         *     var utf8String = CryptoJS.enc.Utf8.stringify(wordArray);
+	         */
+	        stringify: function (wordArray) {
+	            try {
+	                return decodeURIComponent(escape(Latin1.stringify(wordArray)));
+	            } catch (e) {
+	                throw new Error('Malformed UTF-8 data');
+	            }
+	        },
+
+	        /**
+	         * Converts a UTF-8 string to a word array.
+	         *
+	         * @param {string} utf8Str The UTF-8 string.
+	         *
+	         * @return {WordArray} The word array.
+	         *
+	         * @static
+	         *
+	         * @example
+	         *
+	         *     var wordArray = CryptoJS.enc.Utf8.parse(utf8String);
+	         */
+	        parse: function (utf8Str) {
+	            return Latin1.parse(unescape(encodeURIComponent(utf8Str)));
+	        }
+	    };
+
+	    /**
+	     * Abstract buffered block algorithm template.
+	     *
+	     * The property blockSize must be implemented in a concrete subtype.
+	     *
+	     * @property {number} _minBufferSize The number of blocks that should be kept unprocessed in the buffer. Default: 0
+	     */
+	    var BufferedBlockAlgorithm = C_lib.BufferedBlockAlgorithm = Base.extend({
+	        /**
+	         * Resets this block algorithm's data buffer to its initial state.
+	         *
+	         * @example
+	         *
+	         *     bufferedBlockAlgorithm.reset();
+	         */
+	        reset: function () {
+	            // Initial values
+	            this._data = new WordArray.init();
+	            this._nDataBytes = 0;
+	        },
+
+	        /**
+	         * Adds new data to this block algorithm's buffer.
+	         *
+	         * @param {WordArray|string} data The data to append. Strings are converted to a WordArray using UTF-8.
+	         *
+	         * @example
+	         *
+	         *     bufferedBlockAlgorithm._append('data');
+	         *     bufferedBlockAlgorithm._append(wordArray);
+	         */
+	        _append: function (data) {
+	            // Convert string to WordArray, else assume WordArray already
+	            if (typeof data == 'string') {
+	                data = Utf8.parse(data);
+	            }
+
+	            // Append
+	            this._data.concat(data);
+	            this._nDataBytes += data.sigBytes;
+	        },
+
+	        /**
+	         * Processes available data blocks.
+	         *
+	         * This method invokes _doProcessBlock(offset), which must be implemented by a concrete subtype.
+	         *
+	         * @param {boolean} doFlush Whether all blocks and partial blocks should be processed.
+	         *
+	         * @return {WordArray} The processed data.
+	         *
+	         * @example
+	         *
+	         *     var processedData = bufferedBlockAlgorithm._process();
+	         *     var processedData = bufferedBlockAlgorithm._process(!!'flush');
+	         */
+	        _process: function (doFlush) {
+	            var processedWords;
+
+	            // Shortcuts
+	            var data = this._data;
+	            var dataWords = data.words;
+	            var dataSigBytes = data.sigBytes;
+	            var blockSize = this.blockSize;
+	            var blockSizeBytes = blockSize * 4;
+
+	            // Count blocks ready
+	            var nBlocksReady = dataSigBytes / blockSizeBytes;
+	            if (doFlush) {
+	                // Round up to include partial blocks
+	                nBlocksReady = Math.ceil(nBlocksReady);
+	            } else {
+	                // Round down to include only full blocks,
+	                // less the number of blocks that must remain in the buffer
+	                nBlocksReady = Math.max((nBlocksReady | 0) - this._minBufferSize, 0);
+	            }
+
+	            // Count words ready
+	            var nWordsReady = nBlocksReady * blockSize;
+
+	            // Count bytes ready
+	            var nBytesReady = Math.min(nWordsReady * 4, dataSigBytes);
+
+	            // Process blocks
+	            if (nWordsReady) {
+	                for (var offset = 0; offset < nWordsReady; offset += blockSize) {
+	                    // Perform concrete-algorithm logic
+	                    this._doProcessBlock(dataWords, offset);
+	                }
+
+	                // Remove processed words
+	                processedWords = dataWords.splice(0, nWordsReady);
+	                data.sigBytes -= nBytesReady;
+	            }
+
+	            // Return processed words
+	            return new WordArray.init(processedWords, nBytesReady);
+	        },
+
+	        /**
+	         * Creates a copy of this object.
+	         *
+	         * @return {Object} The clone.
+	         *
+	         * @example
+	         *
+	         *     var clone = bufferedBlockAlgorithm.clone();
+	         */
+	        clone: function () {
+	            var clone = Base.clone.call(this);
+	            clone._data = this._data.clone();
+
+	            return clone;
+	        },
+
+	        _minBufferSize: 0
+	    });
+
+	    /**
+	     * Abstract hasher template.
+	     *
+	     * @property {number} blockSize The number of 32-bit words this hasher operates on. Default: 16 (512 bits)
+	     */
+	    var Hasher = C_lib.Hasher = BufferedBlockAlgorithm.extend({
+	        /**
+	         * Configuration options.
+	         */
+	        cfg: Base.extend(),
+
+	        /**
+	         * Initializes a newly created hasher.
+	         *
+	         * @param {Object} cfg (Optional) The configuration options to use for this hash computation.
+	         *
+	         * @example
+	         *
+	         *     var hasher = CryptoJS.algo.SHA256.create();
+	         */
+	        init: function (cfg) {
+	            // Apply config defaults
+	            this.cfg = this.cfg.extend(cfg);
+
+	            // Set initial values
+	            this.reset();
+	        },
+
+	        /**
+	         * Resets this hasher to its initial state.
+	         *
+	         * @example
+	         *
+	         *     hasher.reset();
+	         */
+	        reset: function () {
+	            // Reset data buffer
+	            BufferedBlockAlgorithm.reset.call(this);
+
+	            // Perform concrete-hasher logic
+	            this._doReset();
+	        },
+
+	        /**
+	         * Updates this hasher with a message.
+	         *
+	         * @param {WordArray|string} messageUpdate The message to append.
+	         *
+	         * @return {Hasher} This hasher.
+	         *
+	         * @example
+	         *
+	         *     hasher.update('message');
+	         *     hasher.update(wordArray);
+	         */
+	        update: function (messageUpdate) {
+	            // Append
+	            this._append(messageUpdate);
+
+	            // Update the hash
+	            this._process();
+
+	            // Chainable
+	            return this;
+	        },
+
+	        /**
+	         * Finalizes the hash computation.
+	         * Note that the finalize operation is effectively a destructive, read-once operation.
+	         *
+	         * @param {WordArray|string} messageUpdate (Optional) A final message update.
+	         *
+	         * @return {WordArray} The hash.
+	         *
+	         * @example
+	         *
+	         *     var hash = hasher.finalize();
+	         *     var hash = hasher.finalize('message');
+	         *     var hash = hasher.finalize(wordArray);
+	         */
+	        finalize: function (messageUpdate) {
+	            // Final message update
+	            if (messageUpdate) {
+	                this._append(messageUpdate);
+	            }
+
+	            // Perform concrete-hasher logic
+	            var hash = this._doFinalize();
+
+	            return hash;
+	        },
+
+	        blockSize: 512/32,
+
+	        /**
+	         * Creates a shortcut function to a hasher's object interface.
+	         *
+	         * @param {Hasher} hasher The hasher to create a helper for.
+	         *
+	         * @return {Function} The shortcut function.
+	         *
+	         * @static
+	         *
+	         * @example
+	         *
+	         *     var SHA256 = CryptoJS.lib.Hasher._createHelper(CryptoJS.algo.SHA256);
+	         */
+	        _createHelper: function (hasher) {
+	            return function (message, cfg) {
+	                return new hasher.init(cfg).finalize(message);
+	            };
+	        },
+
+	        /**
+	         * Creates a shortcut function to the HMAC's object interface.
+	         *
+	         * @param {Hasher} hasher The hasher to use in this HMAC helper.
+	         *
+	         * @return {Function} The shortcut function.
+	         *
+	         * @static
+	         *
+	         * @example
+	         *
+	         *     var HmacSHA256 = CryptoJS.lib.Hasher._createHmacHelper(CryptoJS.algo.SHA256);
+	         */
+	        _createHmacHelper: function (hasher) {
+	            return function (message, key) {
+	                return new C_algo.HMAC.init(hasher, key).finalize(message);
+	            };
+	        }
+	    });
+
+	    /**
+	     * Algorithm namespace.
+	     */
+	    var C_algo = C.algo = {};
+
+	    return C;
+	}(Math));
+
+
+	return CryptoJS;
+
+}));
+}).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"crypto":156}],160:[function(require,module,exports){
 (function (process){(function (){
 function detect() {
   if (typeof navigator !== 'undefined') {
@@ -32441,7 +33251,7 @@ module.exports = {
 };
 
 }).call(this)}).call(this,require('_process'))
-},{"_process":234}],160:[function(require,module,exports){
+},{"_process":235}],161:[function(require,module,exports){
 'use strict';
 
 var elliptic = exports;
@@ -32456,7 +33266,7 @@ elliptic.curves = require('./elliptic/curves');
 elliptic.ec = require('./elliptic/ec');
 elliptic.eddsa = require('./elliptic/eddsa');
 
-},{"../package.json":175,"./elliptic/curve":163,"./elliptic/curves":166,"./elliptic/ec":167,"./elliptic/eddsa":170,"./elliptic/utils":174,"brorand":155}],161:[function(require,module,exports){
+},{"../package.json":176,"./elliptic/curve":164,"./elliptic/curves":167,"./elliptic/ec":168,"./elliptic/eddsa":171,"./elliptic/utils":175,"brorand":155}],162:[function(require,module,exports){
 'use strict';
 
 var BN = require('bn.js');
@@ -32839,7 +33649,7 @@ BasePoint.prototype.dblp = function dblp(k) {
   return r;
 };
 
-},{"../utils":174,"bn.js":154}],162:[function(require,module,exports){
+},{"../utils":175,"bn.js":154}],163:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -33276,7 +34086,7 @@ Point.prototype.eqXToP = function eqXToP(x) {
 Point.prototype.toP = Point.prototype.normalize;
 Point.prototype.mixedAdd = Point.prototype.add;
 
-},{"../utils":174,"./base":161,"bn.js":154,"inherits":203}],163:[function(require,module,exports){
+},{"../utils":175,"./base":162,"bn.js":154,"inherits":204}],164:[function(require,module,exports){
 'use strict';
 
 var curve = exports;
@@ -33286,7 +34096,7 @@ curve.short = require('./short');
 curve.mont = require('./mont');
 curve.edwards = require('./edwards');
 
-},{"./base":161,"./edwards":162,"./mont":164,"./short":165}],164:[function(require,module,exports){
+},{"./base":162,"./edwards":163,"./mont":165,"./short":166}],165:[function(require,module,exports){
 'use strict';
 
 var BN = require('bn.js');
@@ -33466,7 +34276,7 @@ Point.prototype.getX = function getX() {
   return this.x.fromRed();
 };
 
-},{"../utils":174,"./base":161,"bn.js":154,"inherits":203}],165:[function(require,module,exports){
+},{"../utils":175,"./base":162,"bn.js":154,"inherits":204}],166:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -34406,7 +35216,7 @@ JPoint.prototype.isInfinity = function isInfinity() {
   return this.z.cmpn(0) === 0;
 };
 
-},{"../utils":174,"./base":161,"bn.js":154,"inherits":203}],166:[function(require,module,exports){
+},{"../utils":175,"./base":162,"bn.js":154,"inherits":204}],167:[function(require,module,exports){
 'use strict';
 
 var curves = exports;
@@ -34614,7 +35424,7 @@ defineCurve('secp256k1', {
   ],
 });
 
-},{"./curve":163,"./precomputed/secp256k1":173,"./utils":174,"hash.js":189}],167:[function(require,module,exports){
+},{"./curve":164,"./precomputed/secp256k1":174,"./utils":175,"hash.js":190}],168:[function(require,module,exports){
 'use strict';
 
 var BN = require('bn.js');
@@ -34859,7 +35669,7 @@ EC.prototype.getKeyRecoveryParam = function(e, signature, Q, enc) {
   throw new Error('Unable to find valid recovery factor');
 };
 
-},{"../curves":166,"../utils":174,"./key":168,"./signature":169,"bn.js":154,"brorand":155,"hmac-drbg":201}],168:[function(require,module,exports){
+},{"../curves":167,"../utils":175,"./key":169,"./signature":170,"bn.js":154,"brorand":155,"hmac-drbg":202}],169:[function(require,module,exports){
 'use strict';
 
 var BN = require('bn.js');
@@ -34982,7 +35792,7 @@ KeyPair.prototype.inspect = function inspect() {
          ' pub: ' + (this.pub && this.pub.inspect()) + ' >';
 };
 
-},{"../utils":174,"bn.js":154}],169:[function(require,module,exports){
+},{"../utils":175,"bn.js":154}],170:[function(require,module,exports){
 'use strict';
 
 var BN = require('bn.js');
@@ -35150,7 +35960,7 @@ Signature.prototype.toDER = function toDER(enc) {
   return utils.encode(res, enc);
 };
 
-},{"../utils":174,"bn.js":154}],170:[function(require,module,exports){
+},{"../utils":175,"bn.js":154}],171:[function(require,module,exports){
 'use strict';
 
 var hash = require('hash.js');
@@ -35270,7 +36080,7 @@ EDDSA.prototype.isPoint = function isPoint(val) {
   return val instanceof this.pointClass;
 };
 
-},{"../curves":166,"../utils":174,"./key":171,"./signature":172,"hash.js":189}],171:[function(require,module,exports){
+},{"../curves":167,"../utils":175,"./key":172,"./signature":173,"hash.js":190}],172:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -35367,7 +36177,7 @@ KeyPair.prototype.getPublic = function getPublic(enc) {
 
 module.exports = KeyPair;
 
-},{"../utils":174}],172:[function(require,module,exports){
+},{"../utils":175}],173:[function(require,module,exports){
 'use strict';
 
 var BN = require('bn.js');
@@ -35434,7 +36244,7 @@ Signature.prototype.toHex = function toHex() {
 
 module.exports = Signature;
 
-},{"../utils":174,"bn.js":154}],173:[function(require,module,exports){
+},{"../utils":175,"bn.js":154}],174:[function(require,module,exports){
 module.exports = {
   doubles: {
     step: 4,
@@ -36216,7 +37026,7 @@ module.exports = {
   },
 };
 
-},{}],174:[function(require,module,exports){
+},{}],175:[function(require,module,exports){
 'use strict';
 
 var utils = exports;
@@ -36337,7 +37147,7 @@ function intFromLE(bytes) {
 utils.intFromLE = intFromLE;
 
 
-},{"bn.js":154,"minimalistic-assert":230,"minimalistic-crypto-utils":231}],175:[function(require,module,exports){
+},{"bn.js":154,"minimalistic-assert":231,"minimalistic-crypto-utils":232}],176:[function(require,module,exports){
 module.exports={
   "name": "elliptic",
   "version": "6.5.4",
@@ -36395,7 +37205,7 @@ module.exports={
   }
 }
 
-},{}],176:[function(require,module,exports){
+},{}],177:[function(require,module,exports){
 (function (process){(function (){
 var once = require('once');
 
@@ -36493,7 +37303,7 @@ var eos = function(stream, opts, callback) {
 module.exports = eos;
 
 }).call(this)}).call(this,require('_process'))
-},{"_process":234,"once":232}],177:[function(require,module,exports){
+},{"_process":235,"once":233}],178:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.EthereumProviderError = exports.EthereumRpcError = void 0;
@@ -36570,7 +37380,7 @@ function stringifyReplacer(_, value) {
     return value;
 }
 
-},{"fast-safe-stringify":188}],178:[function(require,module,exports){
+},{"fast-safe-stringify":189}],179:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.errorValues = exports.errorCodes = void 0;
@@ -36663,7 +37473,7 @@ exports.errorValues = {
     },
 };
 
-},{}],179:[function(require,module,exports){
+},{}],180:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ethErrors = void 0;
@@ -36803,7 +37613,7 @@ function parseOpts(arg) {
     return [];
 }
 
-},{"./classes":177,"./error-constants":178,"./utils":181}],180:[function(require,module,exports){
+},{"./classes":178,"./error-constants":179,"./utils":182}],181:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getMessageFromCode = exports.serializeError = exports.EthereumProviderError = exports.EthereumRpcError = exports.ethErrors = exports.errorCodes = void 0;
@@ -36818,7 +37628,7 @@ Object.defineProperty(exports, "ethErrors", { enumerable: true, get: function ()
 const error_constants_1 = require("./error-constants");
 Object.defineProperty(exports, "errorCodes", { enumerable: true, get: function () { return error_constants_1.errorCodes; } });
 
-},{"./classes":177,"./error-constants":178,"./errors":179,"./utils":181}],181:[function(require,module,exports){
+},{"./classes":178,"./error-constants":179,"./errors":180,"./utils":182}],182:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.serializeError = exports.isValidCode = exports.getMessageFromCode = exports.JSON_RPC_SERVER_ERROR_MESSAGE = void 0;
@@ -36930,13 +37740,13 @@ function hasKey(obj, key) {
     return Object.prototype.hasOwnProperty.call(obj, key);
 }
 
-},{"./classes":177,"./error-constants":178}],182:[function(require,module,exports){
+},{"./classes":178,"./error-constants":179}],183:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.version = void 0;
 exports.version = "ethers/5.6.9";
 
-},{}],183:[function(require,module,exports){
+},{}],184:[function(require,module,exports){
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
@@ -36992,7 +37802,7 @@ Object.defineProperty(exports, "version", { enumerable: true, get: function () {
 var logger = new logger_1.Logger(_version_1.version);
 exports.logger = logger;
 
-},{"./_version":182,"./utils":185,"@ethersproject/abstract-signer":20,"@ethersproject/bignumber":29,"@ethersproject/constants":36,"@ethersproject/contracts":39,"@ethersproject/logger":56,"@ethersproject/providers":73,"@ethersproject/wallet":107,"@ethersproject/wordlists":112}],184:[function(require,module,exports){
+},{"./_version":183,"./utils":186,"@ethersproject/abstract-signer":20,"@ethersproject/bignumber":29,"@ethersproject/constants":36,"@ethersproject/contracts":39,"@ethersproject/logger":56,"@ethersproject/providers":73,"@ethersproject/wallet":107,"@ethersproject/wordlists":112}],185:[function(require,module,exports){
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
@@ -37046,7 +37856,7 @@ Object.defineProperty(exports, "wordlists", { enumerable: true, get: function ()
 Object.defineProperty(exports, "version", { enumerable: true, get: function () { return ethers_1.version; } });
 Object.defineProperty(exports, "Wordlist", { enumerable: true, get: function () { return ethers_1.Wordlist; } });
 
-},{"./ethers":183}],185:[function(require,module,exports){
+},{"./ethers":184}],186:[function(require,module,exports){
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
@@ -37195,7 +38005,7 @@ var strings_2 = require("@ethersproject/strings");
 Object.defineProperty(exports, "UnicodeNormalizationForm", { enumerable: true, get: function () { return strings_2.UnicodeNormalizationForm; } });
 Object.defineProperty(exports, "Utf8ErrorReason", { enumerable: true, get: function () { return strings_2.Utf8ErrorReason; } });
 
-},{"@ethersproject/abi":15,"@ethersproject/address":22,"@ethersproject/base64":24,"@ethersproject/basex":25,"@ethersproject/bytes":32,"@ethersproject/hash":42,"@ethersproject/hdnode":47,"@ethersproject/json-wallets":50,"@ethersproject/keccak256":54,"@ethersproject/logger":56,"@ethersproject/properties":62,"@ethersproject/random":84,"@ethersproject/rlp":87,"@ethersproject/sha2":90,"@ethersproject/signing-key":94,"@ethersproject/solidity":96,"@ethersproject/strings":100,"@ethersproject/transactions":103,"@ethersproject/units":105,"@ethersproject/wallet":107,"@ethersproject/web":110}],186:[function(require,module,exports){
+},{"@ethersproject/abi":15,"@ethersproject/address":22,"@ethersproject/base64":24,"@ethersproject/basex":25,"@ethersproject/bytes":32,"@ethersproject/hash":42,"@ethersproject/hdnode":47,"@ethersproject/json-wallets":50,"@ethersproject/keccak256":54,"@ethersproject/logger":56,"@ethersproject/properties":62,"@ethersproject/random":84,"@ethersproject/rlp":87,"@ethersproject/sha2":90,"@ethersproject/signing-key":94,"@ethersproject/solidity":96,"@ethersproject/strings":100,"@ethersproject/transactions":103,"@ethersproject/units":105,"@ethersproject/wallet":107,"@ethersproject/web":110}],187:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -37694,7 +38504,7 @@ function eventTargetAgnosticAddListener(emitter, name, listener, flags) {
   }
 }
 
-},{}],187:[function(require,module,exports){
+},{}],188:[function(require,module,exports){
 (function (Buffer){(function (){
 "use strict";
 const stream_1 = require("stream");
@@ -37763,7 +38573,7 @@ module.exports = class PortDuplexStream extends stream_1.Duplex {
 };
 
 }).call(this)}).call(this,require("buffer").Buffer)
-},{"buffer":157,"stream":252}],188:[function(require,module,exports){
+},{"buffer":157,"stream":253}],189:[function(require,module,exports){
 module.exports = stringify
 stringify.default = stringify
 stringify.stable = deterministicStringify
@@ -37994,7 +38804,7 @@ function replaceGetterValues (replacer) {
   }
 }
 
-},{}],189:[function(require,module,exports){
+},{}],190:[function(require,module,exports){
 var hash = exports;
 
 hash.utils = require('./hash/utils');
@@ -38011,7 +38821,7 @@ hash.sha384 = hash.sha.sha384;
 hash.sha512 = hash.sha.sha512;
 hash.ripemd160 = hash.ripemd.ripemd160;
 
-},{"./hash/common":190,"./hash/hmac":191,"./hash/ripemd":192,"./hash/sha":193,"./hash/utils":200}],190:[function(require,module,exports){
+},{"./hash/common":191,"./hash/hmac":192,"./hash/ripemd":193,"./hash/sha":194,"./hash/utils":201}],191:[function(require,module,exports){
 'use strict';
 
 var utils = require('./utils');
@@ -38105,7 +38915,7 @@ BlockHash.prototype._pad = function pad() {
   return res;
 };
 
-},{"./utils":200,"minimalistic-assert":230}],191:[function(require,module,exports){
+},{"./utils":201,"minimalistic-assert":231}],192:[function(require,module,exports){
 'use strict';
 
 var utils = require('./utils');
@@ -38154,7 +38964,7 @@ Hmac.prototype.digest = function digest(enc) {
   return this.outer.digest(enc);
 };
 
-},{"./utils":200,"minimalistic-assert":230}],192:[function(require,module,exports){
+},{"./utils":201,"minimalistic-assert":231}],193:[function(require,module,exports){
 'use strict';
 
 var utils = require('./utils');
@@ -38302,7 +39112,7 @@ var sh = [
   8, 5, 12, 9, 12, 5, 14, 6, 8, 13, 6, 5, 15, 13, 11, 11
 ];
 
-},{"./common":190,"./utils":200}],193:[function(require,module,exports){
+},{"./common":191,"./utils":201}],194:[function(require,module,exports){
 'use strict';
 
 exports.sha1 = require('./sha/1');
@@ -38311,7 +39121,7 @@ exports.sha256 = require('./sha/256');
 exports.sha384 = require('./sha/384');
 exports.sha512 = require('./sha/512');
 
-},{"./sha/1":194,"./sha/224":195,"./sha/256":196,"./sha/384":197,"./sha/512":198}],194:[function(require,module,exports){
+},{"./sha/1":195,"./sha/224":196,"./sha/256":197,"./sha/384":198,"./sha/512":199}],195:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -38387,7 +39197,7 @@ SHA1.prototype._digest = function digest(enc) {
     return utils.split32(this.h, 'big');
 };
 
-},{"../common":190,"../utils":200,"./common":199}],195:[function(require,module,exports){
+},{"../common":191,"../utils":201,"./common":200}],196:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -38419,7 +39229,7 @@ SHA224.prototype._digest = function digest(enc) {
 };
 
 
-},{"../utils":200,"./256":196}],196:[function(require,module,exports){
+},{"../utils":201,"./256":197}],197:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -38526,7 +39336,7 @@ SHA256.prototype._digest = function digest(enc) {
     return utils.split32(this.h, 'big');
 };
 
-},{"../common":190,"../utils":200,"./common":199,"minimalistic-assert":230}],197:[function(require,module,exports){
+},{"../common":191,"../utils":201,"./common":200,"minimalistic-assert":231}],198:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -38563,7 +39373,7 @@ SHA384.prototype._digest = function digest(enc) {
     return utils.split32(this.h.slice(0, 12), 'big');
 };
 
-},{"../utils":200,"./512":198}],198:[function(require,module,exports){
+},{"../utils":201,"./512":199}],199:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -38895,7 +39705,7 @@ function g1_512_lo(xh, xl) {
   return r;
 }
 
-},{"../common":190,"../utils":200,"minimalistic-assert":230}],199:[function(require,module,exports){
+},{"../common":191,"../utils":201,"minimalistic-assert":231}],200:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -38946,7 +39756,7 @@ function g1_256(x) {
 }
 exports.g1_256 = g1_256;
 
-},{"../utils":200}],200:[function(require,module,exports){
+},{"../utils":201}],201:[function(require,module,exports){
 'use strict';
 
 var assert = require('minimalistic-assert');
@@ -39226,7 +40036,7 @@ function shr64_lo(ah, al, num) {
 }
 exports.shr64_lo = shr64_lo;
 
-},{"inherits":203,"minimalistic-assert":230}],201:[function(require,module,exports){
+},{"inherits":204,"minimalistic-assert":231}],202:[function(require,module,exports){
 'use strict';
 
 var hash = require('hash.js');
@@ -39341,7 +40151,7 @@ HmacDRBG.prototype.generate = function generate(len, enc, add, addEnc) {
   return utils.encode(res, enc);
 };
 
-},{"hash.js":189,"minimalistic-assert":230,"minimalistic-crypto-utils":231}],202:[function(require,module,exports){
+},{"hash.js":190,"minimalistic-assert":231,"minimalistic-crypto-utils":232}],203:[function(require,module,exports){
 /*! ieee754. BSD-3-Clause License. Feross Aboukhadijeh <https://feross.org/opensource> */
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
   var e, m
@@ -39428,7 +40238,7 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128
 }
 
-},{}],203:[function(require,module,exports){
+},{}],204:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -39457,7 +40267,7 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],204:[function(require,module,exports){
+},{}],205:[function(require,module,exports){
 /*!
  * Determine if an object is a Buffer
  *
@@ -39480,14 +40290,14 @@ function isSlowBuffer (obj) {
   return typeof obj.readFloatLE === 'function' && typeof obj.slice === 'function' && isBuffer(obj.slice(0, 0))
 }
 
-},{}],205:[function(require,module,exports){
+},{}],206:[function(require,module,exports){
 var toString = {}.toString;
 
 module.exports = Array.isArray || function (arr) {
   return toString.call(arr) == '[object Array]';
 };
 
-},{}],206:[function(require,module,exports){
+},{}],207:[function(require,module,exports){
 (function (process,global){(function (){
 /**
  * [js-sha3]{@link https://github.com/emn178/js-sha3}
@@ -40147,7 +40957,7 @@ module.exports = Array.isArray || function (arr) {
 })();
 
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":234}],207:[function(require,module,exports){
+},{"_process":235}],208:[function(require,module,exports){
 "use strict";
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
@@ -40398,7 +41208,7 @@ function jsonify(request) {
     return JSON.stringify(request, null, 2);
 }
 
-},{"@metamask/safe-event-emitter":150,"eth-rpc-errors":180}],208:[function(require,module,exports){
+},{"@metamask/safe-event-emitter":150,"eth-rpc-errors":181}],209:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createAsyncMiddleware = void 0;
@@ -40465,7 +41275,7 @@ function createAsyncMiddleware(asyncMiddleware) {
 }
 exports.createAsyncMiddleware = createAsyncMiddleware;
 
-},{}],209:[function(require,module,exports){
+},{}],210:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createScaffoldMiddleware = void 0;
@@ -40487,7 +41297,7 @@ function createScaffoldMiddleware(handlers) {
 }
 exports.createScaffoldMiddleware = createScaffoldMiddleware;
 
-},{}],210:[function(require,module,exports){
+},{}],211:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getUniqueId = void 0;
@@ -40501,7 +41311,7 @@ function getUniqueId() {
 }
 exports.getUniqueId = getUniqueId;
 
-},{}],211:[function(require,module,exports){
+},{}],212:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createIdRemapMiddleware = void 0;
@@ -40521,7 +41331,7 @@ function createIdRemapMiddleware() {
 }
 exports.createIdRemapMiddleware = createIdRemapMiddleware;
 
-},{"./getUniqueId":210}],212:[function(require,module,exports){
+},{"./getUniqueId":211}],213:[function(require,module,exports){
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
@@ -40541,7 +41351,7 @@ __exportStar(require("./getUniqueId"), exports);
 __exportStar(require("./JsonRpcEngine"), exports);
 __exportStar(require("./mergeMiddleware"), exports);
 
-},{"./JsonRpcEngine":207,"./createAsyncMiddleware":208,"./createScaffoldMiddleware":209,"./getUniqueId":210,"./idRemapMiddleware":211,"./mergeMiddleware":213}],213:[function(require,module,exports){
+},{"./JsonRpcEngine":208,"./createAsyncMiddleware":209,"./createScaffoldMiddleware":210,"./getUniqueId":211,"./idRemapMiddleware":212,"./mergeMiddleware":214}],214:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.mergeMiddleware = void 0;
@@ -40553,7 +41363,7 @@ function mergeMiddleware(middlewareStack) {
 }
 exports.mergeMiddleware = mergeMiddleware;
 
-},{"./JsonRpcEngine":207}],214:[function(require,module,exports){
+},{"./JsonRpcEngine":208}],215:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const readable_stream_1 = require("readable-stream");
@@ -40589,7 +41399,7 @@ function createEngineStream(opts) {
 }
 exports.default = createEngineStream;
 
-},{"readable-stream":225}],215:[function(require,module,exports){
+},{"readable-stream":226}],216:[function(require,module,exports){
 "use strict";
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
@@ -40658,7 +41468,7 @@ function createStreamMiddleware() {
 }
 exports.default = createStreamMiddleware;
 
-},{"@metamask/safe-event-emitter":150,"readable-stream":225}],216:[function(require,module,exports){
+},{"@metamask/safe-event-emitter":150,"readable-stream":226}],217:[function(require,module,exports){
 "use strict";
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
@@ -40670,35 +41480,35 @@ exports.createEngineStream = createEngineStream_1.default;
 const createStreamMiddleware_1 = __importDefault(require("./createStreamMiddleware"));
 exports.createStreamMiddleware = createStreamMiddleware_1.default;
 
-},{"./createEngineStream":214,"./createStreamMiddleware":215}],217:[function(require,module,exports){
+},{"./createEngineStream":215,"./createStreamMiddleware":216}],218:[function(require,module,exports){
 arguments[4][139][0].apply(exports,arguments)
-},{"./_stream_readable":219,"./_stream_writable":221,"core-util-is":158,"dup":139,"inherits":203,"process-nextick-args":233}],218:[function(require,module,exports){
+},{"./_stream_readable":220,"./_stream_writable":222,"core-util-is":158,"dup":139,"inherits":204,"process-nextick-args":234}],219:[function(require,module,exports){
 arguments[4][140][0].apply(exports,arguments)
-},{"./_stream_transform":220,"core-util-is":158,"dup":140,"inherits":203}],219:[function(require,module,exports){
+},{"./_stream_transform":221,"core-util-is":158,"dup":140,"inherits":204}],220:[function(require,module,exports){
 arguments[4][141][0].apply(exports,arguments)
-},{"./_stream_duplex":217,"./internal/streams/BufferList":222,"./internal/streams/destroy":223,"./internal/streams/stream":224,"_process":234,"core-util-is":158,"dup":141,"events":186,"inherits":203,"isarray":205,"process-nextick-args":233,"safe-buffer":226,"string_decoder/":227,"util":156}],220:[function(require,module,exports){
+},{"./_stream_duplex":218,"./internal/streams/BufferList":223,"./internal/streams/destroy":224,"./internal/streams/stream":225,"_process":235,"core-util-is":158,"dup":141,"events":187,"inherits":204,"isarray":206,"process-nextick-args":234,"safe-buffer":227,"string_decoder/":228,"util":156}],221:[function(require,module,exports){
 arguments[4][142][0].apply(exports,arguments)
-},{"./_stream_duplex":217,"core-util-is":158,"dup":142,"inherits":203}],221:[function(require,module,exports){
+},{"./_stream_duplex":218,"core-util-is":158,"dup":142,"inherits":204}],222:[function(require,module,exports){
 arguments[4][143][0].apply(exports,arguments)
-},{"./_stream_duplex":217,"./internal/streams/destroy":223,"./internal/streams/stream":224,"_process":234,"core-util-is":158,"dup":143,"inherits":203,"process-nextick-args":233,"safe-buffer":226,"timers":254,"util-deprecate":255}],222:[function(require,module,exports){
+},{"./_stream_duplex":218,"./internal/streams/destroy":224,"./internal/streams/stream":225,"_process":235,"core-util-is":158,"dup":143,"inherits":204,"process-nextick-args":234,"safe-buffer":227,"timers":255,"util-deprecate":256}],223:[function(require,module,exports){
 arguments[4][144][0].apply(exports,arguments)
-},{"dup":144,"safe-buffer":226,"util":156}],223:[function(require,module,exports){
+},{"dup":144,"safe-buffer":227,"util":156}],224:[function(require,module,exports){
 arguments[4][145][0].apply(exports,arguments)
-},{"dup":145,"process-nextick-args":233}],224:[function(require,module,exports){
+},{"dup":145,"process-nextick-args":234}],225:[function(require,module,exports){
 arguments[4][146][0].apply(exports,arguments)
-},{"dup":146,"events":186}],225:[function(require,module,exports){
+},{"dup":146,"events":187}],226:[function(require,module,exports){
 arguments[4][147][0].apply(exports,arguments)
-},{"./lib/_stream_duplex.js":217,"./lib/_stream_passthrough.js":218,"./lib/_stream_readable.js":219,"./lib/_stream_transform.js":220,"./lib/_stream_writable.js":221,"dup":147}],226:[function(require,module,exports){
+},{"./lib/_stream_duplex.js":218,"./lib/_stream_passthrough.js":219,"./lib/_stream_readable.js":220,"./lib/_stream_transform.js":221,"./lib/_stream_writable.js":222,"dup":147}],227:[function(require,module,exports){
 arguments[4][148][0].apply(exports,arguments)
-},{"buffer":157,"dup":148}],227:[function(require,module,exports){
+},{"buffer":157,"dup":148}],228:[function(require,module,exports){
 arguments[4][149][0].apply(exports,arguments)
-},{"dup":149,"safe-buffer":226}],228:[function(require,module,exports){
+},{"dup":149,"safe-buffer":227}],229:[function(require,module,exports){
 module.exports={
   "CHROME_ID": "nkbihfbeogaeaoehlefnkodbefgpgknn",
   "FIREFOX_ID": "webextension@metamask.io"
 }
 
-},{}],229:[function(require,module,exports){
+},{}],230:[function(require,module,exports){
 const { MetaMaskInpageProvider } = require('@metamask/inpage-provider')
 const PortStream = require('extension-port-stream')
 const { detect } = require('detect-browser')
@@ -40731,7 +41541,7 @@ function getMetaMaskId () {
 }
 
 
-},{"./config.json":228,"@metamask/inpage-provider":127,"detect-browser":159,"extension-port-stream":187}],230:[function(require,module,exports){
+},{"./config.json":229,"@metamask/inpage-provider":127,"detect-browser":160,"extension-port-stream":188}],231:[function(require,module,exports){
 module.exports = assert;
 
 function assert(val, msg) {
@@ -40744,7 +41554,7 @@ assert.equal = function assertEqual(l, r, msg) {
     throw new Error(msg || ('Assertion failed: ' + l + ' != ' + r));
 };
 
-},{}],231:[function(require,module,exports){
+},{}],232:[function(require,module,exports){
 'use strict';
 
 var utils = exports;
@@ -40804,7 +41614,7 @@ utils.encode = function encode(arr, enc) {
     return arr;
 };
 
-},{}],232:[function(require,module,exports){
+},{}],233:[function(require,module,exports){
 var wrappy = require('wrappy')
 module.exports = wrappy(once)
 module.exports.strict = wrappy(onceStrict)
@@ -40848,7 +41658,7 @@ function onceStrict (fn) {
   return f
 }
 
-},{"wrappy":256}],233:[function(require,module,exports){
+},{"wrappy":257}],234:[function(require,module,exports){
 (function (process){(function (){
 'use strict';
 
@@ -40897,7 +41707,7 @@ function nextTick(fn, arg1, arg2, arg3) {
 
 
 }).call(this)}).call(this,require('_process'))
-},{"_process":234}],234:[function(require,module,exports){
+},{"_process":235}],235:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -41083,7 +41893,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],235:[function(require,module,exports){
+},{}],236:[function(require,module,exports){
 (function (process){(function (){
 var once = require('once')
 var eos = require('end-of-stream')
@@ -41169,7 +41979,7 @@ var pump = function () {
 module.exports = pump
 
 }).call(this)}).call(this,require('_process'))
-},{"_process":234,"end-of-stream":176,"fs":156,"once":232}],236:[function(require,module,exports){
+},{"_process":235,"end-of-stream":177,"fs":156,"once":233}],237:[function(require,module,exports){
 'use strict';
 
 function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.create(superClass.prototype); subClass.prototype.constructor = subClass; subClass.__proto__ = superClass; }
@@ -41298,7 +42108,7 @@ createErrorType('ERR_UNKNOWN_ENCODING', function (arg) {
 createErrorType('ERR_STREAM_UNSHIFT_AFTER_END_EVENT', 'stream.unshift() after end event');
 module.exports.codes = codes;
 
-},{}],237:[function(require,module,exports){
+},{}],238:[function(require,module,exports){
 (function (process){(function (){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -41440,7 +42250,7 @@ Object.defineProperty(Duplex.prototype, 'destroyed', {
   }
 });
 }).call(this)}).call(this,require('_process'))
-},{"./_stream_readable":239,"./_stream_writable":241,"_process":234,"inherits":203}],238:[function(require,module,exports){
+},{"./_stream_readable":240,"./_stream_writable":242,"_process":235,"inherits":204}],239:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -41480,7 +42290,7 @@ function PassThrough(options) {
 PassThrough.prototype._transform = function (chunk, encoding, cb) {
   cb(null, chunk);
 };
-},{"./_stream_transform":240,"inherits":203}],239:[function(require,module,exports){
+},{"./_stream_transform":241,"inherits":204}],240:[function(require,module,exports){
 (function (process,global){(function (){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -42607,7 +43417,7 @@ function indexOf(xs, x) {
   return -1;
 }
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../errors":236,"./_stream_duplex":237,"./internal/streams/async_iterator":242,"./internal/streams/buffer_list":243,"./internal/streams/destroy":244,"./internal/streams/from":246,"./internal/streams/state":248,"./internal/streams/stream":249,"_process":234,"buffer":157,"events":186,"inherits":203,"string_decoder/":253,"util":156}],240:[function(require,module,exports){
+},{"../errors":237,"./_stream_duplex":238,"./internal/streams/async_iterator":243,"./internal/streams/buffer_list":244,"./internal/streams/destroy":245,"./internal/streams/from":247,"./internal/streams/state":249,"./internal/streams/stream":250,"_process":235,"buffer":157,"events":187,"inherits":204,"string_decoder/":254,"util":156}],241:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -42809,7 +43619,7 @@ function done(stream, er, data) {
   if (stream._transformState.transforming) throw new ERR_TRANSFORM_ALREADY_TRANSFORMING();
   return stream.push(null);
 }
-},{"../errors":236,"./_stream_duplex":237,"inherits":203}],241:[function(require,module,exports){
+},{"../errors":237,"./_stream_duplex":238,"inherits":204}],242:[function(require,module,exports){
 (function (process,global){(function (){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -43509,7 +44319,7 @@ Writable.prototype._destroy = function (err, cb) {
   cb(err);
 };
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../errors":236,"./_stream_duplex":237,"./internal/streams/destroy":244,"./internal/streams/state":248,"./internal/streams/stream":249,"_process":234,"buffer":157,"inherits":203,"util-deprecate":255}],242:[function(require,module,exports){
+},{"../errors":237,"./_stream_duplex":238,"./internal/streams/destroy":245,"./internal/streams/state":249,"./internal/streams/stream":250,"_process":235,"buffer":157,"inherits":204,"util-deprecate":256}],243:[function(require,module,exports){
 (function (process){(function (){
 'use strict';
 
@@ -43719,7 +44529,7 @@ var createReadableStreamAsyncIterator = function createReadableStreamAsyncIterat
 
 module.exports = createReadableStreamAsyncIterator;
 }).call(this)}).call(this,require('_process'))
-},{"./end-of-stream":245,"_process":234}],243:[function(require,module,exports){
+},{"./end-of-stream":246,"_process":235}],244:[function(require,module,exports){
 'use strict';
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
@@ -43930,7 +44740,7 @@ function () {
 
   return BufferList;
 }();
-},{"buffer":157,"util":156}],244:[function(require,module,exports){
+},{"buffer":157,"util":156}],245:[function(require,module,exports){
 (function (process){(function (){
 'use strict'; // undocumented cb() API, needed for core, not for public API
 
@@ -44038,7 +44848,7 @@ module.exports = {
   errorOrDestroy: errorOrDestroy
 };
 }).call(this)}).call(this,require('_process'))
-},{"_process":234}],245:[function(require,module,exports){
+},{"_process":235}],246:[function(require,module,exports){
 // Ported from https://github.com/mafintosh/end-of-stream with
 // permission from the author, Mathias Buus (@mafintosh).
 'use strict';
@@ -44143,12 +44953,12 @@ function eos(stream, opts, callback) {
 }
 
 module.exports = eos;
-},{"../../../errors":236}],246:[function(require,module,exports){
+},{"../../../errors":237}],247:[function(require,module,exports){
 module.exports = function () {
   throw new Error('Readable.from is not available in the browser')
 };
 
-},{}],247:[function(require,module,exports){
+},{}],248:[function(require,module,exports){
 // Ported from https://github.com/mafintosh/pump with
 // permission from the author, Mathias Buus (@mafintosh).
 'use strict';
@@ -44246,7 +45056,7 @@ function pipeline() {
 }
 
 module.exports = pipeline;
-},{"../../../errors":236,"./end-of-stream":245}],248:[function(require,module,exports){
+},{"../../../errors":237,"./end-of-stream":246}],249:[function(require,module,exports){
 'use strict';
 
 var ERR_INVALID_OPT_VALUE = require('../../../errors').codes.ERR_INVALID_OPT_VALUE;
@@ -44274,9 +45084,9 @@ function getHighWaterMark(state, options, duplexKey, isDuplex) {
 module.exports = {
   getHighWaterMark: getHighWaterMark
 };
-},{"../../../errors":236}],249:[function(require,module,exports){
+},{"../../../errors":237}],250:[function(require,module,exports){
 arguments[4][146][0].apply(exports,arguments)
-},{"dup":146,"events":186}],250:[function(require,module,exports){
+},{"dup":146,"events":187}],251:[function(require,module,exports){
 /*! safe-buffer. MIT License. Feross Aboukhadijeh <https://feross.org/opensource> */
 /* eslint-disable node/no-deprecated-api */
 var buffer = require('buffer')
@@ -44343,7 +45153,7 @@ SafeBuffer.allocUnsafeSlow = function (size) {
   return buffer.SlowBuffer(size)
 }
 
-},{"buffer":157}],251:[function(require,module,exports){
+},{"buffer":157}],252:[function(require,module,exports){
 (function (setImmediate){(function (){
 "use strict";
 
@@ -44835,7 +45645,7 @@ SafeBuffer.allocUnsafeSlow = function (size) {
 })(this);
 
 }).call(this)}).call(this,require("timers").setImmediate)
-},{"timers":254}],252:[function(require,module,exports){
+},{"timers":255}],253:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -44966,9 +45776,9 @@ Stream.prototype.pipe = function(dest, options) {
   return dest;
 };
 
-},{"events":186,"inherits":203,"readable-stream/lib/_stream_duplex.js":237,"readable-stream/lib/_stream_passthrough.js":238,"readable-stream/lib/_stream_readable.js":239,"readable-stream/lib/_stream_transform.js":240,"readable-stream/lib/_stream_writable.js":241,"readable-stream/lib/internal/streams/end-of-stream.js":245,"readable-stream/lib/internal/streams/pipeline.js":247}],253:[function(require,module,exports){
+},{"events":187,"inherits":204,"readable-stream/lib/_stream_duplex.js":238,"readable-stream/lib/_stream_passthrough.js":239,"readable-stream/lib/_stream_readable.js":240,"readable-stream/lib/_stream_transform.js":241,"readable-stream/lib/_stream_writable.js":242,"readable-stream/lib/internal/streams/end-of-stream.js":246,"readable-stream/lib/internal/streams/pipeline.js":248}],254:[function(require,module,exports){
 arguments[4][149][0].apply(exports,arguments)
-},{"dup":149,"safe-buffer":250}],254:[function(require,module,exports){
+},{"dup":149,"safe-buffer":251}],255:[function(require,module,exports){
 (function (setImmediate,clearImmediate){(function (){
 var nextTick = require('process/browser.js').nextTick;
 var apply = Function.prototype.apply;
@@ -45047,7 +45857,7 @@ exports.clearImmediate = typeof clearImmediate === "function" ? clearImmediate :
   delete immediateIds[id];
 };
 }).call(this)}).call(this,require("timers").setImmediate,require("timers").clearImmediate)
-},{"process/browser.js":234,"timers":254}],255:[function(require,module,exports){
+},{"process/browser.js":235,"timers":255}],256:[function(require,module,exports){
 (function (global){(function (){
 
 /**
@@ -45118,7 +45928,7 @@ function config (name) {
 }
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],256:[function(require,module,exports){
+},{}],257:[function(require,module,exports){
 // Returns a wrapper function that returns a wrapped callback
 // The wrapper function should do some stuff, and return a
 // presumably different callback function.
@@ -45153,461 +45963,39 @@ function wrappy (fn, cb) {
   }
 }
 
-},{}],257:[function(require,module,exports){
-"use strict";
-
-function _typeof(obj) {
-  "@babel/helpers - typeof";
-
-  return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) {
-    return typeof obj;
-  } : function (obj) {
-    return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
-  }, _typeof(obj);
-}
-
-function _regeneratorRuntime() {
-  "use strict";
-  /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */
-
-  _regeneratorRuntime = function _regeneratorRuntime() {
-    return exports;
-  };
-
-  var exports = {},
-      Op = Object.prototype,
-      hasOwn = Op.hasOwnProperty,
-      $Symbol = "function" == typeof Symbol ? Symbol : {},
-      iteratorSymbol = $Symbol.iterator || "@@iterator",
-      asyncIteratorSymbol = $Symbol.asyncIterator || "@@asyncIterator",
-      toStringTagSymbol = $Symbol.toStringTag || "@@toStringTag";
-
-  function define(obj, key, value) {
-    return Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: !0,
-      configurable: !0,
-      writable: !0
-    }), obj[key];
-  }
-
-  try {
-    define({}, "");
-  } catch (err) {
-    define = function define(obj, key, value) {
-      return obj[key] = value;
-    };
-  }
-
-  function wrap(innerFn, outerFn, self, tryLocsList) {
-    var protoGenerator = outerFn && outerFn.prototype instanceof Generator ? outerFn : Generator,
-        generator = Object.create(protoGenerator.prototype),
-        context = new Context(tryLocsList || []);
-    return generator._invoke = function (innerFn, self, context) {
-      var state = "suspendedStart";
-      return function (method, arg) {
-        if ("executing" === state) throw new Error("Generator is already running");
-
-        if ("completed" === state) {
-          if ("throw" === method) throw arg;
-          return doneResult();
-        }
-
-        for (context.method = method, context.arg = arg;;) {
-          var delegate = context.delegate;
-
-          if (delegate) {
-            var delegateResult = maybeInvokeDelegate(delegate, context);
-
-            if (delegateResult) {
-              if (delegateResult === ContinueSentinel) continue;
-              return delegateResult;
-            }
-          }
-
-          if ("next" === context.method) context.sent = context._sent = context.arg;else if ("throw" === context.method) {
-            if ("suspendedStart" === state) throw state = "completed", context.arg;
-            context.dispatchException(context.arg);
-          } else "return" === context.method && context.abrupt("return", context.arg);
-          state = "executing";
-          var record = tryCatch(innerFn, self, context);
-
-          if ("normal" === record.type) {
-            if (state = context.done ? "completed" : "suspendedYield", record.arg === ContinueSentinel) continue;
-            return {
-              value: record.arg,
-              done: context.done
-            };
-          }
-
-          "throw" === record.type && (state = "completed", context.method = "throw", context.arg = record.arg);
-        }
-      };
-    }(innerFn, self, context), generator;
-  }
-
-  function tryCatch(fn, obj, arg) {
-    try {
-      return {
-        type: "normal",
-        arg: fn.call(obj, arg)
-      };
-    } catch (err) {
-      return {
-        type: "throw",
-        arg: err
-      };
-    }
-  }
-
-  exports.wrap = wrap;
-  var ContinueSentinel = {};
-
-  function Generator() {}
-
-  function GeneratorFunction() {}
-
-  function GeneratorFunctionPrototype() {}
-
-  var IteratorPrototype = {};
-  define(IteratorPrototype, iteratorSymbol, function () {
-    return this;
-  });
-  var getProto = Object.getPrototypeOf,
-      NativeIteratorPrototype = getProto && getProto(getProto(values([])));
-  NativeIteratorPrototype && NativeIteratorPrototype !== Op && hasOwn.call(NativeIteratorPrototype, iteratorSymbol) && (IteratorPrototype = NativeIteratorPrototype);
-  var Gp = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(IteratorPrototype);
-
-  function defineIteratorMethods(prototype) {
-    ["next", "throw", "return"].forEach(function (method) {
-      define(prototype, method, function (arg) {
-        return this._invoke(method, arg);
-      });
-    });
-  }
-
-  function AsyncIterator(generator, PromiseImpl) {
-    function invoke(method, arg, resolve, reject) {
-      var record = tryCatch(generator[method], generator, arg);
-
-      if ("throw" !== record.type) {
-        var result = record.arg,
-            value = result.value;
-        return value && "object" == _typeof(value) && hasOwn.call(value, "__await") ? PromiseImpl.resolve(value.__await).then(function (value) {
-          invoke("next", value, resolve, reject);
-        }, function (err) {
-          invoke("throw", err, resolve, reject);
-        }) : PromiseImpl.resolve(value).then(function (unwrapped) {
-          result.value = unwrapped, resolve(result);
-        }, function (error) {
-          return invoke("throw", error, resolve, reject);
-        });
-      }
-
-      reject(record.arg);
-    }
-
-    var previousPromise;
-
-    this._invoke = function (method, arg) {
-      function callInvokeWithMethodAndArg() {
-        return new PromiseImpl(function (resolve, reject) {
-          invoke(method, arg, resolve, reject);
-        });
-      }
-
-      return previousPromise = previousPromise ? previousPromise.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg();
-    };
-  }
-
-  function maybeInvokeDelegate(delegate, context) {
-    var method = delegate.iterator[context.method];
-
-    if (undefined === method) {
-      if (context.delegate = null, "throw" === context.method) {
-        if (delegate.iterator["return"] && (context.method = "return", context.arg = undefined, maybeInvokeDelegate(delegate, context), "throw" === context.method)) return ContinueSentinel;
-        context.method = "throw", context.arg = new TypeError("The iterator does not provide a 'throw' method");
-      }
-
-      return ContinueSentinel;
-    }
-
-    var record = tryCatch(method, delegate.iterator, context.arg);
-    if ("throw" === record.type) return context.method = "throw", context.arg = record.arg, context.delegate = null, ContinueSentinel;
-    var info = record.arg;
-    return info ? info.done ? (context[delegate.resultName] = info.value, context.next = delegate.nextLoc, "return" !== context.method && (context.method = "next", context.arg = undefined), context.delegate = null, ContinueSentinel) : info : (context.method = "throw", context.arg = new TypeError("iterator result is not an object"), context.delegate = null, ContinueSentinel);
-  }
-
-  function pushTryEntry(locs) {
-    var entry = {
-      tryLoc: locs[0]
-    };
-    1 in locs && (entry.catchLoc = locs[1]), 2 in locs && (entry.finallyLoc = locs[2], entry.afterLoc = locs[3]), this.tryEntries.push(entry);
-  }
-
-  function resetTryEntry(entry) {
-    var record = entry.completion || {};
-    record.type = "normal", delete record.arg, entry.completion = record;
-  }
-
-  function Context(tryLocsList) {
-    this.tryEntries = [{
-      tryLoc: "root"
-    }], tryLocsList.forEach(pushTryEntry, this), this.reset(!0);
-  }
-
-  function values(iterable) {
-    if (iterable) {
-      var iteratorMethod = iterable[iteratorSymbol];
-      if (iteratorMethod) return iteratorMethod.call(iterable);
-      if ("function" == typeof iterable.next) return iterable;
-
-      if (!isNaN(iterable.length)) {
-        var i = -1,
-            next = function next() {
-          for (; ++i < iterable.length;) {
-            if (hasOwn.call(iterable, i)) return next.value = iterable[i], next.done = !1, next;
-          }
-
-          return next.value = undefined, next.done = !0, next;
-        };
-
-        return next.next = next;
-      }
-    }
-
-    return {
-      next: doneResult
-    };
-  }
-
-  function doneResult() {
-    return {
-      value: undefined,
-      done: !0
-    };
-  }
-
-  return GeneratorFunction.prototype = GeneratorFunctionPrototype, define(Gp, "constructor", GeneratorFunctionPrototype), define(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, toStringTagSymbol, "GeneratorFunction"), exports.isGeneratorFunction = function (genFun) {
-    var ctor = "function" == typeof genFun && genFun.constructor;
-    return !!ctor && (ctor === GeneratorFunction || "GeneratorFunction" === (ctor.displayName || ctor.name));
-  }, exports.mark = function (genFun) {
-    return Object.setPrototypeOf ? Object.setPrototypeOf(genFun, GeneratorFunctionPrototype) : (genFun.__proto__ = GeneratorFunctionPrototype, define(genFun, toStringTagSymbol, "GeneratorFunction")), genFun.prototype = Object.create(Gp), genFun;
-  }, exports.awrap = function (arg) {
-    return {
-      __await: arg
-    };
-  }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, asyncIteratorSymbol, function () {
-    return this;
-  }), exports.AsyncIterator = AsyncIterator, exports.async = function (innerFn, outerFn, self, tryLocsList, PromiseImpl) {
-    void 0 === PromiseImpl && (PromiseImpl = Promise);
-    var iter = new AsyncIterator(wrap(innerFn, outerFn, self, tryLocsList), PromiseImpl);
-    return exports.isGeneratorFunction(outerFn) ? iter : iter.next().then(function (result) {
-      return result.done ? result.value : iter.next();
-    });
-  }, defineIteratorMethods(Gp), define(Gp, toStringTagSymbol, "Generator"), define(Gp, iteratorSymbol, function () {
-    return this;
-  }), define(Gp, "toString", function () {
-    return "[object Generator]";
-  }), exports.keys = function (object) {
-    var keys = [];
-
-    for (var key in object) {
-      keys.push(key);
-    }
-
-    return keys.reverse(), function next() {
-      for (; keys.length;) {
-        var key = keys.pop();
-        if (key in object) return next.value = key, next.done = !1, next;
-      }
-
-      return next.done = !0, next;
-    };
-  }, exports.values = values, Context.prototype = {
-    constructor: Context,
-    reset: function reset(skipTempReset) {
-      if (this.prev = 0, this.next = 0, this.sent = this._sent = undefined, this.done = !1, this.delegate = null, this.method = "next", this.arg = undefined, this.tryEntries.forEach(resetTryEntry), !skipTempReset) for (var name in this) {
-        "t" === name.charAt(0) && hasOwn.call(this, name) && !isNaN(+name.slice(1)) && (this[name] = undefined);
-      }
-    },
-    stop: function stop() {
-      this.done = !0;
-      var rootRecord = this.tryEntries[0].completion;
-      if ("throw" === rootRecord.type) throw rootRecord.arg;
-      return this.rval;
-    },
-    dispatchException: function dispatchException(exception) {
-      if (this.done) throw exception;
-      var context = this;
-
-      function handle(loc, caught) {
-        return record.type = "throw", record.arg = exception, context.next = loc, caught && (context.method = "next", context.arg = undefined), !!caught;
-      }
-
-      for (var i = this.tryEntries.length - 1; i >= 0; --i) {
-        var entry = this.tryEntries[i],
-            record = entry.completion;
-        if ("root" === entry.tryLoc) return handle("end");
-
-        if (entry.tryLoc <= this.prev) {
-          var hasCatch = hasOwn.call(entry, "catchLoc"),
-              hasFinally = hasOwn.call(entry, "finallyLoc");
-
-          if (hasCatch && hasFinally) {
-            if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0);
-            if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc);
-          } else if (hasCatch) {
-            if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0);
-          } else {
-            if (!hasFinally) throw new Error("try statement without catch or finally");
-            if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc);
-          }
-        }
-      }
-    },
-    abrupt: function abrupt(type, arg) {
-      for (var i = this.tryEntries.length - 1; i >= 0; --i) {
-        var entry = this.tryEntries[i];
-
-        if (entry.tryLoc <= this.prev && hasOwn.call(entry, "finallyLoc") && this.prev < entry.finallyLoc) {
-          var finallyEntry = entry;
-          break;
-        }
-      }
-
-      finallyEntry && ("break" === type || "continue" === type) && finallyEntry.tryLoc <= arg && arg <= finallyEntry.finallyLoc && (finallyEntry = null);
-      var record = finallyEntry ? finallyEntry.completion : {};
-      return record.type = type, record.arg = arg, finallyEntry ? (this.method = "next", this.next = finallyEntry.finallyLoc, ContinueSentinel) : this.complete(record);
-    },
-    complete: function complete(record, afterLoc) {
-      if ("throw" === record.type) throw record.arg;
-      return "break" === record.type || "continue" === record.type ? this.next = record.arg : "return" === record.type ? (this.rval = this.arg = record.arg, this.method = "return", this.next = "end") : "normal" === record.type && afterLoc && (this.next = afterLoc), ContinueSentinel;
-    },
-    finish: function finish(finallyLoc) {
-      for (var i = this.tryEntries.length - 1; i >= 0; --i) {
-        var entry = this.tryEntries[i];
-        if (entry.finallyLoc === finallyLoc) return this.complete(entry.completion, entry.afterLoc), resetTryEntry(entry), ContinueSentinel;
-      }
-    },
-    "catch": function _catch(tryLoc) {
-      for (var i = this.tryEntries.length - 1; i >= 0; --i) {
-        var entry = this.tryEntries[i];
-
-        if (entry.tryLoc === tryLoc) {
-          var record = entry.completion;
-
-          if ("throw" === record.type) {
-            var thrown = record.arg;
-            resetTryEntry(entry);
-          }
-
-          return thrown;
-        }
-      }
-
-      throw new Error("illegal catch attempt");
-    },
-    delegateYield: function delegateYield(iterable, resultName, nextLoc) {
-      return this.delegate = {
-        iterator: values(iterable),
-        resultName: resultName,
-        nextLoc: nextLoc
-      }, "next" === this.method && (this.arg = undefined), ContinueSentinel;
-    }
-  }, exports;
-}
-
-function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {
-  try {
-    var info = gen[key](arg);
-    var value = info.value;
-  } catch (error) {
-    reject(error);
-    return;
-  }
-
-  if (info.done) {
-    resolve(value);
-  } else {
-    Promise.resolve(value).then(_next, _throw);
-  }
-}
-
-function _asyncToGenerator(fn) {
-  return function () {
-    var self = this,
-        args = arguments;
-    return new Promise(function (resolve, reject) {
-      var gen = fn.apply(self, args);
-
-      function _next(value) {
-        asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value);
-      }
-
-      function _throw(err) {
-        asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err);
-      }
-
-      _next(undefined);
-    });
-  };
-}
-
-function _classCallCheck(instance, Constructor) {
-  if (!(instance instanceof Constructor)) {
-    throw new TypeError("Cannot call a class as a function");
-  }
-}
-
-function _defineProperties(target, props) {
-  for (var i = 0; i < props.length; i++) {
-    var descriptor = props[i];
-    descriptor.enumerable = descriptor.enumerable || false;
-    descriptor.configurable = true;
-    if ("value" in descriptor) descriptor.writable = true;
-    Object.defineProperty(target, descriptor.key, descriptor);
-  }
-}
-
-function _createClass(Constructor, protoProps, staticProps) {
-  if (protoProps) _defineProperties(Constructor.prototype, protoProps);
-  if (staticProps) _defineProperties(Constructor, staticProps);
-  Object.defineProperty(Constructor, "prototype", {
-    writable: false
-  });
-  return Constructor;
-} // This is a metamask library that allows us to connect to the metamask extension from our extension.
-
-
-var createProvider = require("metamask-extension-provider");
-
-var _require = require("ethers"),
-    ethers = _require.ethers;
-
-var maskInpageProvider = createProvider();
-var provider = new ethers.providers.Web3Provider(maskInpageProvider, "any");
-var signer = provider.getSigner();
-
-var _require2 = require("./LogError"),
-    LogError = _require2.LogError;
-
-var EcommerceCart = /*#__PURE__*/function () {
+},{}],258:[function(require,module,exports){
+// This is a metamask library that allows us to connect to the metamask extension from our extension.
+const createProvider = require("metamask-extension-provider");
+
+const {
+  ethers
+} = require("ethers");
+
+const maskInpageProvider = createProvider();
+const provider = new ethers.providers.Web3Provider(maskInpageProvider, "any");
+const signer = provider.getSigner();
+
+const {
+  LogError
+} = require("./LogError");
+
+const {
+  algo
+} = require("crypto-js/core");
+
+class EcommerceCart {
   /*
   Defines methods and handles the flow generic to Ecommerce websites.
   See the following link (EcommerceCart handles Generic Login Flow)
   https://lucid.app/lucidchart/86202d2d-3c46-49a6-89d9-a9164dd5f1ad/edit?invitationId=inv_d5751113-87f0-4abf-a8c3-6a076808331f&page=0_0#?referringapp=slack&login=slack
   */
-  function EcommerceCart() {
-    _classCallCheck(this, EcommerceCart);
+  constructor() {
     /**
      * Initializes instance attributes of EcommerceCart.
      * @param  {HTMLElement} cryptoButton Pay with cryto button.
      * @param  {String} walletID Wallet ID of users crypto wallet.
      * @param  {Object} productDict Contains the products selected by the user.
      */
-
-
     this.cryptoButton = this.createButton();
     this.walletID;
     this.productDict;
@@ -45615,997 +46003,602 @@ var EcommerceCart = /*#__PURE__*/function () {
     this.shipping;
   }
 
-  _createClass(EcommerceCart, [{
-    key: "createListeners",
-    value: function createListeners() {
-      var _this = this;
-      /**
-       * Initializes message listeners.
-       * @function createListeners
-       */
-      // Sends productDict when requested by cartConfirmation popup
+  createListeners() {
+    /**
+     * Initializes message listeners.
+     * @function createListeners
+     */
+    // Sends productDict when requested by cartConfirmation popup
+    chrome.runtime.onMessage.addListener((msg, sender, response) => {
+      if (msg.from === "popup" && msg.subject === "needInfo") {
+        console.log(this.productDict, this.shipping);
+        response([this.productDict, this.shipping]);
+      }
+    }); // Sends message prompting Metamask transaction.
 
+    chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+      if (msg.from === "popup" && msg.subject === "promptTransaction") {
+        this.handleTransaction(msg).then(response => {
+          sendResponse(true);
+        }).catch(err => {
+          console.log(err);
+          sendResponse(false);
+        });
+        return true;
+      }
+    });
+  }
 
-      chrome.runtime.onMessage.addListener(function (msg, sender, response) {
-        if (msg.from === "popup" && msg.subject === "needInfo") {
-          console.log(_this.productDict, _this.shipping);
-          response([_this.productDict, _this.shipping]);
+  convertCurrency(price, currency) {
+    return fetch("https://api.exchangerate.host/convert?from=" + currency + "&to=USD&amount=" + String(price)).then(response => response.text()).then(data => {
+      return data;
+    });
+  }
+
+  async handleTransaction(msg) {
+    const DECIMALS = 6;
+    const usdceth_abi = ["function transfer(address to, uint amount)"];
+    const usdcpoly_abi = ["function transfer(address recipient, uint amount)"]; //
+
+    const USDCETH = new ethers.Contract("0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48", usdceth_abi, signer); //"0x68ec573C119826db2eaEA1Efbfc2970cDaC869c4"  "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
+
+    const USDCPOLY = new ethers.Contract("0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174", usdcpoly_abi, signer); //0xd5b31FB565d608692d6422beB31Bf0875dad4fC3   0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174
+
+    const cost = msg.price;
+    const currency = msg.currency;
+    let ticker;
+
+    if (msg.ticker === "eth") {
+      ticker = 'ethusd';
+    } else if (msg.ticker === "matic") {
+      ticker = 'maticusd';
+    } else if (msg.ticker === 'usdc-polygon') {
+      ticker = 'usdcusd';
+    } else if (msg.ticker === 'usdc-eth') {
+      ticker = 'usdcusd';
+    }
+
+    const chain = msg.ticker;
+    console.log(ticker);
+    const currentChain = await provider.send('eth_chainId');
+    console.log(currentChain); //Switch Chains
+
+    console.log(chain);
+
+    if (chain === 'eth' || chain === 'usdc-eth' && currentChain !== '0x1') {
+      await provider.send('wallet_switchEthereumChain', [{
+        chainId: '0x1'
+      }]);
+    } else if (chain === 'matic' || chain === 'usdc-polygon' && currentChain !== '0x89') {
+      await provider.send('wallet_switchEthereumChain', [{
+        chainId: '0x89'
+      }]);
+    } else if (chain === 'ftm' && currentChain !== '0xFA') {
+      try {
+        await provider.send('wallet_switchEthereumChain', [{
+          chainId: '0xFA'
+        }]);
+      } catch {
+        try {
+          const params = [{
+            chainId: '0xFA',
+            chainName: 'Fantom Opera',
+            nativeCurrency: {
+              name: 'Fantom',
+              symbol: 'FTM',
+              decimals: 18
+            },
+            rpcUrls: ['https://rpc.ankr.com/fantom/'],
+            blockExplorerUrls: ['https://ftmscan.com/']
+          }];
+          provider.send('wallet_addEthereumChain', params);
+        } catch (err) {
+          console.log(err.stack);
         }
-      }); // Sends message prompting Metamask transaction.
+      }
+    }
 
-      chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
-        if (msg.from === "popup" && msg.subject === "promptTransaction") {
-          _this.handleTransaction(msg).then(function (response) {
-            sendResponse(true);
-          })["catch"](function (err) {
+    let costUSD;
+
+    if (currency === "USD") {
+      costUSD = cost;
+    } else {
+      let currencyResponse = await this.convertCurrency(cost, currency);
+      console.log(currencyResponse);
+      costUSD = JSON.parse(currencyResponse).result;
+    }
+
+    console.log(ticker);
+    console.log(currency);
+    console.log(costUSD);
+    const getCoinPriceResponse = await chrome.runtime.sendMessage({
+      from: "cart",
+      subject: "getCoinPrice",
+      body: {
+        ticker: ticker
+      }
+    }); // Checking that the price of the Crypto in USD is received, and an error was not thrown.
+
+    if (getCoinPriceResponse.hasOwnProperty("error")) {
+      throw new LogError(getCoinPriceResponse.customMsg, "getCoinPriceResponse.error", {
+        price: costUSD
+      }, getCoinPriceResponse.uiMsg, getCoinPriceResponse.errorID, () => {
+        this.cryptoButton.disabled = false;
+        alert("Server Error");
+      });
+    } // Getting the price of the Crypto in USD.
+
+
+    const coinPriceUSD = getCoinPriceResponse.data;
+    console.log(coinPriceUSD);
+    const ethCost = costUSD / coinPriceUSD; // Calculating the cost of the cart in ETH.
+
+    let gasLimit = await provider.estimateGas({
+      to: "0x9E4b8417554166293191f5ecb6a5E0E929e58fef",
+      value: ethers.utils.parseEther(ethCost.toFixed(18))
+    }); // TODO: Update this to use the selected token.
+
+    console.log(`Price in Eth: ${ethCost}`); // Declaring variables for the transaction.
+
+    const gas = await provider.getGasPrice();
+    const gasPrice = ethers.utils.hexlify(gas);
+    console.log(gasPrice); // Creating the transaction object.
+
+    const transaction = {
+      // The address of the user's wallet.
+      from: maskInpageProvider.selectedAddress,
+      // The destination address.
+      // TODO: Update this to be the actual Gemini address.
+      to: "0x9E4b8417554166293191f5ecb6a5E0E929e58fef",
+      // The amount of Crypto to send.
+      value: ethers.utils.parseEther(ethCost.toFixed(18)),
+      gasLimit: ethers.utils.hexlify(gasLimit),
+      gasPrice: gasPrice
+    };
+    console.log("waiting o sign"); // This prompts the user to approve the transaction on Metamask.
+
+    let tx;
+    const address = '0xB5EC5c29Ed50067ba97c4009e14f5Bff607a324c';
+    const amount = ethers.utils.parseUnits(ethCost.toFixed(6).toString(), DECIMALS);
+    console.log(amount);
+    console.log(gasPrice / 1);
+    console.log(chain);
+
+    if (chain === 'usdc-eth') {
+      let gasLimit = await USDCETH.estimateGas.transfer("0x9E4b8417554166293191f5ecb6a5E0E929e58fef", ethers.utils.parseUnits(ethCost.toFixed(6).toString(), DECIMALS));
+      tx = await USDCETH.transfer('0x9E4b8417554166293191f5ecb6a5E0E929e58fef', amount, {
+        gasLimit: gasLimit
+      }); //TODO: change this to an actual gas price conversion
+    } else if (chain === 'usdc-polygon') {
+      let gasLimit = await USDCPOLY.estimateGas.transfer("0xB5EC5c29Ed50067ba97c4009e14f5Bff607a324c", ethers.utils.parseUnits(ethCost.toFixed(6).toString(), DECIMALS));
+      tx = await USDCPOLY.transfer(address, amount, {
+        gasLimit: gasLimit
+      });
+    } else {
+      tx = await signer.sendTransaction(transaction);
+    }
+
+    console.log(`txHASH: ${tx.hash}`);
+    const body = {
+      txHash: tx.hash,
+      retailer: this.retailer,
+      shipping: this.shipping,
+      productidsarr: msg.products,
+      addressid: msg.addressid,
+      orderStatus: "Transaction Pending Confirmation.",
+      ticker: chain,
+      //TODO: In future this needs to be changed to the ticker of the coin being used.
+      amount: ethCost
+    };
+    console.log("BODY" + JSON.stringify(body)); // Sending the body to the backend to track the order.
+
+    chrome.runtime.sendMessage({
+      from: "cart",
+      subject: "getTransaction",
+      body: body
+    });
+    console.log("returning");
+    return true;
+  } // This defines the Pay with Crypto button and its functionality.
+
+
+  createButton() {
+    // Creating the button.
+    let cryptoButton = document.createElement("INPUT");
+    cryptoButton.id = "crypto-button";
+    cryptoButton.type = "image";
+    cryptoButton.src = "https://bafkreiflbuggpczchtd2elv5qqhyks27ujz6hihi4xxzrp5kxu3psd4qce.ipfs.nftstorage.link/";
+    cryptoButton.style.cssText = "height: 79px; width: 260px"; // Defining functionality.
+
+    cryptoButton.addEventListener("click", () => {
+      // We disable the button to prevent multiple clicks.
+      this.cryptoButton.disabled = true; // if (!this.popupOpen) {
+
+      this.cryptoButtonPressed();
+      return; // }
+
+      this.cryptoButton.disabled = false;
+    });
+    return cryptoButton;
+  } // This function is called when the Pay with Crypto button is pressed.
+
+
+  async cryptoButtonPressed() {
+    chrome.runtime.sendMessage({
+      from: "cart",
+      subject: "walletChoice",
+      screenSize: screen.width
+    });
+    chrome.runtime.onMessage.addListener(async (msg, sender) => {
+      if (msg.from === "popup" && msg.subject === "walletChoice") {
+        console.log(msg.wallet);
+
+        if (msg.wallet == 'metamask') {
+          try {
+            const isPopupOpen = await chrome.runtime.sendMessage({
+              from: "cart",
+              subject: "isPopupOpen"
+            });
+            console.log("recorded");
+            console.log("id" + isPopupOpen); // We check to make sure that the user is connected with Metamask and has a wallet connected.
+
+            let walletID = await this.checkMetamaskSignIn(); // We check to make sure that the request is actually coming from a user with a wallet, and not being spoofed.
+            // We do this by calling verifyWallet.
+
+            await this.verifyWallet(walletID, isPopupOpen, 'metamask', 0); // We get the products selected by the user.
+
+            this.productDict = await this.getProducts(); // We get the retailer of the products.
+
+            this.retailer = this.getRetailer();
+            this.shipping = this.getShipping(this.productDict); // This is a timer we will use for loading animation.
+
+            console.log("iiiik");
+            console.log(this.productDict);
+
+            const timer = ms => new Promise(res => setTimeout(res, ms)); // This loop waits for the popup's DOM to load in.
+
+
+            while (!isPopupOpen) {
+              // While the popup is open
+              // We send a message to the popup with the cartInfo.
+              const cartInfoReceived = await chrome.runtime.sendMessage({
+                from: "cart",
+                subject: "sendCartInfo",
+                data: this.productDict,
+                shipping: this.shipping,
+                wallet: 'metamask',
+                address: 0
+              }).then(response => {
+                return response;
+              }); // Once we know the cart has received the products, we can break and stop with the loading animation.
+
+              if (cartInfoReceived) {
+                break;
+              } // We wait for 1 second before checking again.
+
+
+              await timer(100);
+            }
+
+            if (isPopupOpen) {
+              const cartInfoReceived = await chrome.runtime.sendMessage({
+                from: "cart",
+                subject: "sendCartInfo",
+                data: this.productDict,
+                shipping: this.shipping,
+                wallet: 'metamask',
+                address: 0
+              });
+            } // Re-enable the button.
+
+
+            this.cryptoButton.disabled = false;
+          } catch (err) {
+            console.log("Error Crypto Button Flow");
             console.log(err);
-            sendResponse(false);
-          });
 
-          return true;
+            if (err instanceof LogError) {
+              this.cryptoButton.disabled = false;
+            }
+          }
+        } else if (msg.wallet = 'walletConnect') {
+          try {
+            const isPopupOpen = await chrome.runtime.sendMessage({
+              from: "cart",
+              subject: "isPopupOpen"
+            });
+            await this.verifyWallet(walletID, isPopupOpen, wallet, address);
+            console.log("recorded");
+            console.log("id" + isPopupOpen); // We get the products selected by the user.
+
+            this.productDict = await this.getProducts(); // We get the retailer of the products.
+
+            this.retailer = this.getRetailer();
+            this.shipping = this.getShipping(this.productDict); // This is a timer we will use for loading animation.
+
+            console.log("iiiik");
+            console.log(this.productDict);
+
+            const timer = ms => new Promise(res => setTimeout(res, ms));
+
+            console.log(isPopupOpen); // This loop waits for the popup's DOM to load in.
+
+            while (!isPopupOpen) {
+              // While the popup is open
+              // We send a message to the popup with the cartInfo.
+              const cartInfoReceived = await chrome.runtime.sendMessage({
+                from: "cart",
+                subject: "sendCartInfo",
+                data: this.productDict,
+                shipping: this.shipping
+              }).then(response => {
+                return response;
+              }); // Once we know the cart has received the products, we can break and stop with the loading animation.
+
+              if (cartInfoReceived) {
+                break;
+              } // We wait for 1 second before checking again.
+
+
+              await timer(100);
+            }
+
+            if (isPopupOpen) {
+              const cartInfoReceived = await chrome.runtime.sendMessage({
+                from: "cart",
+                subject: "sendCartInfo",
+                data: this.productDict,
+                shipping: this.shipping
+              });
+            } // Re-enable the button.
+
+
+            this.cryptoButton.disabled = false;
+          } catch (err) {
+            console.log("Error Crypto Button Flow");
+            console.log(err);
+
+            if (err instanceof LogError) {
+              this.cryptoButton.disabled = false;
+            }
+          }
+        } else if (msg.wallet == 'pera') {
+          try {
+            const isPopupOpen = await chrome.runtime.sendMessage({
+              from: "cart",
+              subject: "isPopupOpen"
+            });
+            let walletID = msg.address;
+            await this.verifyWallet(walletID, isPopupOpen, 'pera', walletID); // We get the products selected by the user.
+
+            this.productDict = await this.getProducts(); // We get the retailer of the products.
+
+            this.retailer = this.getRetailer();
+            this.shipping = this.getShipping(this.productDict); // This is a timer we will use for loading animation.
+
+            console.log("iiiik");
+            console.log(this.productDict);
+
+            const timer = ms => new Promise(res => setTimeout(res, ms));
+
+            console.log(isPopupOpen); // This loop waits for the popup's DOM to load in.
+
+            while (!isPopupOpen) {
+              // While the popup is open
+              // We send a message to the popup with the cartInfo.
+              const cartInfoReceived = await chrome.runtime.sendMessage({
+                from: "cart",
+                subject: "sendCartInfo",
+                data: this.productDict,
+                shipping: this.shipping,
+                chain: 'algo',
+                address: walletID
+              }).then(response => {
+                return response;
+              }); // Once we know the cart has received the products, we can break and stop with the loading animation.
+
+              if (cartInfoReceived) {
+                break;
+              } // We wait for 1 second before checking again.
+
+
+              await timer(100);
+            }
+
+            if (isPopupOpen) {
+              const cartInfoReceived = await chrome.runtime.sendMessage({
+                from: "cart",
+                subject: "sendCartInfo",
+                data: this.productDict,
+                shipping: this.shipping,
+                chain: 'algo',
+                address: walletID
+              });
+            }
+          } catch (err) {
+            console.log("Error Crypto Button Flow");
+            console.log(err);
+
+            if (err instanceof LogError) {
+              this.cryptoButton.disabled = false;
+            }
+          }
         }
+      }
+    });
+  } // This function checks to make sure that the user is connected with Metamask and has a wallet connected.
+
+
+  async checkMetamaskSignIn() {
+    // We check to make sure that the user is connected with Metamask and has a wallet connected.
+    let accounts = await provider.send("eth_requestAccounts", []).catch(err => {
+      throw new LogError("Metamask already open", err.stack, {}, "Metamask already open", Date.now(), () => {
+        alert("Metamask already open");
+      });
+    }); // If there are no accounts, we throw an error.
+
+    if (accounts.length === 0) {
+      throw new LogError("No Metamask accounts available", err, "No Metamask accounts available", {
+        accounts: accounts
+      }, Date.now(), () => {
+        alert("No Metamask accounts available");
+      });
+    } else {
+      // If there are accounts, we return the first one.
+      return accounts[0];
+    }
+  } // This function checks to make sure that the request is actually coming from a user with a wallet,
+  // and not being spoofed.
+
+
+  async verifyWallet(walletID, isPopupOpen, wallet, address) {
+    // We check for an existing JWT in local storage.
+    let existingToken = await chrome.storage.local.get("glidePayJWT");
+
+    if ( // We check to see if the JWT is empty.
+    JSON.stringify(existingToken) === "{}" || existingToken.hasOwnProperty("message")) {
+      // If it is, we set it to an empty JSON object, and then we create a new JWT for the user.
+      existingToken = {};
+      await this.createJWTToken(walletID, existingToken.glidePayJWT, isPopupOpen);
+      return;
+    } // If the JWT is not empty, we check to make sure that the JWT is valid.
+
+
+    if (!(await this.verifyToken(walletID, existingToken.glidePayJWT))) {
+      // this.verifyToken returns false if the token is invalid.
+      // If it is invalid, we create a new JWT for the user.
+      await this.createJWTToken(walletID.toLowerCase(), existingToken.glidePayJWT, isPopupOpen);
+      return;
+    } else {// Otherwise, it's valid.
+    } // Check to see if the popup is not open.
+    // If the popup is not open, we send a message asking for it to be created.
+
+
+    if (!isPopupOpen) {
+      await chrome.runtime.sendMessage({
+        from: "cart",
+        subject: "createOrderPopup",
+        screenSize: screen.width,
+        wallet: wallet,
+        address: address
       });
     }
-  }, {
-    key: "convertCurrency",
-    value: function convertCurrency(price, currency) {
-      return fetch("https://api.exchangerate.host/convert?from=" + currency + "&to=USD&amount=" + String(price)).then(function (response) {
-        return response.text();
-      }).then(function (data) {
-        return data;
+  } // This function creates a JWT for the user.
+
+
+  async createJWTToken(walletID, token, isPopupOpen) {
+    // First, we generate a unique nonce for the JWT -- one time use. This is used to prevent replay attacks.
+    // This sends a message asking for a nonce to be created.
+    let nonceResponse = await chrome.runtime.sendMessage({
+      from: "cart",
+      subject: "generateNonce",
+      body: {
+        // We pass the walletID to the backend to get the nonce. We make sure that we set it to lowercase
+        // because Metamask often sends us the walletID in lowercase, and so we must be consistent as to how we store
+        // the wallet.
+        wallet: walletID.toLowerCase()
+      }
+    }); // Checks to make sure there's no error.
+
+    if (nonceResponse.hasOwnProperty("error")) {
+      throw new LogError(nonceResponse.customMsg, nonceResponse.error, {
+        walletID: walletID,
+        token: token
+      }, nonceResponse.uiMsg, nonceResponse.errorID, () => {
+        this.cryptoButton.disabled = false;
+        alert("Server Error");
+      });
+    } // Declaring the nonce.
+
+
+    const nonce = nonceResponse.data; // We generate this message to be displayed to the user in the Metamask popup. THIS MUST BE EXACTLY THE SAME HERE
+    // AS IT IS ON THE BACKEND. IF YOU CHANGE THIS, MAKE SURE TO ALSO CHANGE THE BACKEND.
+
+    let message = "Please sign this message to login!.\n Nonce: " + nonce; // This prompts the user to sign the message, and awaits the signature that is generated.
+
+    const signature = await signer.signMessage(message); // This then creates the popup. We do this in advance of calling the backend so that we can have a loading animation
+    // while awaiting the backend response.
+
+    if (!isPopupOpen) {
+      await chrome.runtime.sendMessage({
+        from: "cart",
+        subject: "createOrderPopup",
+        screenSize: screen.width
+      });
+    } // We send the signature to the backend.
+
+
+    let signatureResponse = await chrome.runtime.sendMessage({
+      from: "cart",
+      subject: "verifySignature",
+      body: {
+        wallet: walletID,
+        walletSignature: signature,
+        existingToken: token
+      }
+    }); // Checks to make sure there's no error.
+
+    if (signatureResponse.hasOwnProperty("error")) {
+      const signatureResponseError = signatureResponse.error;
+      throw new LogError(signatureResponseError.customMsg, signatureResponseError.error, {
+        walletID: walletID,
+        token: token,
+        nonce: nonce,
+        message: message,
+        signature: signature
+      }, signatureResponseError.uiMsg, signatureResponseError.errorID, () => {
+        this.cryptoButton.disabled = false;
+        alert("Server Error");
       });
     }
-  }, {
-    key: "handleTransaction",
-    value: function () {
-      var _handleTransaction = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(msg) {
-        var _this2 = this;
 
-        var DECIMALS, usdceth_abi, usdcpoly_abi, USDCETH, USDCPOLY, cost, currency, ticker, chain, currentChain, params, costUSD, currencyResponse, getCoinPriceResponse, coinPriceUSD, ethCost, gasLimit, gas, gasPrice, transaction, tx, address, amount, _gasLimit, _gasLimit2, body;
+    console.log(signatureResponse); // If there's no error, we set the JWT to the response.
 
-        return _regeneratorRuntime().wrap(function _callee$(_context) {
-          while (1) {
-            switch (_context.prev = _context.next) {
-              case 0:
-                DECIMALS = 6;
-                usdceth_abi = ["function transfer(address to, uint amount)"];
-                usdcpoly_abi = ["function transfer(address recipient, uint amount)"]; //
+    const newToken = signatureResponse.data; // Then we store it in localStorage.
 
-                USDCETH = new ethers.Contract("0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48", usdceth_abi, signer); //"0x68ec573C119826db2eaEA1Efbfc2970cDaC869c4"  "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
+    await chrome.storage.local.set({
+      glidePayJWT: newToken
+    });
+    console.log("Wallet Verified and Set");
+  } // This function verifies the JWT.
 
-                USDCPOLY = new ethers.Contract("0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174", usdcpoly_abi, signer); //0xd5b31FB565d608692d6422beB31Bf0875dad4fC3   0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174
 
-                cost = msg.price;
-                currency = msg.currency;
-
-                if (msg.ticker === "eth") {
-                  ticker = 'ethusd';
-                } else if (msg.ticker === "matic") {
-                  ticker = 'maticusd';
-                } else if (msg.ticker === 'usdc-polygon') {
-                  ticker = 'usdcusd';
-                } else if (msg.ticker === 'usdc-eth') {
-                  ticker = 'usdcusd';
-                }
-
-                chain = msg.ticker;
-                console.log(ticker);
-                _context.next = 12;
-                return provider.send('eth_chainId');
-
-              case 12:
-                currentChain = _context.sent;
-                console.log(currentChain); //Switch Chains
-
-                console.log(chain);
-
-                if (!(chain === 'eth' || chain === 'usdc-eth' && currentChain !== '0x1')) {
-                  _context.next = 20;
-                  break;
-                }
-
-                _context.next = 18;
-                return provider.send('wallet_switchEthereumChain', [{
-                  chainId: '0x1'
-                }]);
-
-              case 18:
-                _context.next = 34;
-                break;
-
-              case 20:
-                if (!(chain === 'matic' || chain === 'usdc-polygon' && currentChain !== '0x89')) {
-                  _context.next = 25;
-                  break;
-                }
-
-                _context.next = 23;
-                return provider.send('wallet_switchEthereumChain', [{
-                  chainId: '0x89'
-                }]);
-
-              case 23:
-                _context.next = 34;
-                break;
-
-              case 25:
-                if (!(chain === 'ftm' && currentChain !== '0xFA')) {
-                  _context.next = 34;
-                  break;
-                }
-
-                _context.prev = 26;
-                _context.next = 29;
-                return provider.send('wallet_switchEthereumChain', [{
-                  chainId: '0xFA'
-                }]);
-
-              case 29:
-                _context.next = 34;
-                break;
-
-              case 31:
-                _context.prev = 31;
-                _context.t0 = _context["catch"](26);
-
-                try {
-                  params = [{
-                    chainId: '0xFA',
-                    chainName: 'Fantom Opera',
-                    nativeCurrency: {
-                      name: 'Fantom',
-                      symbol: 'FTM',
-                      decimals: 18
-                    },
-                    rpcUrls: ['https://rpc.ankr.com/fantom/'],
-                    blockExplorerUrls: ['https://ftmscan.com/']
-                  }];
-                  provider.send('wallet_addEthereumChain', params);
-                } catch (err) {
-                  console.log(err.stack);
-                }
-
-              case 34:
-                if (!(currency === "USD")) {
-                  _context.next = 38;
-                  break;
-                }
-
-                costUSD = cost;
-                _context.next = 43;
-                break;
-
-              case 38:
-                _context.next = 40;
-                return this.convertCurrency(cost, currency);
-
-              case 40:
-                currencyResponse = _context.sent;
-                console.log(currencyResponse);
-                costUSD = JSON.parse(currencyResponse).result;
-
-              case 43:
-                console.log(ticker);
-                console.log(currency);
-                console.log(costUSD);
-                _context.next = 48;
-                return chrome.runtime.sendMessage({
-                  from: "cart",
-                  subject: "getCoinPrice",
-                  body: {
-                    ticker: ticker
-                  }
-                });
-
-              case 48:
-                getCoinPriceResponse = _context.sent;
-
-                if (!getCoinPriceResponse.hasOwnProperty("error")) {
-                  _context.next = 51;
-                  break;
-                }
-
-                throw new LogError(getCoinPriceResponse.customMsg, "getCoinPriceResponse.error", {
-                  price: costUSD
-                }, getCoinPriceResponse.uiMsg, getCoinPriceResponse.errorID, function () {
-                  _this2.cryptoButton.disabled = false;
-                  alert("Server Error");
-                });
-
-              case 51:
-                // Getting the price of the Crypto in USD.
-                coinPriceUSD = getCoinPriceResponse.data;
-                console.log(coinPriceUSD);
-                ethCost = costUSD / coinPriceUSD; // Calculating the cost of the cart in ETH.
-
-                _context.next = 56;
-                return provider.estimateGas({
-                  to: "0x9E4b8417554166293191f5ecb6a5E0E929e58fef",
-                  value: ethers.utils.parseEther(ethCost.toFixed(18))
-                });
-
-              case 56:
-                gasLimit = _context.sent; // TODO: Update this to use the selected token.
-
-                console.log("Price in Eth: ".concat(ethCost)); // Declaring variables for the transaction.
-
-                _context.next = 60;
-                return provider.getGasPrice();
-
-              case 60:
-                gas = _context.sent;
-                gasPrice = ethers.utils.hexlify(gas);
-                console.log(gasPrice); // Creating the transaction object.
-
-                transaction = {
-                  // The address of the user's wallet.
-                  from: maskInpageProvider.selectedAddress,
-                  // The destination address.
-                  // TODO: Update this to be the actual Gemini address.
-                  to: "0x9E4b8417554166293191f5ecb6a5E0E929e58fef",
-                  // The amount of Crypto to send.
-                  value: ethers.utils.parseEther(ethCost.toFixed(18)),
-                  gasLimit: ethers.utils.hexlify(gasLimit),
-                  gasPrice: gasPrice
-                };
-                console.log("waiting o sign"); // This prompts the user to approve the transaction on Metamask.
-
-                address = '0xB5EC5c29Ed50067ba97c4009e14f5Bff607a324c';
-                amount = ethers.utils.parseUnits(ethCost.toFixed(6).toString(), DECIMALS);
-                console.log(amount);
-                console.log(gasPrice / 1);
-                console.log(chain);
-
-                if (!(chain === 'usdc-eth')) {
-                  _context.next = 79;
-                  break;
-                }
-
-                _context.next = 73;
-                return USDCETH.estimateGas.transfer("0x9E4b8417554166293191f5ecb6a5E0E929e58fef", ethers.utils.parseUnits(ethCost.toFixed(6).toString(), DECIMALS));
-
-              case 73:
-                _gasLimit = _context.sent;
-                _context.next = 76;
-                return USDCETH.transfer('0x9E4b8417554166293191f5ecb6a5E0E929e58fef', amount, {
-                  gasLimit: _gasLimit
-                });
-
-              case 76:
-                tx = _context.sent;
-                _context.next = 91;
-                break;
-
-              case 79:
-                if (!(chain === 'usdc-polygon')) {
-                  _context.next = 88;
-                  break;
-                }
-
-                _context.next = 82;
-                return USDCPOLY.estimateGas.transfer("0xB5EC5c29Ed50067ba97c4009e14f5Bff607a324c", ethers.utils.parseUnits(ethCost.toFixed(6).toString(), DECIMALS));
-
-              case 82:
-                _gasLimit2 = _context.sent;
-                _context.next = 85;
-                return USDCPOLY.transfer(address, amount, {
-                  gasLimit: _gasLimit2
-                });
-
-              case 85:
-                tx = _context.sent;
-                _context.next = 91;
-                break;
-
-              case 88:
-                _context.next = 90;
-                return signer.sendTransaction(transaction);
-
-              case 90:
-                tx = _context.sent;
-
-              case 91:
-                console.log("txHASH: ".concat(tx.hash));
-                body = {
-                  txHash: tx.hash,
-                  retailer: this.retailer,
-                  shipping: this.shipping,
-                  productidsarr: msg.products,
-                  addressid: msg.addressid,
-                  orderStatus: "Transaction Pending Confirmation.",
-                  ticker: chain,
-                  //TODO: In future this needs to be changed to the ticker of the coin being used.
-                  amount: ethCost
-                };
-                console.log("BODY" + JSON.stringify(body)); // Sending the body to the backend to track the order.
-
-                chrome.runtime.sendMessage({
-                  from: "cart",
-                  subject: "getTransaction",
-                  body: body
-                });
-                console.log("returning");
-                return _context.abrupt("return", true);
-
-              case 97:
-              case "end":
-                return _context.stop();
-            }
-          }
-        }, _callee, this, [[26, 31]]);
-      }));
-
-      function handleTransaction(_x) {
-        return _handleTransaction.apply(this, arguments);
+  async verifyToken(walletID, token) {
+    let verifyTokenResponse = await chrome.runtime.sendMessage({
+      from: "cart",
+      subject: "verifyToken",
+      body: {
+        token: token,
+        wallet: walletID
       }
+    }); // Checks to make sure there's no error.
 
-      return handleTransaction;
-    }() // This defines the Pay with Crypto button and its functionality.
-
-  }, {
-    key: "createButton",
-    value: function createButton() {
-      var _this3 = this; // Creating the button.
-
-
-      var cryptoButton = document.createElement("INPUT");
-      cryptoButton.id = "crypto-button";
-      cryptoButton.type = "image";
-      cryptoButton.src = "https://bafkreiflbuggpczchtd2elv5qqhyks27ujz6hihi4xxzrp5kxu3psd4qce.ipfs.nftstorage.link/";
-      cryptoButton.style.cssText = "height: 79px; width: 260px"; // Defining functionality.
-
-      cryptoButton.addEventListener("click", function () {
-        // We disable the button to prevent multiple clicks.
-        _this3.cryptoButton.disabled = true; // if (!this.popupOpen) {
-
-        _this3.cryptoButtonPressed();
-
-        return; // }
-
-        _this3.cryptoButton.disabled = false;
+    if (verifyTokenResponse.hasOwnProperty("error")) {
+      const verifyTokenResponseError = verifyTokenResponse.error;
+      throw new LogError(verifyTokenResponseError.customMsg, verifyTokenResponseError.error, {
+        walletID: walletID,
+        token: token
+      }, verifyTokenResponseError.uiMsg, verifyTokenResponseError.errorID, () => {
+        this.cryptoButton.disabled = false;
+        alert("CRITICAL ERROR: VERIFY TOKEN FAILED"); //? Why would we do this?
       });
-      return cryptoButton;
-    } // This function is called when the Pay with Crypto button is pressed.
+    } // If there's no error, we set the JWT to the response.
 
-  }, {
-    key: "cryptoButtonPressed",
-    value: function () {
-      var _cryptoButtonPressed = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3() {
-        var _this4 = this;
 
-        return _regeneratorRuntime().wrap(function _callee3$(_context3) {
-          while (1) {
-            switch (_context3.prev = _context3.next) {
-              case 0:
-                chrome.runtime.sendMessage({
-                  from: "cart",
-                  subject: "walletChoice",
-                  screenSize: screen.width
-                });
-                chrome.runtime.onMessage.addListener( /*#__PURE__*/function () {
-                  var _ref = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2(msg, sender) {
-                    var isPopupOpen, walletID, timer, cartInfoReceived, _cartInfoReceived, _isPopupOpen, _timer, _cartInfoReceived2, _cartInfoReceived3;
+    return verifyTokenResponse.data;
+  }
 
-                    return _regeneratorRuntime().wrap(function _callee2$(_context2) {
-                      while (1) {
-                        switch (_context2.prev = _context2.next) {
-                          case 0:
-                            if (!(msg.from === "popup" && msg.subject === "walletChoice")) {
-                              _context2.next = 87;
-                              break;
-                            }
-
-                            console.log(msg.wallet);
-
-                            if (!(msg.wallet == 'metamask')) {
-                              _context2.next = 46;
-                              break;
-                            }
-
-                            _context2.prev = 3;
-                            _context2.next = 6;
-                            return chrome.runtime.sendMessage({
-                              from: "cart",
-                              subject: "isPopupOpen"
-                            });
-
-                          case 6:
-                            isPopupOpen = _context2.sent;
-                            console.log("recorded");
-                            console.log("id" + isPopupOpen); // We check to make sure that the user is connected with Metamask and has a wallet connected.
-
-                            _context2.next = 11;
-                            return _this4.checkMetamaskSignIn();
-
-                          case 11:
-                            walletID = _context2.sent;
-                            _context2.next = 14;
-                            return _this4.verifyWallet(walletID, isPopupOpen);
-
-                          case 14:
-                            _context2.next = 16;
-                            return _this4.getProducts();
-
-                          case 16:
-                            _this4.productDict = _context2.sent; // We get the retailer of the products.
-
-                            _this4.retailer = _this4.getRetailer();
-                            _this4.shipping = _this4.getShipping(_this4.productDict); // This is a timer we will use for loading animation.
-
-                            console.log("iiiik");
-                            console.log(_this4.productDict);
-
-                            timer = function timer(ms) {
-                              return new Promise(function (res) {
-                                return setTimeout(res, ms);
-                              });
-                            };
-
-                          // This loop waits for the popup's DOM to load in.
-
-                          case 22:
-                            if (isPopupOpen) {
-                              _context2.next = 32;
-                              break;
-                            }
-
-                            _context2.next = 25;
-                            return chrome.runtime.sendMessage({
-                              from: "cart",
-                              subject: "sendCartInfo",
-                              data: _this4.productDict,
-                              shipping: _this4.shipping
-                            }).then(function (response) {
-                              return response;
-                            });
-
-                          case 25:
-                            cartInfoReceived = _context2.sent;
-
-                            if (!cartInfoReceived) {
-                              _context2.next = 28;
-                              break;
-                            }
-
-                            return _context2.abrupt("break", 32);
-
-                          case 28:
-                            _context2.next = 30;
-                            return timer(100);
-
-                          case 30:
-                            _context2.next = 22;
-                            break;
-
-                          case 32:
-                            if (!isPopupOpen) {
-                              _context2.next = 36;
-                              break;
-                            }
-
-                            _context2.next = 35;
-                            return chrome.runtime.sendMessage({
-                              from: "cart",
-                              subject: "sendCartInfo",
-                              data: _this4.productDict,
-                              shipping: _this4.shipping
-                            });
-
-                          case 35:
-                            _cartInfoReceived = _context2.sent;
-
-                          case 36:
-                            // Re-enable the button.
-                            _this4.cryptoButton.disabled = false;
-                            _context2.next = 44;
-                            break;
-
-                          case 39:
-                            _context2.prev = 39;
-                            _context2.t0 = _context2["catch"](3);
-                            console.log("Error Crypto Button Flow");
-                            console.log(_context2.t0);
-
-                            if (_context2.t0 instanceof LogError) {
-                              _this4.cryptoButton.disabled = false;
-                            }
-
-                          case 44:
-                            _context2.next = 87;
-                            break;
-
-                          case 46:
-                            if (!(msg.wallet = 'walletConnect')) {
-                              _context2.next = 87;
-                              break;
-                            }
-
-                            _context2.prev = 47;
-                            _context2.next = 50;
-                            return chrome.runtime.sendMessage({
-                              from: "cart",
-                              subject: "isPopupOpen"
-                            });
-
-                          case 50:
-                            _isPopupOpen = _context2.sent;
-
-                            if (_isPopupOpen) {
-                              _context2.next = 54;
-                              break;
-                            }
-
-                            _context2.next = 54;
-                            return chrome.runtime.sendMessage({
-                              from: "cart",
-                              subject: "createOrderPopup",
-                              screenSize: screen.width
-                            });
-
-                          case 54:
-                            console.log("recorded");
-                            console.log("id" + _isPopupOpen); // We get the products selected by the user.
-
-                            _context2.next = 58;
-                            return _this4.getProducts();
-
-                          case 58:
-                            _this4.productDict = _context2.sent; // We get the retailer of the products.
-
-                            _this4.retailer = _this4.getRetailer();
-                            _this4.shipping = _this4.getShipping(_this4.productDict); // This is a timer we will use for loading animation.
-
-                            console.log("iiiik");
-                            console.log(_this4.productDict);
-
-                            _timer = function _timer(ms) {
-                              return new Promise(function (res) {
-                                return setTimeout(res, ms);
-                              });
-                            };
-
-                            console.log(_isPopupOpen);
-                          // This loop waits for the popup's DOM to load in.
-
-                          case 65:
-                            if (_isPopupOpen) {
-                              _context2.next = 75;
-                              break;
-                            }
-
-                            _context2.next = 68;
-                            return chrome.runtime.sendMessage({
-                              from: "cart",
-                              subject: "sendCartInfo",
-                              data: _this4.productDict,
-                              shipping: _this4.shipping
-                            }).then(function (response) {
-                              return response;
-                            });
-
-                          case 68:
-                            _cartInfoReceived2 = _context2.sent;
-
-                            if (!_cartInfoReceived2) {
-                              _context2.next = 71;
-                              break;
-                            }
-
-                            return _context2.abrupt("break", 75);
-
-                          case 71:
-                            _context2.next = 73;
-                            return _timer(100);
-
-                          case 73:
-                            _context2.next = 65;
-                            break;
-
-                          case 75:
-                            if (!_isPopupOpen) {
-                              _context2.next = 79;
-                              break;
-                            }
-
-                            _context2.next = 78;
-                            return chrome.runtime.sendMessage({
-                              from: "cart",
-                              subject: "sendCartInfo",
-                              data: _this4.productDict,
-                              shipping: _this4.shipping
-                            });
-
-                          case 78:
-                            _cartInfoReceived3 = _context2.sent;
-
-                          case 79:
-                            // Re-enable the button.
-                            _this4.cryptoButton.disabled = false;
-                            _context2.next = 87;
-                            break;
-
-                          case 82:
-                            _context2.prev = 82;
-                            _context2.t1 = _context2["catch"](47);
-                            console.log("Error Crypto Button Flow");
-                            console.log(_context2.t1);
-
-                            if (_context2.t1 instanceof LogError) {
-                              _this4.cryptoButton.disabled = false;
-                            }
-
-                          case 87:
-                          case "end":
-                            return _context2.stop();
-                        }
-                      }
-                    }, _callee2, null, [[3, 39], [47, 82]]);
-                  }));
-
-                  return function (_x2, _x3) {
-                    return _ref.apply(this, arguments);
-                  };
-                }());
-
-              case 2:
-              case "end":
-                return _context3.stop();
-            }
-          }
-        }, _callee3);
-      }));
-
-      function cryptoButtonPressed() {
-        return _cryptoButtonPressed.apply(this, arguments);
-      }
-
-      return cryptoButtonPressed;
-    }() // This function checks to make sure that the user is connected with Metamask and has a wallet connected.
-
-  }, {
-    key: "checkMetamaskSignIn",
-    value: function () {
-      var _checkMetamaskSignIn = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4() {
-        var accounts;
-        return _regeneratorRuntime().wrap(function _callee4$(_context4) {
-          while (1) {
-            switch (_context4.prev = _context4.next) {
-              case 0:
-                _context4.next = 2;
-                return provider.send("eth_requestAccounts", [])["catch"](function (err) {
-                  throw new LogError("Metamask already open", err.stack, {}, "Metamask already open", Date.now(), function () {
-                    alert("Metamask already open");
-                  });
-                });
-
-              case 2:
-                accounts = _context4.sent;
-
-                if (!(accounts.length === 0)) {
-                  _context4.next = 7;
-                  break;
-                }
-
-                throw new LogError("No Metamask accounts available", err, "No Metamask accounts available", {
-                  accounts: accounts
-                }, Date.now(), function () {
-                  alert("No Metamask accounts available");
-                });
-
-              case 7:
-                return _context4.abrupt("return", accounts[0]);
-
-              case 8:
-              case "end":
-                return _context4.stop();
-            }
-          }
-        }, _callee4);
-      }));
-
-      function checkMetamaskSignIn() {
-        return _checkMetamaskSignIn.apply(this, arguments);
-      }
-
-      return checkMetamaskSignIn;
-    }() // This function checks to make sure that the request is actually coming from a user with a wallet,
-    // and not being spoofed.
-
-  }, {
-    key: "verifyWallet",
-    value: function () {
-      var _verifyWallet = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee5(walletID, isPopupOpen) {
-        var existingToken;
-        return _regeneratorRuntime().wrap(function _callee5$(_context5) {
-          while (1) {
-            switch (_context5.prev = _context5.next) {
-              case 0:
-                _context5.next = 2;
-                return chrome.storage.local.get("glidePayJWT");
-
-              case 2:
-                existingToken = _context5.sent;
-
-                if (!( // We check to see if the JWT is empty.
-                JSON.stringify(existingToken) === "{}" || existingToken.hasOwnProperty("message"))) {
-                  _context5.next = 8;
-                  break;
-                } // If it is, we set it to an empty JSON object, and then we create a new JWT for the user.
-
-
-                existingToken = {};
-                _context5.next = 7;
-                return this.createJWTToken(walletID, existingToken.glidePayJWT, isPopupOpen);
-
-              case 7:
-                return _context5.abrupt("return");
-
-              case 8:
-                _context5.next = 10;
-                return this.verifyToken(walletID, existingToken.glidePayJWT);
-
-              case 10:
-                if (_context5.sent) {
-                  _context5.next = 16;
-                  break;
-                }
-
-                _context5.next = 13;
-                return this.createJWTToken(walletID.toLowerCase(), existingToken.glidePayJWT, isPopupOpen);
-
-              case 13:
-                return _context5.abrupt("return");
-
-              case 16:
-                if (isPopupOpen) {
-                  _context5.next = 19;
-                  break;
-                }
-
-                _context5.next = 19;
-                return chrome.runtime.sendMessage({
-                  from: "cart",
-                  subject: "createOrderPopup",
-                  screenSize: screen.width
-                });
-
-              case 19:
-              case "end":
-                return _context5.stop();
-            }
-          }
-        }, _callee5, this);
-      }));
-
-      function verifyWallet(_x4, _x5) {
-        return _verifyWallet.apply(this, arguments);
-      }
-
-      return verifyWallet;
-    }() // This function creates a JWT for the user.
-
-  }, {
-    key: "createJWTToken",
-    value: function () {
-      var _createJWTToken = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee6(walletID, token, isPopupOpen) {
-        var _this5 = this;
-
-        var nonceResponse, nonce, message, signature, signatureResponse, signatureResponseError, newToken;
-        return _regeneratorRuntime().wrap(function _callee6$(_context6) {
-          while (1) {
-            switch (_context6.prev = _context6.next) {
-              case 0:
-                _context6.next = 2;
-                return chrome.runtime.sendMessage({
-                  from: "cart",
-                  subject: "generateNonce",
-                  body: {
-                    // We pass the walletID to the backend to get the nonce. We make sure that we set it to lowercase
-                    // because Metamask often sends us the walletID in lowercase, and so we must be consistent as to how we store
-                    // the wallet.
-                    wallet: walletID.toLowerCase()
-                  }
-                });
-
-              case 2:
-                nonceResponse = _context6.sent;
-
-                if (!nonceResponse.hasOwnProperty("error")) {
-                  _context6.next = 5;
-                  break;
-                }
-
-                throw new LogError(nonceResponse.customMsg, nonceResponse.error, {
-                  walletID: walletID,
-                  token: token
-                }, nonceResponse.uiMsg, nonceResponse.errorID, function () {
-                  _this5.cryptoButton.disabled = false;
-                  alert("Server Error");
-                });
-
-              case 5:
-                // Declaring the nonce.
-                nonce = nonceResponse.data; // We generate this message to be displayed to the user in the Metamask popup. THIS MUST BE EXACTLY THE SAME HERE
-                // AS IT IS ON THE BACKEND. IF YOU CHANGE THIS, MAKE SURE TO ALSO CHANGE THE BACKEND.
-
-                message = "Please sign this message to login!.\n Nonce: " + nonce; // This prompts the user to sign the message, and awaits the signature that is generated.
-
-                _context6.next = 9;
-                return signer.signMessage(message);
-
-              case 9:
-                signature = _context6.sent;
-
-                if (isPopupOpen) {
-                  _context6.next = 13;
-                  break;
-                }
-
-                _context6.next = 13;
-                return chrome.runtime.sendMessage({
-                  from: "cart",
-                  subject: "createOrderPopup",
-                  screenSize: screen.width
-                });
-
-              case 13:
-                _context6.next = 15;
-                return chrome.runtime.sendMessage({
-                  from: "cart",
-                  subject: "verifySignature",
-                  body: {
-                    wallet: walletID,
-                    walletSignature: signature,
-                    existingToken: token
-                  }
-                });
-
-              case 15:
-                signatureResponse = _context6.sent;
-
-                if (!signatureResponse.hasOwnProperty("error")) {
-                  _context6.next = 19;
-                  break;
-                }
-
-                signatureResponseError = signatureResponse.error;
-                throw new LogError(signatureResponseError.customMsg, signatureResponseError.error, {
-                  walletID: walletID,
-                  token: token,
-                  nonce: nonce,
-                  message: message,
-                  signature: signature
-                }, signatureResponseError.uiMsg, signatureResponseError.errorID, function () {
-                  _this5.cryptoButton.disabled = false;
-                  alert("Server Error");
-                });
-
-              case 19:
-                console.log(signatureResponse); // If there's no error, we set the JWT to the response.
-
-                newToken = signatureResponse.data; // Then we store it in localStorage.
-
-                _context6.next = 23;
-                return chrome.storage.local.set({
-                  glidePayJWT: newToken
-                });
-
-              case 23:
-                console.log("Wallet Verified and Set");
-
-              case 24:
-              case "end":
-                return _context6.stop();
-            }
-          }
-        }, _callee6);
-      }));
-
-      function createJWTToken(_x6, _x7, _x8) {
-        return _createJWTToken.apply(this, arguments);
-      }
-
-      return createJWTToken;
-    }() // This function verifies the JWT.
-
-  }, {
-    key: "verifyToken",
-    value: function () {
-      var _verifyToken = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee7(walletID, token) {
-        var _this6 = this;
-
-        var verifyTokenResponse, verifyTokenResponseError;
-        return _regeneratorRuntime().wrap(function _callee7$(_context7) {
-          while (1) {
-            switch (_context7.prev = _context7.next) {
-              case 0:
-                _context7.next = 2;
-                return chrome.runtime.sendMessage({
-                  from: "cart",
-                  subject: "verifyToken",
-                  body: {
-                    token: token,
-                    wallet: walletID
-                  }
-                });
-
-              case 2:
-                verifyTokenResponse = _context7.sent;
-
-                if (!verifyTokenResponse.hasOwnProperty("error")) {
-                  _context7.next = 6;
-                  break;
-                }
-
-                verifyTokenResponseError = verifyTokenResponse.error;
-                throw new LogError(verifyTokenResponseError.customMsg, verifyTokenResponseError.error, {
-                  walletID: walletID,
-                  token: token
-                }, verifyTokenResponseError.uiMsg, verifyTokenResponseError.errorID, function () {
-                  _this6.cryptoButton.disabled = false;
-                  alert("CRITICAL ERROR: VERIFY TOKEN FAILED"); //? Why would we do this?
-                });
-
-              case 6:
-                return _context7.abrupt("return", verifyTokenResponse.data);
-
-              case 7:
-              case "end":
-                return _context7.stop();
-            }
-          }
-        }, _callee7);
-      }));
-
-      function verifyToken(_x9, _x10) {
-        return _verifyToken.apply(this, arguments);
-      }
-
-      return verifyToken;
-    }()
-  }]);
-
-  return EcommerceCart;
-}(); // Export the class so that it can be used in other files.
+} // Export the class so that it can be used in other files.
 
 
 module.exports = {
-  EcommerceCart: EcommerceCart
+  EcommerceCart
 };
 
-},{"./LogError":258,"ethers":184,"metamask-extension-provider":229}],258:[function(require,module,exports){
-"use strict";
-
-function _classCallCheck(instance, Constructor) {
-  if (!(instance instanceof Constructor)) {
-    throw new TypeError("Cannot call a class as a function");
-  }
-}
-
-function _defineProperties(target, props) {
-  for (var i = 0; i < props.length; i++) {
-    var descriptor = props[i];
-    descriptor.enumerable = descriptor.enumerable || false;
-    descriptor.configurable = true;
-    if ("value" in descriptor) descriptor.writable = true;
-    Object.defineProperty(target, descriptor.key, descriptor);
-  }
-}
-
-function _createClass(Constructor, protoProps, staticProps) {
-  if (protoProps) _defineProperties(Constructor.prototype, protoProps);
-  if (staticProps) _defineProperties(Constructor, staticProps);
-  Object.defineProperty(Constructor, "prototype", {
-    writable: false
-  });
-  return Constructor;
-} // Error logging class.
-
-
-var LogError = /*#__PURE__*/function () {
-  function LogError(customMsg, error, states, uiMsg, errorID, handle) {
-    _classCallCheck(this, LogError);
-
+},{"./LogError":259,"crypto-js/core":159,"ethers":185,"metamask-extension-provider":230}],259:[function(require,module,exports){
+// Error logging class.
+class LogError {
+  constructor(customMsg, error, states, uiMsg, errorID, handle) {
     this.customMsg = customMsg || null;
     this.error = error || null;
     this.states = states;
@@ -46617,673 +46610,127 @@ var LogError = /*#__PURE__*/function () {
     this.logError();
   }
 
-  _createClass(LogError, [{
-    key: "getDate",
-    value: function getDate() {
-      var today = new Date();
-      var yyyy = today.getFullYear();
-      var mm = String(today.getMonth() + 1).padStart(2, "0");
-      var dd = String(today.getDate()).padStart(2, "0");
-      var hh = String(today.getHours()).padStart(2, "0");
-      var nn = String(today.getMinutes()).padStart(2, "0");
-      var ss = String(today.getSeconds()).padStart(2, "0");
-      return "".concat(yyyy, "/").concat(mm, "/").concat(dd, "T").concat(hh, ":").concat(nn, ":").concat(ss);
-    }
-  }, {
-    key: "logError",
-    value: function logError() {
-      chrome.runtime.sendMessage({
-        from: "cart",
-        subject: "logError",
-        body: {
-          logError: this
-        }
-      }); // TODO: Logs error to database
-    }
-  }]);
+  getDate() {
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, "0");
+    const dd = String(today.getDate()).padStart(2, "0");
+    const hh = String(today.getHours()).padStart(2, "0");
+    const nn = String(today.getMinutes()).padStart(2, "0");
+    const ss = String(today.getSeconds()).padStart(2, "0");
+    return `${yyyy}/${mm}/${dd}T${hh}:${nn}:${ss}`;
+  }
 
-  return LogError;
-}();
+  logError() {
+    chrome.runtime.sendMessage({
+      from: "cart",
+      subject: "logError",
+      body: {
+        logError: this
+      }
+    }); // TODO: Logs error to database
+  }
+
+}
 
 module.exports = {
-  LogError: LogError
+  LogError
 };
 
-},{}],259:[function(require,module,exports){
-"use strict";
+},{}],260:[function(require,module,exports){
+const {
+  LogError
+} = require("./LogError");
 
-function _typeof(obj) {
-  "@babel/helpers - typeof";
+const ECommerceCart = require("./ECommerceCart"); // ALL CHANGES TO THIS FILE MUST BE COMPILED WITH "npm run buildAmazon"
 
-  return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) {
-    return typeof obj;
-  } : function (obj) {
-    return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
-  }, _typeof(obj);
-}
 
-function _regeneratorRuntime() {
-  "use strict";
-  /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */
-
-  _regeneratorRuntime = function _regeneratorRuntime() {
-    return exports;
-  };
-
-  var exports = {},
-      Op = Object.prototype,
-      hasOwn = Op.hasOwnProperty,
-      $Symbol = "function" == typeof Symbol ? Symbol : {},
-      iteratorSymbol = $Symbol.iterator || "@@iterator",
-      asyncIteratorSymbol = $Symbol.asyncIterator || "@@asyncIterator",
-      toStringTagSymbol = $Symbol.toStringTag || "@@toStringTag";
-
-  function define(obj, key, value) {
-    return Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: !0,
-      configurable: !0,
-      writable: !0
-    }), obj[key];
-  }
-
-  try {
-    define({}, "");
-  } catch (err) {
-    define = function define(obj, key, value) {
-      return obj[key] = value;
-    };
-  }
-
-  function wrap(innerFn, outerFn, self, tryLocsList) {
-    var protoGenerator = outerFn && outerFn.prototype instanceof Generator ? outerFn : Generator,
-        generator = Object.create(protoGenerator.prototype),
-        context = new Context(tryLocsList || []);
-    return generator._invoke = function (innerFn, self, context) {
-      var state = "suspendedStart";
-      return function (method, arg) {
-        if ("executing" === state) throw new Error("Generator is already running");
-
-        if ("completed" === state) {
-          if ("throw" === method) throw arg;
-          return doneResult();
-        }
-
-        for (context.method = method, context.arg = arg;;) {
-          var delegate = context.delegate;
-
-          if (delegate) {
-            var delegateResult = maybeInvokeDelegate(delegate, context);
-
-            if (delegateResult) {
-              if (delegateResult === ContinueSentinel) continue;
-              return delegateResult;
-            }
-          }
-
-          if ("next" === context.method) context.sent = context._sent = context.arg;else if ("throw" === context.method) {
-            if ("suspendedStart" === state) throw state = "completed", context.arg;
-            context.dispatchException(context.arg);
-          } else "return" === context.method && context.abrupt("return", context.arg);
-          state = "executing";
-          var record = tryCatch(innerFn, self, context);
-
-          if ("normal" === record.type) {
-            if (state = context.done ? "completed" : "suspendedYield", record.arg === ContinueSentinel) continue;
-            return {
-              value: record.arg,
-              done: context.done
-            };
-          }
-
-          "throw" === record.type && (state = "completed", context.method = "throw", context.arg = record.arg);
-        }
-      };
-    }(innerFn, self, context), generator;
-  }
-
-  function tryCatch(fn, obj, arg) {
-    try {
-      return {
-        type: "normal",
-        arg: fn.call(obj, arg)
-      };
-    } catch (err) {
-      return {
-        type: "throw",
-        arg: err
-      };
-    }
-  }
-
-  exports.wrap = wrap;
-  var ContinueSentinel = {};
-
-  function Generator() {}
-
-  function GeneratorFunction() {}
-
-  function GeneratorFunctionPrototype() {}
-
-  var IteratorPrototype = {};
-  define(IteratorPrototype, iteratorSymbol, function () {
-    return this;
-  });
-  var getProto = Object.getPrototypeOf,
-      NativeIteratorPrototype = getProto && getProto(getProto(values([])));
-  NativeIteratorPrototype && NativeIteratorPrototype !== Op && hasOwn.call(NativeIteratorPrototype, iteratorSymbol) && (IteratorPrototype = NativeIteratorPrototype);
-  var Gp = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(IteratorPrototype);
-
-  function defineIteratorMethods(prototype) {
-    ["next", "throw", "return"].forEach(function (method) {
-      define(prototype, method, function (arg) {
-        return this._invoke(method, arg);
-      });
-    });
-  }
-
-  function AsyncIterator(generator, PromiseImpl) {
-    function invoke(method, arg, resolve, reject) {
-      var record = tryCatch(generator[method], generator, arg);
-
-      if ("throw" !== record.type) {
-        var result = record.arg,
-            value = result.value;
-        return value && "object" == _typeof(value) && hasOwn.call(value, "__await") ? PromiseImpl.resolve(value.__await).then(function (value) {
-          invoke("next", value, resolve, reject);
-        }, function (err) {
-          invoke("throw", err, resolve, reject);
-        }) : PromiseImpl.resolve(value).then(function (unwrapped) {
-          result.value = unwrapped, resolve(result);
-        }, function (error) {
-          return invoke("throw", error, resolve, reject);
-        });
-      }
-
-      reject(record.arg);
-    }
-
-    var previousPromise;
-
-    this._invoke = function (method, arg) {
-      function callInvokeWithMethodAndArg() {
-        return new PromiseImpl(function (resolve, reject) {
-          invoke(method, arg, resolve, reject);
-        });
-      }
-
-      return previousPromise = previousPromise ? previousPromise.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg();
-    };
-  }
-
-  function maybeInvokeDelegate(delegate, context) {
-    var method = delegate.iterator[context.method];
-
-    if (undefined === method) {
-      if (context.delegate = null, "throw" === context.method) {
-        if (delegate.iterator["return"] && (context.method = "return", context.arg = undefined, maybeInvokeDelegate(delegate, context), "throw" === context.method)) return ContinueSentinel;
-        context.method = "throw", context.arg = new TypeError("The iterator does not provide a 'throw' method");
-      }
-
-      return ContinueSentinel;
-    }
-
-    var record = tryCatch(method, delegate.iterator, context.arg);
-    if ("throw" === record.type) return context.method = "throw", context.arg = record.arg, context.delegate = null, ContinueSentinel;
-    var info = record.arg;
-    return info ? info.done ? (context[delegate.resultName] = info.value, context.next = delegate.nextLoc, "return" !== context.method && (context.method = "next", context.arg = undefined), context.delegate = null, ContinueSentinel) : info : (context.method = "throw", context.arg = new TypeError("iterator result is not an object"), context.delegate = null, ContinueSentinel);
-  }
-
-  function pushTryEntry(locs) {
-    var entry = {
-      tryLoc: locs[0]
-    };
-    1 in locs && (entry.catchLoc = locs[1]), 2 in locs && (entry.finallyLoc = locs[2], entry.afterLoc = locs[3]), this.tryEntries.push(entry);
-  }
-
-  function resetTryEntry(entry) {
-    var record = entry.completion || {};
-    record.type = "normal", delete record.arg, entry.completion = record;
-  }
-
-  function Context(tryLocsList) {
-    this.tryEntries = [{
-      tryLoc: "root"
-    }], tryLocsList.forEach(pushTryEntry, this), this.reset(!0);
-  }
-
-  function values(iterable) {
-    if (iterable) {
-      var iteratorMethod = iterable[iteratorSymbol];
-      if (iteratorMethod) return iteratorMethod.call(iterable);
-      if ("function" == typeof iterable.next) return iterable;
-
-      if (!isNaN(iterable.length)) {
-        var i = -1,
-            next = function next() {
-          for (; ++i < iterable.length;) {
-            if (hasOwn.call(iterable, i)) return next.value = iterable[i], next.done = !1, next;
-          }
-
-          return next.value = undefined, next.done = !0, next;
-        };
-
-        return next.next = next;
-      }
-    }
-
-    return {
-      next: doneResult
-    };
-  }
-
-  function doneResult() {
-    return {
-      value: undefined,
-      done: !0
-    };
-  }
-
-  return GeneratorFunction.prototype = GeneratorFunctionPrototype, define(Gp, "constructor", GeneratorFunctionPrototype), define(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, toStringTagSymbol, "GeneratorFunction"), exports.isGeneratorFunction = function (genFun) {
-    var ctor = "function" == typeof genFun && genFun.constructor;
-    return !!ctor && (ctor === GeneratorFunction || "GeneratorFunction" === (ctor.displayName || ctor.name));
-  }, exports.mark = function (genFun) {
-    return Object.setPrototypeOf ? Object.setPrototypeOf(genFun, GeneratorFunctionPrototype) : (genFun.__proto__ = GeneratorFunctionPrototype, define(genFun, toStringTagSymbol, "GeneratorFunction")), genFun.prototype = Object.create(Gp), genFun;
-  }, exports.awrap = function (arg) {
-    return {
-      __await: arg
-    };
-  }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, asyncIteratorSymbol, function () {
-    return this;
-  }), exports.AsyncIterator = AsyncIterator, exports.async = function (innerFn, outerFn, self, tryLocsList, PromiseImpl) {
-    void 0 === PromiseImpl && (PromiseImpl = Promise);
-    var iter = new AsyncIterator(wrap(innerFn, outerFn, self, tryLocsList), PromiseImpl);
-    return exports.isGeneratorFunction(outerFn) ? iter : iter.next().then(function (result) {
-      return result.done ? result.value : iter.next();
-    });
-  }, defineIteratorMethods(Gp), define(Gp, toStringTagSymbol, "Generator"), define(Gp, iteratorSymbol, function () {
-    return this;
-  }), define(Gp, "toString", function () {
-    return "[object Generator]";
-  }), exports.keys = function (object) {
-    var keys = [];
-
-    for (var key in object) {
-      keys.push(key);
-    }
-
-    return keys.reverse(), function next() {
-      for (; keys.length;) {
-        var key = keys.pop();
-        if (key in object) return next.value = key, next.done = !1, next;
-      }
-
-      return next.done = !0, next;
-    };
-  }, exports.values = values, Context.prototype = {
-    constructor: Context,
-    reset: function reset(skipTempReset) {
-      if (this.prev = 0, this.next = 0, this.sent = this._sent = undefined, this.done = !1, this.delegate = null, this.method = "next", this.arg = undefined, this.tryEntries.forEach(resetTryEntry), !skipTempReset) for (var name in this) {
-        "t" === name.charAt(0) && hasOwn.call(this, name) && !isNaN(+name.slice(1)) && (this[name] = undefined);
-      }
-    },
-    stop: function stop() {
-      this.done = !0;
-      var rootRecord = this.tryEntries[0].completion;
-      if ("throw" === rootRecord.type) throw rootRecord.arg;
-      return this.rval;
-    },
-    dispatchException: function dispatchException(exception) {
-      if (this.done) throw exception;
-      var context = this;
-
-      function handle(loc, caught) {
-        return record.type = "throw", record.arg = exception, context.next = loc, caught && (context.method = "next", context.arg = undefined), !!caught;
-      }
-
-      for (var i = this.tryEntries.length - 1; i >= 0; --i) {
-        var entry = this.tryEntries[i],
-            record = entry.completion;
-        if ("root" === entry.tryLoc) return handle("end");
-
-        if (entry.tryLoc <= this.prev) {
-          var hasCatch = hasOwn.call(entry, "catchLoc"),
-              hasFinally = hasOwn.call(entry, "finallyLoc");
-
-          if (hasCatch && hasFinally) {
-            if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0);
-            if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc);
-          } else if (hasCatch) {
-            if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0);
-          } else {
-            if (!hasFinally) throw new Error("try statement without catch or finally");
-            if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc);
-          }
-        }
-      }
-    },
-    abrupt: function abrupt(type, arg) {
-      for (var i = this.tryEntries.length - 1; i >= 0; --i) {
-        var entry = this.tryEntries[i];
-
-        if (entry.tryLoc <= this.prev && hasOwn.call(entry, "finallyLoc") && this.prev < entry.finallyLoc) {
-          var finallyEntry = entry;
-          break;
-        }
-      }
-
-      finallyEntry && ("break" === type || "continue" === type) && finallyEntry.tryLoc <= arg && arg <= finallyEntry.finallyLoc && (finallyEntry = null);
-      var record = finallyEntry ? finallyEntry.completion : {};
-      return record.type = type, record.arg = arg, finallyEntry ? (this.method = "next", this.next = finallyEntry.finallyLoc, ContinueSentinel) : this.complete(record);
-    },
-    complete: function complete(record, afterLoc) {
-      if ("throw" === record.type) throw record.arg;
-      return "break" === record.type || "continue" === record.type ? this.next = record.arg : "return" === record.type ? (this.rval = this.arg = record.arg, this.method = "return", this.next = "end") : "normal" === record.type && afterLoc && (this.next = afterLoc), ContinueSentinel;
-    },
-    finish: function finish(finallyLoc) {
-      for (var i = this.tryEntries.length - 1; i >= 0; --i) {
-        var entry = this.tryEntries[i];
-        if (entry.finallyLoc === finallyLoc) return this.complete(entry.completion, entry.afterLoc), resetTryEntry(entry), ContinueSentinel;
-      }
-    },
-    "catch": function _catch(tryLoc) {
-      for (var i = this.tryEntries.length - 1; i >= 0; --i) {
-        var entry = this.tryEntries[i];
-
-        if (entry.tryLoc === tryLoc) {
-          var record = entry.completion;
-
-          if ("throw" === record.type) {
-            var thrown = record.arg;
-            resetTryEntry(entry);
-          }
-
-          return thrown;
-        }
-      }
-
-      throw new Error("illegal catch attempt");
-    },
-    delegateYield: function delegateYield(iterable, resultName, nextLoc) {
-      return this.delegate = {
-        iterator: values(iterable),
-        resultName: resultName,
-        nextLoc: nextLoc
-      }, "next" === this.method && (this.arg = undefined), ContinueSentinel;
-    }
-  }, exports;
-}
-
-function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {
-  try {
-    var info = gen[key](arg);
-    var value = info.value;
-  } catch (error) {
-    reject(error);
-    return;
-  }
-
-  if (info.done) {
-    resolve(value);
-  } else {
-    Promise.resolve(value).then(_next, _throw);
-  }
-}
-
-function _asyncToGenerator(fn) {
-  return function () {
-    var self = this,
-        args = arguments;
-    return new Promise(function (resolve, reject) {
-      var gen = fn.apply(self, args);
-
-      function _next(value) {
-        asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value);
-      }
-
-      function _throw(err) {
-        asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err);
-      }
-
-      _next(undefined);
-    });
-  };
-}
-
-function _classCallCheck(instance, Constructor) {
-  if (!(instance instanceof Constructor)) {
-    throw new TypeError("Cannot call a class as a function");
-  }
-}
-
-function _defineProperties(target, props) {
-  for (var i = 0; i < props.length; i++) {
-    var descriptor = props[i];
-    descriptor.enumerable = descriptor.enumerable || false;
-    descriptor.configurable = true;
-    if ("value" in descriptor) descriptor.writable = true;
-    Object.defineProperty(target, descriptor.key, descriptor);
-  }
-}
-
-function _createClass(Constructor, protoProps, staticProps) {
-  if (protoProps) _defineProperties(Constructor.prototype, protoProps);
-  if (staticProps) _defineProperties(Constructor, staticProps);
-  Object.defineProperty(Constructor, "prototype", {
-    writable: false
-  });
-  return Constructor;
-}
-
-function _inherits(subClass, superClass) {
-  if (typeof superClass !== "function" && superClass !== null) {
-    throw new TypeError("Super expression must either be null or a function");
-  }
-
-  subClass.prototype = Object.create(superClass && superClass.prototype, {
-    constructor: {
-      value: subClass,
-      writable: true,
-      configurable: true
-    }
-  });
-  Object.defineProperty(subClass, "prototype", {
-    writable: false
-  });
-  if (superClass) _setPrototypeOf(subClass, superClass);
-}
-
-function _setPrototypeOf(o, p) {
-  _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function _setPrototypeOf(o, p) {
-    o.__proto__ = p;
-    return o;
-  };
-  return _setPrototypeOf(o, p);
-}
-
-function _createSuper(Derived) {
-  var hasNativeReflectConstruct = _isNativeReflectConstruct();
-
-  return function _createSuperInternal() {
-    var Super = _getPrototypeOf(Derived),
-        result;
-
-    if (hasNativeReflectConstruct) {
-      var NewTarget = _getPrototypeOf(this).constructor;
-
-      result = Reflect.construct(Super, arguments, NewTarget);
-    } else {
-      result = Super.apply(this, arguments);
-    }
-
-    return _possibleConstructorReturn(this, result);
-  };
-}
-
-function _possibleConstructorReturn(self, call) {
-  if (call && (_typeof(call) === "object" || typeof call === "function")) {
-    return call;
-  } else if (call !== void 0) {
-    throw new TypeError("Derived constructors may only return object or undefined");
-  }
-
-  return _assertThisInitialized(self);
-}
-
-function _assertThisInitialized(self) {
-  if (self === void 0) {
-    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-  }
-
-  return self;
-}
-
-function _isNativeReflectConstruct() {
-  if (typeof Reflect === "undefined" || !Reflect.construct) return false;
-  if (Reflect.construct.sham) return false;
-  if (typeof Proxy === "function") return true;
-
-  try {
-    Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {}));
-    return true;
-  } catch (e) {
-    return false;
-  }
-}
-
-function _getPrototypeOf(o) {
-  _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function _getPrototypeOf(o) {
-    return o.__proto__ || Object.getPrototypeOf(o);
-  };
-  return _getPrototypeOf(o);
-}
-
-var _require = require("./LogError"),
-    LogError = _require.LogError;
-
-var ECommerceCart = require("./ECommerceCart"); // ALL CHANGES TO THIS FILE MUST BE COMPILED WITH "npm run buildAmazon"
-
-
-var Amazon = /*#__PURE__*/function (_ECommerceCart$Ecomme) {
-  _inherits(Amazon, _ECommerceCart$Ecomme);
-
-  var _super = _createSuper(Amazon);
+class Amazon extends ECommerceCart.EcommerceCart {
   /**
    * Defines methods and handles the flow specific to Amazon's website.
    * See the following link (Amazon handles Amazon Flow).
    * https://lucid.app/lucidchart/86202d2d-3c46-49a6-89d9-a9164dd5f1ad/edit?invitationId=inv_d5751113-87f0-4abf-a8c3-6a076808331f&page=0_0#?referringapp=slack&login=slack
    */
-
-
-  function Amazon() {
-    _classCallCheck(this, Amazon);
-
-    return _super.call(this);
+  constructor() {
+    super();
   }
 
-  _createClass(Amazon, [{
-    key: "injectButton",
-    value: function injectButton() {
-      /**
-           * Injects the pay with crypto button into Amazon's checkout page.
-           * @function injectButton
-            */
-      var add_to_cart = document.getElementById("gutterCartViewForm");
-      add_to_cart.after(this.cryptoButton);
-      document.getElementById("gutterCartViewForm").style.marginBottom = "10px";
-      document.getElementById("sc-buy-box").style.paddingBottom = "5px";
-    }
-  }, {
-    key: "getProducts",
-    value: function () {
-      var _getProducts = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
-        var productDict, productElements, productElementsList;
-        return _regeneratorRuntime().wrap(function _callee$(_context) {
-          while (1) {
-            switch (_context.prev = _context.next) {
-              case 0:
-                /**
-                 * Parses Amazon's checkout page for the user's selected products.
-                 * @function getProducts
-                 * @return  {Object} Contains the products selected by the user.
-                 */
-                console.log("getProducts");
-                console.log(document.querySelector("#activeCartViewForm"));
-                productDict = {};
-                productElements = document.querySelectorAll("#activeCartViewForm > div.a-section.a-spacing-mini.sc-list-body.sc-java-remote-feature > div.a-row.sc-list-item.sc-list-item-border.sc-java-remote-feature");
-                productElementsList = Array.from(productElements);
-                productElementsList.forEach(function (part, index, theArray) {
-                  var imageElement = theArray[index].querySelectorAll("div.sc-list-item-content > div > div.a-column.a-span10 > div > div > div.a-fixed-left-grid-col.a-float-left.sc-product-image-desktop.a-col-left > a > img")[0];
+  injectButton() {
+    /**
+         * Injects the pay with crypto button into Amazon's checkout page.
+         * @function injectButton
+          */
+    const add_to_cart = document.getElementById("gutterCartViewForm");
+    add_to_cart.after(this.cryptoButton);
+    document.getElementById("gutterCartViewForm").style.marginBottom = "10px";
+    document.getElementById("sc-buy-box").style.paddingBottom = "5px";
+  }
 
-                  if (imageElement === undefined) {
-                    return;
-                  }
+  async getProducts() {
+    /**
+     * Parses Amazon's checkout page for the user's selected products.
+     * @function getProducts
+     * @return  {Object} Contains the products selected by the user.
+     */
+    console.log("getProducts");
+    console.log(document.querySelector("#activeCartViewForm"));
+    let productDict = {};
+    let productElements = document.querySelectorAll("#activeCartViewForm > div.a-section.a-spacing-mini.sc-list-body.sc-java-remote-feature > div.a-row.sc-list-item.sc-list-item-border.sc-java-remote-feature");
+    let productElementsList = Array.from(productElements);
+    productElementsList.forEach(function (part, index, theArray) {
+      const imageElement = theArray[index].querySelectorAll("div.sc-list-item-content > div > div.a-column.a-span10 > div > div > div.a-fixed-left-grid-col.a-float-left.sc-product-image-desktop.a-col-left > a > img")[0];
 
-                  var currency = JSON.parse(part.getAttribute("data-subtotal")).subtotal.code;
-                  console.log(currency);
-                  var ASIN = theArray[index].getAttribute("data-asin");
-                  var productName = imageElement.getAttribute("alt");
-                  var unitPrice = theArray[index].getAttribute("data-price");
-                  var quantity = theArray[index].getAttribute("data-quantity");
-                  var productImage = imageElement.getAttribute("src");
-                  productDict[index] = {
-                    productID: ASIN,
-                    productName: productName,
-                    unitPrice: unitPrice,
-                    quantity: quantity,
-                    productImage: productImage,
-                    currency: currency
-                  };
-                });
-                return _context.abrupt("return", productDict);
-
-              case 7:
-              case "end":
-                return _context.stop();
-            }
-          }
-        }, _callee);
-      }));
-
-      function getProducts() {
-        return _getProducts.apply(this, arguments);
+      if (imageElement === undefined) {
+        return;
       }
 
-      return getProducts;
-    }()
-  }, {
-    key: "getRetailer",
-    value: function getRetailer() {
-      var url = window.location.href;
+      const currency = JSON.parse(part.getAttribute("data-subtotal")).subtotal.code;
+      console.log(currency);
+      const ASIN = theArray[index].getAttribute("data-asin");
+      const productName = imageElement.getAttribute("alt");
+      const unitPrice = theArray[index].getAttribute("data-price");
+      const quantity = theArray[index].getAttribute("data-quantity");
+      const productImage = imageElement.getAttribute("src");
+      productDict[index] = {
+        productID: ASIN,
+        productName: productName,
+        unitPrice: unitPrice,
+        quantity: quantity,
+        productImage: productImage,
+        currency: currency
+      };
+    });
+    return productDict;
+  }
 
-      if (url.includes("amazon.com.mx")) {
-        return "amazon_mx";
-      } else if (url.includes("www.amazon.ca")) {
-        return "amazon_ca";
-      } else if (url.includes("www.amazon.de")) {
-        return "amazon_de";
-      } else if (url.includes("www.amazon.co.uk")) {
-        return "amazon_uk";
-      } else {
-        return "amazon";
-      }
-    }
-  }, {
-    key: "getShipping",
-    value: function getShipping() {
-      return 0;
-    }
-  }]);
+  getRetailer() {
+    let url = window.location.href;
 
-  return Amazon;
-}(ECommerceCart.EcommerceCart);
+    if (url.includes("amazon.com.mx")) {
+      return "amazon_mx";
+    } else if (url.includes("www.amazon.ca")) {
+      return "amazon_ca";
+    } else if (url.includes("www.amazon.de")) {
+      return "amazon_de";
+    } else if (url.includes("www.amazon.co.uk")) {
+      return "amazon_uk";
+    } else {
+      return "amazon";
+    }
+  }
+
+  getShipping() {
+    return 0;
+  }
+
+}
 
 function main() {
   /**
    * Main runner function.
    * @function main
    */
-  var amazon = new Amazon();
+  let amazon = new Amazon();
   amazon.createListeners();
   amazon.injectButton();
   chrome.runtime.sendMessage({
@@ -47294,7 +46741,7 @@ function main() {
     amazon.injectButton();
   });
   var container = document.getElementById("sc-active-cart");
-  var config = {
+  let config = {
     attributes: true,
     childList: true,
     subtree: true,
@@ -47305,4 +46752,4 @@ function main() {
 
 main();
 
-},{"./ECommerceCart":257,"./LogError":258}]},{},[259]);
+},{"./ECommerceCart":258,"./LogError":259}]},{},[260]);

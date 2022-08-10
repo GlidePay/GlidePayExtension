@@ -1,10 +1,14 @@
 
 import WalletConnect from "@walletconnect/client";
 import QRCodeModal from "@walletconnect/qrcode-modal";
+import {PeraWalletConnect} from "@perawallet/connect";
+
+
 async function main(){
   console.log('running')
   const metamask = document.getElementById("metamask");
   const walletConnect = document.getElementById("walletConnect");
+  const pera = document.getElementById("pera");
 const senderTabID = await chrome.runtime.sendMessage({
     from: "confirmation",
     subject: "getTabID",
@@ -85,7 +89,38 @@ walletConnect.addEventListener("click", async() => {
               
     )
     console.log(response);}}
-    }});})}
+    }});})
+
+    pera.addEventListener("click", async() => {
+      console.log('click')
+
+// Create the PeraWalletConnect instance outside of the component
+    const peraWallet = new PeraWalletConnect({shouldShowSignTxnToast: false});
+    try {peraWallet.disconnect();}catch{}
+    peraWallet.connect().then(async (newAccounts) => {
+      peraWallet.connector?.on("disconnect", peraWallet.disconnect());
+
+      const windows = await chrome.windows.getAll({ populate: true });
+      for (let a in windows) {
+        for (let b in windows[a].tabs) {
+          if (windows[a].tabs[b].id === senderTabID) {
+            const response = await chrome.tabs.sendMessage(
+              windows[a].tabs[b].id,
+              {
+                from: "popup",
+                subject: "walletChoice",
+                wallet: 'pera',
+                address: newAccounts[0]
+              }
+              
+    )
+    console.log(response);}}
+    }
+    window.close()
+    })
+    })
+
+  }
 
 
 main()

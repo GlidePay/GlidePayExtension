@@ -87,7 +87,7 @@ async function getAddresses() {
   productSection.appendChild(addressButtonRow);
 }
 
-async function setProductInfo(products, shipping, sender) {
+async function setProductInfo(products, shipping, sender, wallet, address) {
   let currency;
   const cartView = document.getElementById("cart-view");
   const loadingView = document.getElementById("loading-view");
@@ -155,6 +155,8 @@ async function setProductInfo(products, shipping, sender) {
       //TODO: Add text or popup or something that says this
       return;
     }
+    console.log(wallet)
+    if (wallet == 'metamask') {
     console.log(chain)
     const windows = await chrome.windows.getAll({ populate: true });
     for (let a in windows) {
@@ -183,6 +185,35 @@ async function setProductInfo(products, shipping, sender) {
           );
         }
       }
+    }}else if (wallet == 'pera') {
+      const windows = await chrome.windows.getAll({ populate: true });
+    for (let a in windows) {
+      for (let b in windows[a].tabs) {
+        if (windows[a].tabs[b].id === sender) {
+          console.log("Found sender");
+          chrome.tabs.sendMessage(
+            windows[a].tabs[b].id,
+            {
+              from: "popup",
+              subject: "promptPeraTransaction",
+              price: totalPrice,
+              currency: currency,
+              addressid:
+                addressSelect.options[addressSelect.selectedIndex].value,
+              products: products,
+              ticker: chain
+            },
+            (response) => {
+              if (response) {
+                window.location.href = "/views/ordersentpopup.html";
+              } else {
+                alert("Signing failed");
+              }
+            }
+          );
+        }
+      }
+    }
     }
   });
 }
@@ -198,9 +229,9 @@ function GetURLParameter(sParam) {
   }
 }
 
-async function setUpCart(products, shipping, senderTabID) {
+async function setUpCart(products, shipping, senderTabID, wallet, address) {
   try {
-    await setProductInfo(products, shipping, senderTabID);
+    await setProductInfo(products, shipping, senderTabID, wallet, address);
   } catch (err) {
     new LogError(
       "Setting Product Info Failed (Uncaught)",
@@ -289,8 +320,16 @@ async function cartMain() {
         sendResponse(true);
         const products = message.data;
         const shipping = message.shipping;
+        const wallet = message.wallet;
+        console.log(wallet)
+          const address = message.address
+          if (message.wallet == 'pera') {
+          let evmSelect = document.getElementById('currencySelect')
+          evmSelect.remove()
+          }
+          
         console.log(shipping);
-        await setUpCart(products, shipping, senderTabID);
+        await setUpCart(products, shipping, senderTabID, wallet, address);
       }
       return true;
     }

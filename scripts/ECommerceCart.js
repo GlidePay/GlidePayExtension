@@ -5,6 +5,7 @@ const maskInpageProvider = createProvider();
 const provider = new ethers.providers.Web3Provider(maskInpageProvider, "any");
 const signer = provider.getSigner();
 const { LogError } = require("./LogError");
+const { algo } = require("crypto-js/core");
 
 class EcommerceCart {
   /*
@@ -277,7 +278,7 @@ class EcommerceCart {
           
                 // We check to make sure that the request is actually coming from a user with a wallet, and not being spoofed.
                 // We do this by calling verifyWallet.
-                await this.verifyWallet(walletID, isPopupOpen);
+                await this.verifyWallet(walletID, isPopupOpen, 'metamask', 0);
           
                 // We get the products selected by the user.
                 this.productDict = await this.getProducts();
@@ -303,6 +304,8 @@ class EcommerceCart {
                       subject: "sendCartInfo",
                       data: this.productDict,
                       shipping: this.shipping,
+                      wallet: 'metamask',
+                      address: 0
                     })
                     .then((response) => {
                       return response;
@@ -322,6 +325,8 @@ class EcommerceCart {
                     subject: "sendCartInfo",
                     data: this.productDict,
                     shipping: this.shipping,
+                    wallet: 'metamask',
+                    address: 0
                   });
                 }
                 // Re-enable the button.
@@ -340,72 +345,128 @@ class EcommerceCart {
                 subject: "isPopupOpen"
               })
 
-              if (!isPopupOpen) {
-                await chrome.runtime.sendMessage({
-                  from: "cart",
-                  subject: "createOrderPopup",
-                  screenSize: screen.width,
-                });
-              }
-              
+              await this.verifyWallet(walletID, isPopupOpen, wallet, address)
               console.log("recorded")
               console.log("id" + isPopupOpen)
-      // We get the products selected by the user.
-      this.productDict = await this.getProducts();
-                
-      // We get the retailer of the products.
-      this.retailer = this.getRetailer();
+              // We get the products selected by the user.
+              this.productDict = await this.getProducts();
+                        
+              // We get the retailer of the products.
+              this.retailer = this.getRetailer();
 
-      this.shipping = this.getShipping(this.productDict);
-      // This is a timer we will use for loading animation.
-      console.log("iiiik")
-      console.log(this.productDict)
+              this.shipping = this.getShipping(this.productDict);
+              // This is a timer we will use for loading animation.
+              console.log("iiiik")
+              console.log(this.productDict)
 
-      const timer = (ms) => new Promise((res) => setTimeout(res, ms));
-      console.log(isPopupOpen)
-      // This loop waits for the popup's DOM to load in.
-      while (!isPopupOpen) {
-        // While the popup is open
+              const timer = (ms) => new Promise((res) => setTimeout(res, ms));
+              console.log(isPopupOpen)
+              // This loop waits for the popup's DOM to load in.
+              while (!isPopupOpen) {
+                // While the popup is open
 
-        // We send a message to the popup with the cartInfo.
-        const cartInfoReceived = await chrome.runtime
-          .sendMessage({
-            from: "cart",
-            subject: "sendCartInfo",
-            data: this.productDict,
-            shipping: this.shipping,
-          })
-          .then((response) => {
-            return response;
-          });
+                // We send a message to the popup with the cartInfo.
+                const cartInfoReceived = await chrome.runtime
+                  .sendMessage({
+                    from: "cart",
+                    subject: "sendCartInfo",
+                    data: this.productDict,
+                    shipping: this.shipping,
+                  })
+                  .then((response) => {
+                    return response;
+                  });
 
-        // Once we know the cart has received the products, we can break and stop with the loading animation.
-        if (cartInfoReceived) {
-          break;
+                // Once we know the cart has received the products, we can break and stop with the loading animation.
+                if (cartInfoReceived) {
+                  break;
+                }
+
+                // We wait for 1 second before checking again.
+                await timer(100);
+              }
+              if (isPopupOpen) {
+                const cartInfoReceived = await chrome.runtime.sendMessage({
+                  from: "cart",
+                  subject: "sendCartInfo",
+                  data: this.productDict,
+                  shipping: this.shipping,
+                });
+              }
+              // Re-enable the button.
+              this.cryptoButton.disabled = false;
+              } catch(err) {
+              console.log("Error Crypto Button Flow");
+              console.log(err);
+              if (err instanceof LogError) {
+              this.cryptoButton.disabled = false;
+              }
+      }}else if(msg.wallet == 'pera'){
+            try {
+              const isPopupOpen = await chrome.runtime.sendMessage({
+                from: "cart",
+                subject: "isPopupOpen"
+              })
+
+              let walletID = msg.address
+              await this.verifyWallet(walletID, isPopupOpen, 'pera', walletID)
+                // We get the products selected by the user.
+                this.productDict = await this.getProducts();
+                        
+                // We get the retailer of the products.
+                this.retailer = this.getRetailer();
+  
+                this.shipping = this.getShipping(this.productDict);
+                // This is a timer we will use for loading animation.
+                console.log("iiiik")
+                console.log(this.productDict)
+  
+                const timer = (ms) => new Promise((res) => setTimeout(res, ms));
+                console.log(isPopupOpen)
+                // This loop waits for the popup's DOM to load in.
+                while (!isPopupOpen) {
+                  // While the popup is open
+  
+                  // We send a message to the popup with the cartInfo.
+                  const cartInfoReceived = await chrome.runtime
+                    .sendMessage({
+                      from: "cart",
+                      subject: "sendCartInfo",
+                      data: this.productDict,
+                      shipping: this.shipping,
+                      chain: 'algo',
+                      address: walletID,
+                    })
+                    .then((response) => {
+                      return response;
+                    });
+  
+                  // Once we know the cart has received the products, we can break and stop with the loading animation.
+                  if (cartInfoReceived) {
+                    break;
+                  }
+  
+                  // We wait for 1 second before checking again.
+                  await timer(100);
+                }
+                if (isPopupOpen) {
+                  const cartInfoReceived = await chrome.runtime.sendMessage({
+                    from: "cart",
+                    subject: "sendCartInfo",
+                    data: this.productDict,
+                    shipping: this.shipping,
+                    chain: 'algo',
+                    address: walletID,
+                  });
+                }
+            }catch(err) {
+              console.log("Error Crypto Button Flow");
+              console.log(err);
+              if (err instanceof LogError) {
+              this.cryptoButton.disabled = false;
+              }}
+          }
         }
-
-        // We wait for 1 second before checking again.
-        await timer(100);
-      }
-      if (isPopupOpen) {
-        const cartInfoReceived = await chrome.runtime.sendMessage({
-          from: "cart",
-          subject: "sendCartInfo",
-          data: this.productDict,
-          shipping: this.shipping,
-        });
-      }
-      // Re-enable the button.
-      this.cryptoButton.disabled = false;
-      } catch(err) {
-      console.log("Error Crypto Button Flow");
-      console.log(err);
-      if (err instanceof LogError) {
-      this.cryptoButton.disabled = false;
-      }
-      }
-
-          }}
       });
   }
 
@@ -447,7 +508,7 @@ class EcommerceCart {
 
   // This function checks to make sure that the request is actually coming from a user with a wallet,
   // and not being spoofed.
-  async verifyWallet(walletID, isPopupOpen) {
+  async verifyWallet(walletID, isPopupOpen, wallet, address) {
     // We check for an existing JWT in local storage.
     let existingToken = await chrome.storage.local.get("glidePayJWT");
     if (
@@ -486,6 +547,8 @@ class EcommerceCart {
         from: "cart",
         subject: "createOrderPopup",
         screenSize: screen.width,
+        wallet: wallet,
+        address: address
       });
     }
   }

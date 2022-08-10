@@ -1,9 +1,11 @@
 {
   "dependencies": {
+    "@perawallet/connect": "^0.2.0",
     "@walletconnect/client": "^1.8.0",
     "@walletconnect/ethereum-provider": "^1.8.0",
     "@walletconnect/node": "^1.0.0",
     "@walletconnect/qrcode-modal": "^1.8.0",
+    "algosdk": "^1.19.0",
     "axios": "^0.27.2",
     "browserify": "^17.0.0",
     "crypto-js": "^4.1.1",
@@ -25,7 +27,7 @@
   },
   "scripts": {
     "buildMask": "browserify scripts/metamask-controller.js -o scripts/metamaskbundled.js",
-    "buildAmazon": "browserify scripts/amazon-us.js -o scripts/bundledamazon.js -t [ babelify --presets [ @babel/preset-env @babel/preset-react ] --plugins [ transform-class-properties ] ]",
+    "buildAmazon": "browserify scripts/amazon-us.js -o scripts/bundledamazon.js",
     "buildWalmart": "browserify scripts/walmart-us.js -o scripts/bundledwalmart.js",
     "buildAliExpress": "browserify scripts/aliexpress.js -o scripts/bundledaliexpress.js",
     "buildCostco": "browserify scripts/costco.js -o scripts/bundledcostco.js",
