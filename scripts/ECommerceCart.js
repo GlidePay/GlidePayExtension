@@ -1,9 +1,9 @@
 // This is a metamask library that allows us to connect to the metamask extension from our extension.
 const createProvider = require("metamask-extension-provider");
 const { ethers } = require("ethers");
-//const maskInpageProvider = createProvider();
-//const provider = new ethers.providers.Web3Provider(maskInpageProvider, "any");
-//const signer = provider.getSigner();
+const maskInpageProvider = createProvider();
+const provider = new ethers.providers.Web3Provider(maskInpageProvider, "any");
+const signer = provider.getSigner();
 const { LogError } = require("./LogError");
 const algosdk = require("algosdk")
 const { PeraWalletConnect }  = require("@perawallet/connect");
@@ -75,7 +75,9 @@ class EcommerceCart {
   async handlePeraTransaction(peraWallet, wallet) {
     console.log(wallet)
 
-    
+    const cost = msg.price;
+    const currency = msg.currency;
+    //
     const algod = new algosdk.Algodv2("", "https://node.algoexplorerapi.io/", 443);
     const suggestedParams = await algod.getTransactionParams().do();
     const amountInMicroAlgos = algosdk.algosToMicroalgos(2); // 2 Algos
@@ -428,6 +430,7 @@ class EcommerceCart {
       }} 
       else if(msg.wallet === 'pera'){
         console.log('received')
+        //Prompts for you to connect 
         const peraWallet = new PeraWalletConnect({shouldShowSignTxnToast: false});
         try {peraWallet.disconnect();}catch{}
         console.log(peraWallet)

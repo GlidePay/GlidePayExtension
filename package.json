@@ -21,11 +21,13 @@
     "xhr2": "^0.2.1"
   },
   "browserify": {
-    "transform": ["babelify"]
+    "transform": [
+      "babelify"
+    ]
   },
   "scripts": {
     "buildMask": "browserify scripts/metamask-controller.js -o scripts/metamaskbundled.js",
-    "buildAmazon": "browserify scripts/amazon-us.js  -p esmify > scripts/bundledamazon.js",
+    "buildAmazon": "browserify scripts/amazon-us.js -p esmify > scripts/bundledamazon.js -t [ babelify --presets [ @babel/preset-env ] --global ]",
     "buildWalmart": "browserify scripts/walmart-us.js -o scripts/bundledwalmart.js",
     "buildAliExpress": "browserify scripts/aliexpress.js -o scripts/bundledaliexpress.js",
     "buildCostco": "browserify scripts/costco.js -o scripts/bundledcostco.js",
