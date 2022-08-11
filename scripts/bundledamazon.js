@@ -36569,6 +36569,7 @@ function stringifyReplacer(_, value) {
     }
     return value;
 }
+
 },{"fast-safe-stringify":188}],178:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -36661,6 +36662,7 @@ exports.errorValues = {
         message: 'The provider is disconnected from the specified chain.',
     },
 };
+
 },{}],179:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -36800,6 +36802,7 @@ function parseOpts(arg) {
     }
     return [];
 }
+
 },{"./classes":177,"./error-constants":178,"./utils":181}],180:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -36814,6 +36817,7 @@ const errors_1 = require("./errors");
 Object.defineProperty(exports, "ethErrors", { enumerable: true, get: function () { return errors_1.ethErrors; } });
 const error_constants_1 = require("./error-constants");
 Object.defineProperty(exports, "errorCodes", { enumerable: true, get: function () { return error_constants_1.errorCodes; } });
+
 },{"./classes":177,"./error-constants":178,"./errors":179,"./utils":181}],181:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -36925,6 +36929,7 @@ function assignOriginalError(error) {
 function hasKey(obj, key) {
     return Object.prototype.hasOwnProperty.call(obj, key);
 }
+
 },{"./classes":177,"./error-constants":178}],182:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -40392,6 +40397,7 @@ exports.JsonRpcEngine = JsonRpcEngine;
 function jsonify(request) {
     return JSON.stringify(request, null, 2);
 }
+
 },{"@metamask/safe-event-emitter":150,"eth-rpc-errors":180}],208:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -40458,6 +40464,7 @@ function createAsyncMiddleware(asyncMiddleware) {
     };
 }
 exports.createAsyncMiddleware = createAsyncMiddleware;
+
 },{}],209:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -40479,6 +40486,7 @@ function createScaffoldMiddleware(handlers) {
     };
 }
 exports.createScaffoldMiddleware = createScaffoldMiddleware;
+
 },{}],210:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -40492,6 +40500,7 @@ function getUniqueId() {
     return idCounter;
 }
 exports.getUniqueId = getUniqueId;
+
 },{}],211:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -40511,6 +40520,7 @@ function createIdRemapMiddleware() {
     };
 }
 exports.createIdRemapMiddleware = createIdRemapMiddleware;
+
 },{"./getUniqueId":210}],212:[function(require,module,exports){
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
@@ -40530,6 +40540,7 @@ __exportStar(require("./createScaffoldMiddleware"), exports);
 __exportStar(require("./getUniqueId"), exports);
 __exportStar(require("./JsonRpcEngine"), exports);
 __exportStar(require("./mergeMiddleware"), exports);
+
 },{"./JsonRpcEngine":207,"./createAsyncMiddleware":208,"./createScaffoldMiddleware":209,"./getUniqueId":210,"./idRemapMiddleware":211,"./mergeMiddleware":213}],213:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -40541,6 +40552,7 @@ function mergeMiddleware(middlewareStack) {
     return engine.asMiddleware();
 }
 exports.mergeMiddleware = mergeMiddleware;
+
 },{"./JsonRpcEngine":207}],214:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -45756,36 +45768,53 @@ class Amazon extends ECommerceCart.EcommerceCart {
      * @return  {Object} Contains the products selected by the user.
      */
     console.log("getProducts");
-    console.log(document.querySelector("#activeCartViewForm"));
+    console.log(document.querySelector("#activeCartViewForm > div.a-section.a-spacing-mini.sc-list-body.sc-java-remote-feature").children);
     let productDict = {};
     let productElements = document.querySelectorAll(
-      "#activeCartViewForm > div.a-section.a-spacing-mini.sc-list-body.sc-java-remote-feature > div.a-row.sc-list-item.sc-list-item-border.sc-java-remote-feature"
-    );
+      "#activeCartViewForm > div.a-section.a-spacing-mini.sc-list-body.sc-java-remote-feature"
+    )[0].children;
+    console.log("productElements");
+    console.log(productElements);
     let productElementsList = Array.from(productElements);
+    console.log("productElementsList");
+    console.log(productElementsList);
 
     productElementsList.forEach(function (part, index, theArray) {
-      const imageElement = theArray[index].querySelectorAll(
-        "div.sc-list-item-content > div > div.a-column.a-span10 > div > div > div.a-fixed-left-grid-col.a-float-left.sc-product-image-desktop.a-col-left > a > img"
-      )[0];
-      if (imageElement === undefined) {
-        return;
-      }
-      const currency = JSON.parse(part.getAttribute("data-subtotal")).subtotal
-        .code;
-      console.log(currency);
-      const ASIN = theArray[index].getAttribute("data-asin");
-      const productName = imageElement.getAttribute("alt");
-      const unitPrice = theArray[index].getAttribute("data-price");
-      const quantity = theArray[index].getAttribute("data-quantity");
-      const productImage = imageElement.getAttribute("src");
-      productDict[index] = {
-        productID: ASIN,
-        productName: productName,
-        unitPrice: unitPrice,
-        quantity: quantity,
-        productImage: productImage,
-        currency: currency,
-      };
+        if (part.className.includes("sc-list-item")) {
+          console.log("part.className.includes('sc-list-item')");
+          console.log(part);
+          const imageElement = theArray[index].querySelectorAll(
+              "div.sc-list-item-content > div > div.a-spacing-mini.sc-item-content-group > a > img"
+          )[0];
+          //> div > div.a-column.a-span10 > div > div > div.a-fixed-left-grid-col.a-float-left.sc-product-image-desktop.a-col-left > a > img
+          console.log("imageElement");
+          console.log(imageElement);
+          if (imageElement === undefined) {
+            return;
+          }
+          const currency = JSON.parse(part.getAttribute("data-subtotal")).subtotal.code;
+          console.log("currency");
+          console.log(currency);
+          const ASIN = theArray[index].getAttribute("data-asin");
+            console.log("ASIN");
+            console.log(ASIN);
+          const productName = imageElement.getAttribute("alt");
+            console.log("productName");
+            console.log(productName);
+          const unitPrice = theArray[index].getAttribute("data-price");
+            console.log("unitPrice");
+            console.log(unitPrice);
+          const quantity = theArray[index].getAttribute("data-quantity");
+          const productImage = imageElement.getAttribute("src");
+          productDict[index] = {
+            productID: ASIN,
+            productName: productName,
+            unitPrice: unitPrice,
+            quantity: quantity,
+            productImage: productImage,
+            currency: currency,
+          };
+        }
     });
     return productDict;
   }
