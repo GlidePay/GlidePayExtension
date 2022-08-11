@@ -150,13 +150,14 @@ async function setProductInfo(products, shipping, sender, wallet, address) {
   const confirmButton = document.getElementById("submit-button");
   confirmButton.addEventListener("click", async () => {
     const addressSelect = document.getElementById("addressSelect");
-    const chain = document.getElementById("currencySelect").value
+    
     if (addressSelect.selectedIndex === -1) {
       //TODO: Add text or popup or something that says this
       return;
     }
     console.log(wallet)
     if (wallet == 'metamask') {
+      const chain = document.getElementById("currencySelect").value
     console.log(chain)
     const windows = await chrome.windows.getAll({ populate: true });
     for (let a in windows) {
@@ -201,7 +202,7 @@ async function setProductInfo(products, shipping, sender, wallet, address) {
               addressid:
                 addressSelect.options[addressSelect.selectedIndex].value,
               products: products,
-              ticker: chain
+              wallet: address
             },
             (response) => {
               if (response) {

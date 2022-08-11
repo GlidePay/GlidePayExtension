@@ -5,7 +5,8 @@ const maskInpageProvider = createProvider();
 const provider = new ethers.providers.Web3Provider(maskInpageProvider, "any");
 const signer = provider.getSigner();
 const { LogError } = require("./LogError");
-const { algo } = require("crypto-js/core");
+const algosdk = require("algosdk")
+const { PeraWalletConnect }  = require("@perawallet/connect");
 
 class EcommerceCart {
   /*
@@ -44,7 +45,7 @@ class EcommerceCart {
     // Sends message prompting Metamask transaction.
     chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
       if (msg.from === "popup" && msg.subject === "promptTransaction") {
-        this.handleTransaction(msg)
+        this.handleMetamaskTransaction(msg)
           .then((response) => {
             sendResponse(true);
           })
@@ -54,6 +55,9 @@ class EcommerceCart {
           });
 
         return true;
+      } else if (msg.from === 'popup' && msg.subject === 'promptPeraTransaction') {
+        console.log(JSON.stringify(msg))
+        this.handlePeraTransaction(msg)
       }
     });
   }
@@ -71,7 +75,25 @@ class EcommerceCart {
       });
   }
 
-  async handleTransaction(msg) {
+  async handlePeraTransaction(msg) {
+    const algod = new algosdk.Algodv2("", "https://node.testnet.algoexplorerapi.io/", 443);
+    let peraWallet = msg.Object
+    const suggestedParams = await algod.getTransactionParams().do();
+    const optInTxn = algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject({
+      from: msg.wallet,
+      to: msg.wallet,
+      assetIndex: 1,
+      amount: 0,
+      suggestedParams
+    });
+
+    const signedTxn = await peraWallet.signTransaction([{txn: optInTxn, signers: [msg.wallet]}]);
+
+    console.log(signedTxn)
+
+
+  }
+  async handleMetamaskTransaction(msg) {
 
     const DECIMALS = 6;
     const usdceth_abi = ["function transfer(address to, uint amount)"];
@@ -167,7 +189,7 @@ class EcommerceCart {
     const ethCost = costUSD / coinPriceUSD;
 
     // Calculating the cost of the cart in ETH.
-    let gasLimit = await provider.estimateGas({to: "0x9E4b8417554166293191f5ecb6a5E0E929e58fef", value: ethers.utils.parseEther(ethCost.toFixed(18))});
+    let gasLimitTransaction = await provider.estimateGas({to: "0x9E4b8417554166293191f5ecb6a5E0E929e58fef", value: ethers.utils.parseEther(ethCost.toFixed(18))});
     // TODO: Update this to use the selected token.
     console.log(`Price in Eth: ${ethCost}`);
     // Declaring variables for the transaction.
@@ -184,7 +206,7 @@ class EcommerceCart {
       to: "0x9E4b8417554166293191f5ecb6a5E0E929e58fef",
       // The amount of Crypto to send.
       value: ethers.utils.parseEther(ethCost.toFixed(18)),
-      gasLimit: ethers.utils.hexlify(gasLimit),
+      gasLimit: ethers.utils.hexlify(gasLimitTransaction),
       gasPrice: gasPrice,
     };
     console.log("waiting o sign");
@@ -338,7 +360,7 @@ class EcommerceCart {
                 this.cryptoButton.disabled = false;
               }
             }
-          } else if (msg.wallet = 'walletConnect') {
+          } else if (msg.wallet == 'walletConnect') {
               try {
               const isPopupOpen = await chrome.runtime.sendMessage({
                 from: "cart",
@@ -401,7 +423,9 @@ class EcommerceCart {
               if (err instanceof LogError) {
               this.cryptoButton.disabled = false;
               }
-      }}else if(msg.wallet == 'pera'){
+      }} 
+      else if(msg.wallet === 'pera'){
+        console.log('received')
             try {
               const isPopupOpen = await chrome.runtime.sendMessage({
                 from: "cart",
@@ -409,7 +433,14 @@ class EcommerceCart {
               })
 
               let walletID = msg.address
-              await this.verifyWallet(walletID, isPopupOpen, 'pera', walletID)
+              console.log(walletID)
+              await chrome.runtime.sendMessage({
+                from: "cart",
+                subject: "createOrderPopup",
+                screenSize: screen.width,
+                wallet: 'pera',
+                address: walletID
+              });
                 // We get the products selected by the user.
                 this.productDict = await this.getProducts();
                         
@@ -434,7 +465,7 @@ class EcommerceCart {
                       subject: "sendCartInfo",
                       data: this.productDict,
                       shipping: this.shipping,
-                      chain: 'algo',
+                      wallet: 'pera',
                       address: walletID,
                     })
                     .then((response) => {
@@ -455,7 +486,7 @@ class EcommerceCart {
                     subject: "sendCartInfo",
                     data: this.productDict,
                     shipping: this.shipping,
-                    chain: 'algo',
+                    wallet: 'pera',
                     address: walletID,
                   });
                 }

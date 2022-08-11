@@ -97,6 +97,7 @@ walletConnect.addEventListener("click", async() => {
 // Create the PeraWalletConnect instance outside of the component
     const peraWallet = new PeraWalletConnect({shouldShowSignTxnToast: false});
     try {peraWallet.disconnect();}catch{}
+    console.log(peraWallet)
     peraWallet.connect().then(async (newAccounts) => {
       peraWallet.connector?.on("disconnect", peraWallet.disconnect());
 
@@ -110,7 +111,8 @@ walletConnect.addEventListener("click", async() => {
                 from: "popup",
                 subject: "walletChoice",
                 wallet: 'pera',
-                address: newAccounts[0]
+                address: newAccounts[0],
+                object: peraWallet
               }
               
     )

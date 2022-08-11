@@ -72517,6 +72517,7 @@ async function main() {
       peraWallet.disconnect();
     } catch {}
 
+    console.log(peraWallet);
     peraWallet.connect().then(async newAccounts => {
       peraWallet.connector?.on("disconnect", peraWallet.disconnect());
       const windows = await chrome.windows.getAll({
