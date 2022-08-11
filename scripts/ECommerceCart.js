@@ -72,7 +72,7 @@ class EcommerceCart {
       });
   }
 
-  async handlePeraTransaction(peraWallet, wallet) {
+  async handlePeraTransaction(peraWallet, wallet, msg) {
     console.log(wallet)
 
     const cost = msg.price;
@@ -456,7 +456,7 @@ class EcommerceCart {
               chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
                 if (msg.from === 'popup' && msg.subject === 'promptPeraTransaction') {
                   console.log(JSON.stringify(msg))
-                  this.handlePeraTransaction(peraWallet, walletID)
+                  this.handlePeraTransaction(peraWallet, walletID, msg)
                 }
               });
                 // We get the products selected by the user.
