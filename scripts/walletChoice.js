@@ -93,14 +93,6 @@ walletConnect.addEventListener("click", async() => {
 
     pera.addEventListener("click", async() => {
       console.log('click')
-
-// Create the PeraWalletConnect instance outside of the component
-    const peraWallet = new PeraWalletConnect({shouldShowSignTxnToast: false});
-    try {peraWallet.disconnect();}catch{}
-    console.log(peraWallet)
-    peraWallet.connect().then(async (newAccounts) => {
-      peraWallet.connector?.on("disconnect", peraWallet.disconnect());
-
       const windows = await chrome.windows.getAll({ populate: true });
       for (let a in windows) {
         for (let b in windows[a].tabs) {
@@ -111,15 +103,12 @@ walletConnect.addEventListener("click", async() => {
                 from: "popup",
                 subject: "walletChoice",
                 wallet: 'pera',
-                address: newAccounts[0],
-                object: peraWallet
               }
               
     )
     console.log(response);}}
     }
     window.close()
-    })
     })
 
   }

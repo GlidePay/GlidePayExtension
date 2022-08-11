@@ -1,9 +1,9 @@
 // This is a metamask library that allows us to connect to the metamask extension from our extension.
 const createProvider = require("metamask-extension-provider");
 const { ethers } = require("ethers");
-const maskInpageProvider = createProvider();
-const provider = new ethers.providers.Web3Provider(maskInpageProvider, "any");
-const signer = provider.getSigner();
+//const maskInpageProvider = createProvider();
+//const provider = new ethers.providers.Web3Provider(maskInpageProvider, "any");
+//const signer = provider.getSigner();
 const { LogError } = require("./LogError");
 const algosdk = require("algosdk")
 const { PeraWalletConnect }  = require("@perawallet/connect");
@@ -55,9 +55,6 @@ class EcommerceCart {
           });
 
         return true;
-      } else if (msg.from === 'popup' && msg.subject === 'promptPeraTransaction') {
-        console.log(JSON.stringify(msg))
-        this.handlePeraTransaction(msg)
       }
     });
   }
@@ -75,19 +72,24 @@ class EcommerceCart {
       });
   }
 
-  async handlePeraTransaction(msg) {
-    const algod = new algosdk.Algodv2("", "https://node.testnet.algoexplorerapi.io/", 443);
-    let peraWallet = msg.Object
+  async handlePeraTransaction(peraWallet, wallet) {
+    console.log(wallet)
+
+    
+    const algod = new algosdk.Algodv2("", "https://node.algoexplorerapi.io/", 443);
     const suggestedParams = await algod.getTransactionParams().do();
-    const optInTxn = algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject({
-      from: msg.wallet,
-      to: msg.wallet,
-      assetIndex: 1,
-      amount: 0,
-      suggestedParams
+    const amountInMicroAlgos = algosdk.algosToMicroalgos(2); // 2 Algos
+    const unsignedTxn = algosdk.makePaymentTxnWithSuggestedParamsFromObject({
+      from: wallet,
+      to: wallet,
+      amount: amountInMicroAlgos,
+      suggestedParams: suggestedParams,
     });
 
-    const signedTxn = await peraWallet.signTransaction([{txn: optInTxn, signers: [msg.wallet]}]);
+    const singleTxnGroups = [{txn: unsignedTxn, signers: [wallet]}];
+
+
+    const signedTxn = await peraWallet.signTransaction([singleTxnGroups]);
 
     console.log(signedTxn)
 
@@ -286,6 +288,7 @@ class EcommerceCart {
       chrome.runtime.onMessage.addListener(async (msg, sender) => {
         if (msg.from === "popup" && msg.subject === "walletChoice") {
           console.log(msg.wallet)
+          console.log(msg.object)
           if (msg.wallet == 'metamask') {
             try {
                 
@@ -366,7 +369,6 @@ class EcommerceCart {
                 from: "cart",
                 subject: "isPopupOpen"
               })
-
               await this.verifyWallet(walletID, isPopupOpen, wallet, address)
               console.log("recorded")
               console.log("id" + isPopupOpen)
@@ -426,20 +428,33 @@ class EcommerceCart {
       }} 
       else if(msg.wallet === 'pera'){
         console.log('received')
+        const peraWallet = new PeraWalletConnect({shouldShowSignTxnToast: false});
+        try {peraWallet.disconnect();}catch{}
+        console.log(peraWallet)
+        await peraWallet.connect().then(async (newAccounts) => {
+          //peraWallet.connector?.on("disconnect", peraWallet.disconnect());
+        })
+        console.log(peraWallet)
+        const walletID = peraWallet.connector.accounts[0]
+        console.log(walletID)
             try {
               const isPopupOpen = await chrome.runtime.sendMessage({
                 from: "cart",
                 subject: "isPopupOpen"
               })
 
-              let walletID = msg.address
-              console.log(walletID)
               await chrome.runtime.sendMessage({
                 from: "cart",
                 subject: "createOrderPopup",
                 screenSize: screen.width,
                 wallet: 'pera',
-                address: walletID
+              });
+
+              chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+                if (msg.from === 'popup' && msg.subject === 'promptPeraTransaction') {
+                  console.log(JSON.stringify(msg))
+                  this.handlePeraTransaction(peraWallet, walletID)
+                }
               });
                 // We get the products selected by the user.
                 this.productDict = await this.getProducts();
@@ -466,7 +481,6 @@ class EcommerceCart {
                       data: this.productDict,
                       shipping: this.shipping,
                       wallet: 'pera',
-                      address: walletID,
                     })
                     .then((response) => {
                       return response;

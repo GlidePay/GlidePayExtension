@@ -72507,39 +72507,25 @@ async function main() {
     });
   });
   pera.addEventListener("click", async () => {
-    console.log('click'); // Create the PeraWalletConnect instance outside of the component
-
-    const peraWallet = new _connect.PeraWalletConnect({
-      shouldShowSignTxnToast: false
+    console.log('click');
+    const windows = await chrome.windows.getAll({
+      populate: true
     });
 
-    try {
-      peraWallet.disconnect();
-    } catch {}
-
-    console.log(peraWallet);
-    peraWallet.connect().then(async newAccounts => {
-      peraWallet.connector?.on("disconnect", peraWallet.disconnect());
-      const windows = await chrome.windows.getAll({
-        populate: true
-      });
-
-      for (let a in windows) {
-        for (let b in windows[a].tabs) {
-          if (windows[a].tabs[b].id === senderTabID) {
-            const response = await chrome.tabs.sendMessage(windows[a].tabs[b].id, {
-              from: "popup",
-              subject: "walletChoice",
-              wallet: 'pera',
-              address: newAccounts[0]
-            });
-            console.log(response);
-          }
+    for (let a in windows) {
+      for (let b in windows[a].tabs) {
+        if (windows[a].tabs[b].id === senderTabID) {
+          const response = await chrome.tabs.sendMessage(windows[a].tabs[b].id, {
+            from: "popup",
+            subject: "walletChoice",
+            wallet: 'pera'
+          });
+          console.log(response);
         }
       }
+    }
 
-      window.close();
-    });
+    window.close();
   });
 }
 

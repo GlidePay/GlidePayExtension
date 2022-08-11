@@ -25,7 +25,7 @@
   },
   "scripts": {
     "buildMask": "browserify scripts/metamask-controller.js -o scripts/metamaskbundled.js",
-    "buildAmazon": "browserify scripts/amazon-us.js  -t [ babelify --presets [ @babel/preset-env  ] --plugins [ @babel/plugin-transform-class-properties ] -o scripts/bundledamazon.js",
+    "buildAmazon": "browserify scripts/amazon-us.js  -p esmify > scripts/bundledamazon.js",
     "buildWalmart": "browserify scripts/walmart-us.js -o scripts/bundledwalmart.js",
     "buildAliExpress": "browserify scripts/aliexpress.js -o scripts/bundledaliexpress.js",
     "buildCostco": "browserify scripts/costco.js -o scripts/bundledcostco.js",

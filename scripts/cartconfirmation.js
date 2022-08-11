@@ -150,11 +150,12 @@ async function setProductInfo(products, shipping, sender, wallet, address) {
   const confirmButton = document.getElementById("submit-button");
   confirmButton.addEventListener("click", async () => {
     const addressSelect = document.getElementById("addressSelect");
-    
-    if (addressSelect.selectedIndex === -1) {
+    console.log(wallet + 'hoho')
+    console.log(wallet == 'pera')
+    /* (addressSelect.selectedIndex === -1) {
       //TODO: Add text or popup or something that says this
       return;
-    }
+    } */
     console.log(wallet)
     if (wallet == 'metamask') {
       const chain = document.getElementById("currencySelect").value
@@ -187,11 +188,11 @@ async function setProductInfo(products, shipping, sender, wallet, address) {
         }
       }
     }}else if (wallet == 'pera') {
+      console.log("peraclicked")
       const windows = await chrome.windows.getAll({ populate: true });
     for (let a in windows) {
       for (let b in windows[a].tabs) {
         if (windows[a].tabs[b].id === sender) {
-          console.log("Found sender");
           chrome.tabs.sendMessage(
             windows[a].tabs[b].id,
             {
@@ -199,8 +200,8 @@ async function setProductInfo(products, shipping, sender, wallet, address) {
               subject: "promptPeraTransaction",
               price: totalPrice,
               currency: currency,
-              addressid:
-                addressSelect.options[addressSelect.selectedIndex].value,
+              addressid: 1,
+                //addressSelect.options[addressSelect.selectedIndex].value,
               products: products,
               wallet: address
             },
@@ -249,7 +250,7 @@ async function setUpCart(products, shipping, senderTabID, wallet, address) {
       }
     );
   }
-  try {
+  /* try {
     await getAddresses();
   } catch (err) {
     console.log(err);
@@ -268,7 +269,7 @@ async function setUpCart(products, shipping, senderTabID, wallet, address) {
         addressSelectDropdown.after(errorText);
       }
     );
-  }
+  } */
 }
 
 async function cartMain() {
