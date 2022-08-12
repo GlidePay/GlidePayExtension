@@ -47,6 +47,7 @@ class EcommerceCart {
       if (msg.from === "popup" && msg.subject === "promptTransaction") {
         this.handleMetamaskTransaction(msg)
           .then((response) => {
+            console.log(response)
             sendResponse(true);
           })
           .catch((err) => {
@@ -77,10 +78,12 @@ class EcommerceCart {
 
     const cost = msg.price;
     const currency = msg.currency;
+
+    const algoCost = msg.price
     //
     const algod = new algosdk.Algodv2("", "https://node.algoexplorerapi.io/", 443);
     const suggestedParams = await algod.getTransactionParams().do();
-    const amountInMicroAlgos = algosdk.algosToMicroalgos(2); // 2 Algos
+    const amountInMicroAlgos = algosdk.algosToMicroalgos(algoCost); // 2 Algos
     const unsignedTxn = algosdk.makePaymentTxnWithSuggestedParamsFromObject({
       from: wallet,
       to: wallet,
@@ -88,12 +91,35 @@ class EcommerceCart {
       suggestedParams: suggestedParams,
     });
 
+    console.log(unsignedTxn)
+
     const singleTxnGroups = [{txn: unsignedTxn, signers: [wallet]}];
 
+    try {
+      console.log('here')
+      const signedTxn = await peraWallet.signTransaction([singleTxnGroups]);
+    console.log(signedTxn)}catch(err){console.log(err)}
 
-    const signedTxn = await peraWallet.signTransaction([singleTxnGroups]);
+    const body = {
+      txHash: signedTxn,
+      retailer: this.retailer,
+      shipping: this.shipping,
+      productidsarr: msg.products,
+      addressid: msg.addressid,
+      orderStatus: "Transaction Pending Confirmation.",
+      ticker: chain, //TODO: In future this needs to be changed to the ticker of the coin being used.
+      amount: algoCost,
+    };
+    console.log("BODY" + JSON.stringify(body));
 
-    console.log(signedTxn)
+    // Sending the body to the backend to track the order.
+    chrome.runtime.sendMessage({
+      from: "cart",
+      subject: "getTransaction",
+      body: body,
+    });
+    console.log("returning");
+    return true;
 
 
   }
@@ -440,6 +466,20 @@ class EcommerceCart {
         console.log(peraWallet)
         const walletID = peraWallet.connector.accounts[0]
         console.log(walletID)
+        chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+          if (msg.from === 'popup' && msg.subject === 'promptPeraTransaction') {
+            console.log(JSON.stringify(msg))
+            this.handlePeraTransaction(peraWallet, walletID, msg).then((response) => {
+              console.log(response)
+              sendResponse(true);
+            })
+            .catch((err) => {
+              console.log(err);
+              sendResponse(false);
+            });
+            return true
+          }
+        });
             try {
               const isPopupOpen = await chrome.runtime.sendMessage({
                 from: "cart",
@@ -451,13 +491,6 @@ class EcommerceCart {
                 subject: "createOrderPopup",
                 screenSize: screen.width,
                 wallet: 'pera',
-              });
-
-              chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
-                if (msg.from === 'popup' && msg.subject === 'promptPeraTransaction') {
-                  console.log(JSON.stringify(msg))
-                  this.handlePeraTransaction(peraWallet, walletID, msg)
-                }
               });
                 // We get the products selected by the user.
                 this.productDict = await this.getProducts();

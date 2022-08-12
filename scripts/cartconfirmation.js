@@ -205,7 +205,8 @@ async function setProductInfo(products, shipping, sender, wallet, address) {
               products: products,
               wallet: address
             },
-            (response) => {
+            async (response) => {
+              console.log(response)
               if (response) {
                 window.location.href = "/views/ordersentpopup.html";
               } else {
