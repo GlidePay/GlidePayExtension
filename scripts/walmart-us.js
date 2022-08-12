@@ -32,7 +32,7 @@ class Walmart extends ECommerceCart.EcommerceCart {
      * @return  {Object} Contains the products selected by the user.
      */
 
-        // Fucking disgusting ass code lol
+      // Fucking disgusting ass code lol
         let productDict = {};
         let productIndex = 0;
         let productElements = document.querySelector(

@@ -1,5 +1,6 @@
 const { LogError } = require("./LogError");
 const ECommerceCart = require("./ECommerceCart");
+const $ = require("jquery");
 // ALL CHANGES TO THIS FILE MUST BE COMPILED WITH "npm run buildAmazon"
 
 class Amazon extends ECommerceCart.EcommerceCart {
@@ -46,29 +47,25 @@ class Amazon extends ECommerceCart.EcommerceCart {
         if (part.className.includes("sc-list-item")) {
           console.log("part.className.includes('sc-list-item')");
           console.log(part);
-          const imageElement = theArray[index].querySelectorAll(
-              "div.sc-list-item-content > div > div.a-spacing-mini.sc-item-content-group > a > img"
-          )[0];
           //> div > div.a-column.a-span10 > div > div > div.a-fixed-left-grid-col.a-float-left.sc-product-image-desktop.a-col-left > a > img
-          console.log("imageElement");
-          console.log(imageElement);
-          if (imageElement === undefined) {
-            return;
-          }
           const currency = JSON.parse(part.getAttribute("data-subtotal")).subtotal.code;
           console.log("currency");
           console.log(currency);
-          const ASIN = theArray[index].getAttribute("data-asin");
+          const ASIN = part.getAttribute("data-asin");
             console.log("ASIN");
             console.log(ASIN);
-          const productName = imageElement.getAttribute("alt");
+          const t = part.querySelectorAll(".a-truncate-full");
+          const productName = t[t.length - 1].innerHTML.trim();
             console.log("productName");
             console.log(productName);
-          const unitPrice = theArray[index].getAttribute("data-price");
+          const unitPrice = part.getAttribute("data-price");
             console.log("unitPrice");
             console.log(unitPrice);
-          const quantity = theArray[index].getAttribute("data-quantity");
-          const productImage = imageElement.getAttribute("src");
+          const quantity = part.getAttribute("data-quantity");
+          const productImage = part.querySelector(".sc-product-image").getAttribute("src");
+          const subtotal = part.getAttribute("data-subtotal");
+          console.log("subtotal");
+            console.log(subtotal);
           productDict[index] = {
             productID: ASIN,
             productName: productName,

@@ -36569,6 +36569,7 @@ function stringifyReplacer(_, value) {
     }
     return value;
 }
+
 },{"fast-safe-stringify":188}],178:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -36661,6 +36662,7 @@ exports.errorValues = {
         message: 'The provider is disconnected from the specified chain.',
     },
 };
+
 },{}],179:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -36800,6 +36802,7 @@ function parseOpts(arg) {
     }
     return [];
 }
+
 },{"./classes":177,"./error-constants":178,"./utils":181}],180:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -36814,6 +36817,7 @@ const errors_1 = require("./errors");
 Object.defineProperty(exports, "ethErrors", { enumerable: true, get: function () { return errors_1.ethErrors; } });
 const error_constants_1 = require("./error-constants");
 Object.defineProperty(exports, "errorCodes", { enumerable: true, get: function () { return error_constants_1.errorCodes; } });
+
 },{"./classes":177,"./error-constants":178,"./errors":179,"./utils":181}],181:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -36925,6 +36929,7 @@ function assignOriginalError(error) {
 function hasKey(obj, key) {
     return Object.prototype.hasOwnProperty.call(obj, key);
 }
+
 },{"./classes":177,"./error-constants":178}],182:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -40392,6 +40397,7 @@ exports.JsonRpcEngine = JsonRpcEngine;
 function jsonify(request) {
     return JSON.stringify(request, null, 2);
 }
+
 },{"@metamask/safe-event-emitter":150,"eth-rpc-errors":180}],208:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -40458,6 +40464,7 @@ function createAsyncMiddleware(asyncMiddleware) {
     };
 }
 exports.createAsyncMiddleware = createAsyncMiddleware;
+
 },{}],209:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -40479,6 +40486,7 @@ function createScaffoldMiddleware(handlers) {
     };
 }
 exports.createScaffoldMiddleware = createScaffoldMiddleware;
+
 },{}],210:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -40492,6 +40500,7 @@ function getUniqueId() {
     return idCounter;
 }
 exports.getUniqueId = getUniqueId;
+
 },{}],211:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -40511,6 +40520,7 @@ function createIdRemapMiddleware() {
     };
 }
 exports.createIdRemapMiddleware = createIdRemapMiddleware;
+
 },{"./getUniqueId":210}],212:[function(require,module,exports){
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
@@ -40530,6 +40540,7 @@ __exportStar(require("./createScaffoldMiddleware"), exports);
 __exportStar(require("./getUniqueId"), exports);
 __exportStar(require("./JsonRpcEngine"), exports);
 __exportStar(require("./mergeMiddleware"), exports);
+
 },{"./JsonRpcEngine":207,"./createAsyncMiddleware":208,"./createScaffoldMiddleware":209,"./getUniqueId":210,"./idRemapMiddleware":211,"./mergeMiddleware":213}],213:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -40541,6 +40552,7 @@ function mergeMiddleware(middlewareStack) {
     return engine.asMiddleware();
 }
 exports.mergeMiddleware = mergeMiddleware;
+
 },{"./JsonRpcEngine":207}],214:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -45169,7 +45181,6 @@ class EcommerceCart {
     this.productDict;
     this.retailer;
     this.shipping;
-    this.popupOpen = false;
   }
 
   createListeners() {
@@ -45181,14 +45192,8 @@ class EcommerceCart {
     // Sends productDict when requested by cartConfirmation popup
     chrome.runtime.onMessage.addListener((msg, sender, response) => {
       if (msg.from === "popup" && msg.subject === "needInfo") {
-        console.log(this.productDict, this.shipping)
+        console.log(this.productDict, this.shipping);
         response([this.productDict, this.shipping]);
-      }
-    });
-    // Listens for when the popup is closed, keeps track of popup state.
-    chrome.runtime.onMessage.addListener((msg, sender, response) => {
-      if (msg.from === "background" && msg.subject === "popupClosed") {
-        this.popupOpen = false;
       }
     });
 
@@ -45251,7 +45256,7 @@ class EcommerceCart {
     //Switch Chains
     console.log(chain)
         if (chain === 'eth' || chain === 'usdc-eth' && currentChain !== '0x1') {
-          await provider.send('wallet_switchEthereumChain', [{chainId: '0x1'}]);}
+          await provider.send('wallet_switchEthereumChain', [{chainId: '0x3'}]);}
         else if (chain === 'matic' || chain === 'usdc-polygon' && currentChain !== '0x89') {
           await provider.send('wallet_switchEthereumChain', [{chainId: '0x89'}]); 
         }
@@ -45396,10 +45401,10 @@ class EcommerceCart {
     cryptoButton.addEventListener("click", () => {
       // We disable the button to prevent multiple clicks.
       this.cryptoButton.disabled = true;
-      if (!this.popupOpen) {
-        this.cryptoButtonPressed();
-        return;
-      }
+      // if (!this.popupOpen) {
+      this.cryptoButtonPressed();
+      return;
+      // }
       this.cryptoButton.disabled = false;
     });
     return cryptoButton;
@@ -45411,9 +45416,14 @@ class EcommerceCart {
       // We check to make sure that the user is connected with Metamask and has a wallet connected.
       let walletID = await this.checkMetamaskSignIn();
 
+      const isPopupOpen = await chrome.runtime.sendMessage({
+        from: "cart",
+        subject: "isPopupOpen",
+      });
+
       // We check to make sure that the request is actually coming from a user with a wallet, and not being spoofed.
       // We do this by calling verifyWallet.
-      await this.verifyWallet(walletID);
+      await this.verifyWallet(walletID, isPopupOpen);
 
       // We get the products selected by the user.
       this.productDict = await this.getProducts();
@@ -45426,7 +45436,7 @@ class EcommerceCart {
       const timer = (ms) => new Promise((res) => setTimeout(res, ms));
 
       // This loop waits for the popup's DOM to load in.
-      while (this.popupOpen) {
+      while (!isPopupOpen) {
         // While the popup is open
 
         // We send a message to the popup with the cartInfo.
@@ -45447,7 +45457,15 @@ class EcommerceCart {
         }
 
         // We wait for 1 second before checking again.
-        await timer(1000);
+        await timer(100);
+      }
+      if (isPopupOpen) {
+        const cartInfoReceived = await chrome.runtime.sendMessage({
+          from: "cart",
+          subject: "sendCartInfo",
+          data: this.productDict,
+          shipping: this.shipping,
+        });
       }
 
       // Re-enable the button.
@@ -45499,7 +45517,7 @@ class EcommerceCart {
 
   // This function checks to make sure that the request is actually coming from a user with a wallet,
   // and not being spoofed.
-  async verifyWallet(walletID) {
+  async verifyWallet(walletID, isPopupOpen) {
     // We check for an existing JWT in local storage.
     let existingToken = await chrome.storage.local.get("glidePayJWT");
     if (
@@ -45509,7 +45527,11 @@ class EcommerceCart {
     ) {
       // If it is, we set it to an empty JSON object, and then we create a new JWT for the user.
       existingToken = {};
-      await this.createJWTToken(walletID, existingToken.glidePayJWT);
+      await this.createJWTToken(
+        walletID,
+        existingToken.glidePayJWT,
+        isPopupOpen
+      );
       return;
     }
     // If the JWT is not empty, we check to make sure that the JWT is valid.
@@ -45519,7 +45541,8 @@ class EcommerceCart {
       // If it is invalid, we create a new JWT for the user.
       await this.createJWTToken(
         walletID.toLowerCase(),
-        existingToken.glidePayJWT
+        existingToken.glidePayJWT,
+        isPopupOpen
       );
       return;
     } else {
@@ -45527,19 +45550,18 @@ class EcommerceCart {
     }
 
     // Check to see if the popup is not open.
-    if (!this.popupOpen) {
-      // If the popup is not open, we send a message asking for it to be created.
+    // If the popup is not open, we send a message asking for it to be created.
+    if (!isPopupOpen) {
       await chrome.runtime.sendMessage({
         from: "cart",
         subject: "createOrderPopup",
         screenSize: screen.width,
       });
     }
-    this.popupOpen = true;
   }
 
   // This function creates a JWT for the user.
-  async createJWTToken(walletID, token) {
+  async createJWTToken(walletID, token, isPopupOpen) {
     // First, we generate a unique nonce for the JWT -- one time use. This is used to prevent replay attacks.
     // This sends a message asking for a nonce to be created.
     let nonceResponse = await chrome.runtime.sendMessage({
@@ -45580,14 +45602,13 @@ class EcommerceCart {
 
     // This then creates the popup. We do this in advance of calling the backend so that we can have a loading animation
     // while awaiting the backend response.
-    if (!this.popupOpen) {
+    if (!isPopupOpen) {
       await chrome.runtime.sendMessage({
         from: "cart",
         subject: "createOrderPopup",
         screenSize: screen.width,
       });
     }
-    this.popupOpen = true;
 
     // We send the signature to the backend.
     let signatureResponse = await chrome.runtime.sendMessage({
@@ -45748,7 +45769,20 @@ class Walmart extends ECommerceCart.EcommerceCart {
      * @return  {Object} Contains the products selected by the user.
      */
 
-        // Fucking disgusting ass code lol
+    const t = await fetch("https://www.walmart.com/cart", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "x-apollo-operation-name": "getCart", "x-o-gql-query": "query getCart", "x-o-platform-version": "main-496-debfb0", "x-o-segment": "oaoh" },
+        body: JSON.stringify({
+            query:
+                "query getCart( $cartInput:CartInput! $includeCartCustomerContext:Boolean! = false ){cart(input:$cartInput){...CartFragment cartCustomerContext @include(if:$includeCartCustomerContext){paymentData{isCapOneLinked hasCapOne showCapOneBanner}}}}fragment CartFragment on Cart{id checkoutable customer{id isGuest}addressMode migrationLineItems{quantity quantityLabel quantityString accessibilityQuantityLabel offerId usItemId productName thumbnailUrl addOnService priceInfo{linePrice{value displayValue}}selectedVariants{name value}}lineItems{id quantity quantityString quantityLabel isPreOrder createdDateTime selectedAddOnServices{offerId quantity groupType error{code upstreamErrorCode errorMsg}}bundleComponents{offerId quantity}registryId fulfillmentPreference selectedVariants{name value}priceInfo{priceDisplayCodes{showItemPrice priceDisplayCondition finalCostByWeight}itemPrice{...lineItemPriceInfoFragment}wasPrice{...lineItemPriceInfoFragment}unitPrice{...lineItemPriceInfoFragment}linePrice{...lineItemPriceInfoFragment}}product{name usItemId imageInfo{thumbnailUrl}addOnServices{serviceType serviceTitle serviceSubTitle groups{groupType groupTitle assetUrl shortDescription services{displayName selectedDisplayName offerId currentPrice{priceString}serviceMetaData}}}itemType offerId sellerId sellerName hasSellerBadge orderLimit orderMinLimit weightUnit weightIncrement salesUnit salesUnitType sellerType isAlcohol fulfillmentType fulfillmentSpeed fulfillmentTitle classType rhPath availabilityStatus brand category{categoryPath}departmentName configuration snapEligible preOrder{isPreOrder}}registryInfo{registryId registryType}wirelessPlan{planId mobileNumber postPaidPlan{...postpaidPlanDetailsFragment}}fulfillmentSourcingDetails{currentSelection requestedSelection}}fulfillment{intent accessPoint{...accessPointFragment}reservation{...reservationFragment}storeId displayStoreSnackBarMessage homepageBookslotDetails{title subTitle expiryText expiryTime slotExpiryText}deliveryAddress{addressLineOne addressLineTwo city state postalCode firstName lastName id}fulfillmentItemGroups{...on FCGroup{__typename defaultMode collapsedItemIds startDate endDate fulfillmentSwitchInfo{fulfillmentType benefit{type price itemCount date isWalmartPlusProgram}partialItemIds}shippingOptions{__typename itemIds availableShippingOptions{__typename id shippingMethod deliveryDate price{__typename displayValue value}label{prefix suffix}isSelected isDefault slaTier}}hasMadeShippingChanges slaGroups{__typename label deliveryDate sellerGroups{__typename id name isProSeller type catalogSellerId shipOptionGroup{__typename deliveryPrice{__typename displayValue value}itemIds shipMethod}}warningLabel}}...on SCGroup{__typename defaultMode collapsedItemIds fulfillmentSwitchInfo{fulfillmentType benefit{type price itemCount date isWalmartPlusProgram}partialItemIds}itemGroups{__typename label itemIds}accessPoint{...accessPointFragment}reservation{...reservationFragment}}...on DigitalDeliveryGroup{__typename defaultMode collapsedItemIds itemGroups{__typename label itemIds}}...on Unscheduled{__typename defaultMode collapsedItemIds itemGroups{__typename label itemIds}accessPoint{...accessPointFragment}reservation{...reservationFragment}fulfillmentSwitchInfo{fulfillmentType benefit{type price itemCount date isWalmartPlusProgram}partialItemIds}}...on AutoCareCenter{__typename defaultMode collapsedItemIds startDate endDate accBasketType itemGroups{__typename label itemIds}accessPoint{...accessPointFragment}reservation{...reservationFragment}fulfillmentSwitchInfo{fulfillmentType benefit{type price itemCount date isWalmartPlusProgram}partialItemIds}}}suggestedSlotAvailability{isPickupAvailable isDeliveryAvailable nextPickupSlot{startTime endTime slaInMins}nextDeliverySlot{startTime endTime slaInMins}nextUnscheduledPickupSlot{startTime endTime slaInMins}nextSlot{__typename...on RegularSlot{fulfillmentOption fulfillmentType startTime}...on DynamicExpressSlot{fulfillmentOption fulfillmentType startTime slaInMins}...on UnscheduledSlot{fulfillmentOption fulfillmentType startTime unscheduledHoldInDays}}}}priceDetails{subTotal{...priceTotalFields}fees{...priceTotalFields}taxTotal{...priceTotalFields}grandTotal{...priceTotalFields}belowMinimumFee{...priceTotalFields}minimumThreshold{value displayValue}ebtSnapMaxEligible{displayValue value}balanceToMinimumThreshold{value displayValue}}affirm{isMixedPromotionCart message{description termsUrl imageUrl monthlyPayment termLength isZeroAPR}nonAffirmGroup{...nonAffirmGroupFields}affirmGroups{...on AffirmItemGroup{__typename message{description termsUrl imageUrl monthlyPayment termLength isZeroAPR}flags{type displayLabel}name label itemCount collapsedItemIds itemIds defaultMode}}}checkoutableErrors{code shouldDisableCheckout itemIds}checkoutableWarnings{code itemIds}operationalErrors{offerId itemId requestedQuantity adjustedQuantity code upstreamErrorCode}}fragment postpaidPlanDetailsFragment on PostPaidPlan{espOrderSummaryId espOrderId espOrderLineId warpOrderId warpSessionId devicePayment{...postpaidPlanPriceFragment}devicePlan{price{...postpaidPlanPriceFragment}frequency duration annualPercentageRate}deviceDataPlan{...deviceDataPlanFragment}}fragment deviceDataPlanFragment on DeviceDataPlan{carrierName planType expiryTime activationFee{...postpaidPlanPriceFragment}planDetails{price{...postpaidPlanPriceFragment}frequency name}agreements{...agreementFragment}}fragment postpaidPlanPriceFragment on PriceDetailRow{key label displayValue value strikeOutDisplayValue strikeOutValue info{title message}}fragment agreementFragment on CarrierAgreement{name type format value docTitle label}fragment priceTotalFields on PriceDetailRow{label displayValue value key strikeOutDisplayValue strikeOutValue}fragment lineItemPriceInfoFragment on Price{displayValue value}fragment accessPointFragment on AccessPoint{id assortmentStoreId name nodeAccessType fulfillmentType fulfillmentOption displayName timeZone address{addressLineOne addressLineTwo city postalCode state phone}}fragment reservationFragment on Reservation{expiryTime isUnscheduled expired showSlotExpiredError reservedSlot{__typename...on RegularSlot{id price{total{displayValue}expressFee{displayValue}baseFee{displayValue}memberBaseFee{displayValue}}nodeAccessType accessPointId fulfillmentOption startTime fulfillmentType slotMetadata endTime available supportedTimeZone isAlcoholRestricted}...on DynamicExpressSlot{id price{total{displayValue}expressFee{displayValue}baseFee{displayValue}memberBaseFee{displayValue}}accessPointId fulfillmentOption startTime fulfillmentType slotMetadata available slaInMins maxItemAllowed supportedTimeZone isAlcoholRestricted}...on UnscheduledSlot{price{total{displayValue}expressFee{displayValue}baseFee{displayValue}memberBaseFee{displayValue}}accessPointId fulfillmentOption startTime fulfillmentType slotMetadata unscheduledHoldInDays supportedTimeZone}...on InHomeSlot{id price{total{displayValue}expressFee{displayValue}baseFee{displayValue}memberBaseFee{displayValue}}accessPointId fulfillmentOption startTime fulfillmentType slotMetadata endTime available supportedTimeZone isAlcoholRestricted}}}fragment nonAffirmGroupFields on NonAffirmGroup{label itemCount itemIds collapsedItemIds}",
+            variables: { cartInput: { forceRefresh: !1 }, includeCartCustomerContext: !0 },
+        }),
+    });
+    const r = await t.json();
+    console.log("R!!!");
+    console.log(r);
+
+      // Fucking disgusting ass code lol
         let productDict = {};
         let productIndex = 0;
         let productElements = document.querySelector(
