@@ -20,11 +20,6 @@
     "web3modal": "^1.9.8",
     "xhr2": "^0.2.1"
   },
-  "browserify": {
-    "transform": [
-      "babelify"
-    ]
-  },
   "scripts": {
     "buildAmazon": "browserify scripts/amazon-us.js -p esmify > bundles/bundledamazon.js -t [ babelify --presets [ @babel/preset-env ] --global ]",
     "buildWalmart": "browserify scripts/walmart-us.js -p esmify > bundles/bundledwalmart.js -t [ babelify --presets [ @babel/preset-env ] --global ]",

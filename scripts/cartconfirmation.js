@@ -104,7 +104,7 @@ async function setProductInfo(products, shipping, sender, wallet, address) {
     itemImgEntry.setAttribute("class", "ps-4");
     let priceString = productDict["unitPrice"].toString();
     if (priceString.includes(",")) {
-        priceString = priceString.replace(/,/g, "");
+      priceString = priceString.replace(/,/g, "");
     }
     subtotal += parseFloat(priceString) * productDict["quantity"];
     console.log("LOGGING");
@@ -150,74 +150,76 @@ async function setProductInfo(products, shipping, sender, wallet, address) {
   const confirmButton = document.getElementById("submit-button");
   confirmButton.addEventListener("click", async () => {
     const addressSelect = document.getElementById("addressSelect");
-    console.log(wallet + 'hoho')
-    console.log(wallet === 'pera')
+    console.log(wallet + "hoho");
+    console.log(wallet === "pera");
     /* (addressSelect.selectedIndex === -1) {
       //TODO: Add text or popup or something that says this
       return;
     } */
-    console.log(wallet)
-    if (wallet === 'metamask') {
-      const chain = document.getElementById("currencySelect").value
-    console.log(chain)
-    const windows = await chrome.windows.getAll({ populate: true });
-    for (let a in windows) {
-      for (let b in windows[a].tabs) {
-        if (windows[a].tabs[b].id === sender) {
-          console.log("Found sender");
-          chrome.tabs.sendMessage(
-            windows[a].tabs[b].id,
-            {
-              from: "popup",
-              subject: "promptTransaction",
-              price: totalPrice,
-              currency: currency,
-              addressid:
-                addressSelect.options[addressSelect.selectedIndex].value,
-              products: products,
-              ticker: chain
-            },
-            (response) => {
-              if (response) {
-                window.location.href = "/views/ordersentpopup.html";
-              } else {
-                alert("Signing failed");
-              }
-            }
-          );
-        }
-      }
-    }}else if (wallet === 'pera') {
-      console.log("peraclicked")
+    console.log(wallet);
+    if (wallet === "metamask") {
+      const chain = document.getElementById("currencySelect").value;
+      console.log(chain);
       const windows = await chrome.windows.getAll({ populate: true });
-    for (let a in windows) {
-      for (let b in windows[a].tabs) {
-        if (windows[a].tabs[b].id === sender) {
-          chrome.tabs.sendMessage(
-            windows[a].tabs[b].id,
-            {
-              from: "popup",
-              subject: "promptPeraTransaction",
-              price: totalPrice,
-              currency: currency,
-              addressid: 1,
-                //addressSelect.options[addressSelect.selectedIndex].value,
-              products: products,
-              wallet: address,
-              chain: "algo"
-            },
-            async (response) => {
-              console.log(response)
-              if (response) {
-                window.location.href = "/views/ordersentpopup.html";
-              } else {
-                alert("Signing failed");
+      for (let a in windows) {
+        for (let b in windows[a].tabs) {
+          if (windows[a].tabs[b].id === sender) {
+            console.log("Found sender");
+            chrome.tabs.sendMessage(
+              windows[a].tabs[b].id,
+              {
+                from: "popup",
+                subject: "promptTransaction",
+                price: totalPrice,
+                currency: currency,
+                addressid:
+                  addressSelect.options[addressSelect.selectedIndex].value,
+                products: products,
+                ticker: chain,
+              },
+              (response) => {
+                if (response) {
+                  window.location.href = "/views/ordersentpopup.html";
+                } else {
+                  alert("Signing failed");
+                }
               }
-            }
-          );
+            );
+          }
         }
       }
-    }
+    } else if (wallet === "pera") {
+      console.log("peraclicked");
+      const windows = await chrome.windows.getAll({ populate: true });
+      for (let a in windows) {
+        for (let b in windows[a].tabs) {
+          if (windows[a].tabs[b].id === sender) {
+            chrome.tabs.sendMessage(
+              windows[a].tabs[b].id,
+              {
+                from: "popup",
+                subject: "promptPeraTransaction",
+                price: totalPrice,
+                currency: currency,
+                addressid: 1,
+                //addressSelect.options[addressSelect.selectedIndex].value,
+                products: products,
+                wallet: address,
+                chain: "algo",
+              },
+              async (response) => {
+                console.log("RESPONSE!!");
+                console.log(response);
+                if (response) {
+                  window.location.href = "/views/ordersentpopup.html";
+                } else {
+                  alert("Signing failed");
+                }
+              }
+            );
+          }
+        }
+      }
     }
   });
 }
@@ -320,18 +322,18 @@ async function cartMain() {
     async (message, sender, sendResponse) => {
       if (message.from === "cart" && message.subject === "sendCartInfo") {
         // chrome.runtime.onMessage.removeListener(arguments.callee);
-        console.log("we ran it up")
+        console.log("we ran it up");
         sendResponse(true);
         const products = message.data;
         const shipping = message.shipping;
         const wallet = message.wallet;
-        console.log(wallet)
-          const address = message.address
-          if (message.wallet == 'pera') {
-          let evmSelect = document.getElementById('currencySelect')
-          evmSelect.remove()
-          }
-          
+        console.log(wallet);
+        const address = message.address;
+        if (message.wallet === "pera") {
+          let evmSelect = document.getElementById("currencySelect");
+          evmSelect.remove();
+        }
+
         console.log(shipping);
         await setUpCart(products, shipping, senderTabID, wallet, address);
       }
