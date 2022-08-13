@@ -151,13 +151,13 @@ async function setProductInfo(products, shipping, sender, wallet, address) {
   confirmButton.addEventListener("click", async () => {
     const addressSelect = document.getElementById("addressSelect");
     console.log(wallet + 'hoho')
-    console.log(wallet == 'pera')
+    console.log(wallet === 'pera')
     /* (addressSelect.selectedIndex === -1) {
       //TODO: Add text or popup or something that says this
       return;
     } */
     console.log(wallet)
-    if (wallet == 'metamask') {
+    if (wallet === 'metamask') {
       const chain = document.getElementById("currencySelect").value
     console.log(chain)
     const windows = await chrome.windows.getAll({ populate: true });
@@ -187,7 +187,7 @@ async function setProductInfo(products, shipping, sender, wallet, address) {
           );
         }
       }
-    }}else if (wallet == 'pera') {
+    }}else if (wallet === 'pera') {
       console.log("peraclicked")
       const windows = await chrome.windows.getAll({ populate: true });
     for (let a in windows) {
@@ -203,7 +203,8 @@ async function setProductInfo(products, shipping, sender, wallet, address) {
               addressid: 1,
                 //addressSelect.options[addressSelect.selectedIndex].value,
               products: products,
-              wallet: address
+              wallet: address,
+              chain: "algo"
             },
             async (response) => {
               console.log(response)

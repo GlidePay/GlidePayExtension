@@ -26,12 +26,11 @@
     ]
   },
   "scripts": {
-    "buildMask": "browserify scripts/metamask-controller.js -o scripts/metamaskbundled.js",
-    "buildAmazon": "browserify scripts/amazon-us.js -p esmify > scripts/bundledamazon.js -t [ babelify --presets [ @babel/preset-env ] --global ]",
-    "buildWalmart": "browserify scripts/walmart-us.js -o scripts/bundledwalmart.js",
-    "buildAliExpress": "browserify scripts/aliexpress.js -o scripts/bundledaliexpress.js",
-    "buildCostco": "browserify scripts/costco.js -o scripts/bundledcostco.js",
-    "buildWalletChoice": "browserify scripts/walletChoice.js -p esmify > scripts/bundledwalletchoice.js"
+    "buildAmazon": "browserify scripts/amazon-us.js -p esmify > bundles/bundledamazon.js -t [ babelify --presets [ @babel/preset-env ] --global ]",
+    "buildWalmart": "browserify scripts/walmart-us.js -p esmify > bundles/bundledwalmart.js -t [ babelify --presets [ @babel/preset-env ] --global ]",
+    "buildAliExpress": "browserify scripts/aliexpress-us.js -p esmify > bundles/bundledaliexpress.js -t [ babelify --presets [ @babel/preset-env ] --global ]",
+    "buildCostco": "browserify scripts/costco.js -p esmify > bundles/bundledcostco.js -t [ babelify --presets [ @babel/preset-env ] --global ]",
+    "buildWalletChoice": "browserify scripts/walletChoice.js -p esmify > bundles/bundledwalletchoice.js"
   },
   "devDependencies": {
     "@babel/core": "^7.18.10",

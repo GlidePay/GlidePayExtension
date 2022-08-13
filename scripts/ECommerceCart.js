@@ -74,7 +74,8 @@ class EcommerceCart {
   }
 
   async handlePeraTransaction(peraWallet, wallet, msg) {
-    console.log(wallet)
+    console.log("perawallet");
+    console.log(wallet);
 
     const cost = msg.price;
     const currency = msg.currency;
@@ -98,31 +99,31 @@ class EcommerceCart {
     try {
       console.log('here')
       const signedTxn = await peraWallet.signTransaction([singleTxnGroups]);
-    console.log(signedTxn)}catch(err){console.log(err)}
-
-    const body = {
-      txHash: signedTxn,
-      retailer: this.retailer,
-      shipping: this.shipping,
-      productidsarr: msg.products,
-      addressid: msg.addressid,
-      orderStatus: "Transaction Pending Confirmation.",
-      ticker: chain, //TODO: In future this needs to be changed to the ticker of the coin being used.
-      amount: algoCost,
-    };
-    console.log("BODY" + JSON.stringify(body));
-
-    // Sending the body to the backend to track the order.
-    chrome.runtime.sendMessage({
-      from: "cart",
-      subject: "getTransaction",
-      body: body,
-    });
-    console.log("returning");
-    return true;
-
-
+      console.log(signedTxn)
+      const body = {
+        txHash: unsignedTxn.txID(),
+        retailer: this.retailer,
+        shipping: this.shipping,
+        productidsarr: msg.products,
+        addressid: msg.addressid,
+        orderStatus: "Transaction Pending Confirmation.",
+        ticker: msg.chain, //TODO: In future this needs to be changed to the ticker of the coin being used.
+        amount: algoCost,
+      };
+      console.log("BODY" + JSON.stringify(body));
+      // Sending the body to the backend to track the order.
+      chrome.runtime.sendMessage({
+        from: "cart",
+        subject: "getTransaction",
+        body: body,
+      });
+      console.log("returning");
+      return true;
+    } catch (err) {
+      console.log(err)
+    }
   }
+
   async handleMetamaskTransaction(msg) {
 
     const DECIMALS = 6;
@@ -391,13 +392,13 @@ class EcommerceCart {
                 this.cryptoButton.disabled = false;
               }
             }
-          } else if (msg.wallet == 'walletConnect') {
+          } else if (msg.wallet === 'walletConnect') {
               try {
               const isPopupOpen = await chrome.runtime.sendMessage({
                 from: "cart",
                 subject: "isPopupOpen"
               })
-              await this.verifyWallet(walletID, isPopupOpen, wallet, address)
+              await this.verifyWallet(msg.walletID, isPopupOpen, msg.chainId, 0);
               console.log("recorded")
               console.log("id" + isPopupOpen)
               // We get the products selected by the user.
@@ -590,6 +591,8 @@ class EcommerceCart {
   // This function checks to make sure that the request is actually coming from a user with a wallet,
   // and not being spoofed.
   async verifyWallet(walletID, isPopupOpen, wallet, address) {
+    console.log("walletID!!!");
+    console.log(walletID);
     // We check for an existing JWT in local storage.
     let existingToken = await chrome.storage.local.get("glidePayJWT");
     if (
