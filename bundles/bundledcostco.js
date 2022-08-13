@@ -36569,6 +36569,7 @@ function stringifyReplacer(_, value) {
     }
     return value;
 }
+
 },{"fast-safe-stringify":188}],178:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -36661,6 +36662,7 @@ exports.errorValues = {
         message: 'The provider is disconnected from the specified chain.',
     },
 };
+
 },{}],179:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -36800,6 +36802,7 @@ function parseOpts(arg) {
     }
     return [];
 }
+
 },{"./classes":177,"./error-constants":178,"./utils":181}],180:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -36814,6 +36817,7 @@ const errors_1 = require("./errors");
 Object.defineProperty(exports, "ethErrors", { enumerable: true, get: function () { return errors_1.ethErrors; } });
 const error_constants_1 = require("./error-constants");
 Object.defineProperty(exports, "errorCodes", { enumerable: true, get: function () { return error_constants_1.errorCodes; } });
+
 },{"./classes":177,"./error-constants":178,"./errors":179,"./utils":181}],181:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -36925,6 +36929,7 @@ function assignOriginalError(error) {
 function hasKey(obj, key) {
     return Object.prototype.hasOwnProperty.call(obj, key);
 }
+
 },{"./classes":177,"./error-constants":178}],182:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -40392,6 +40397,7 @@ exports.JsonRpcEngine = JsonRpcEngine;
 function jsonify(request) {
     return JSON.stringify(request, null, 2);
 }
+
 },{"@metamask/safe-event-emitter":150,"eth-rpc-errors":180}],208:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -40458,6 +40464,7 @@ function createAsyncMiddleware(asyncMiddleware) {
     };
 }
 exports.createAsyncMiddleware = createAsyncMiddleware;
+
 },{}],209:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -40479,6 +40486,7 @@ function createScaffoldMiddleware(handlers) {
     };
 }
 exports.createScaffoldMiddleware = createScaffoldMiddleware;
+
 },{}],210:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -40492,6 +40500,7 @@ function getUniqueId() {
     return idCounter;
 }
 exports.getUniqueId = getUniqueId;
+
 },{}],211:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -40511,6 +40520,7 @@ function createIdRemapMiddleware() {
     };
 }
 exports.createIdRemapMiddleware = createIdRemapMiddleware;
+
 },{"./getUniqueId":210}],212:[function(require,module,exports){
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
@@ -40530,6 +40540,7 @@ __exportStar(require("./createScaffoldMiddleware"), exports);
 __exportStar(require("./getUniqueId"), exports);
 __exportStar(require("./JsonRpcEngine"), exports);
 __exportStar(require("./mergeMiddleware"), exports);
+
 },{"./JsonRpcEngine":207,"./createAsyncMiddleware":208,"./createScaffoldMiddleware":209,"./getUniqueId":210,"./idRemapMiddleware":211,"./mergeMiddleware":213}],213:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -40541,6 +40552,7 @@ function mergeMiddleware(middlewareStack) {
     return engine.asMiddleware();
 }
 exports.mergeMiddleware = mergeMiddleware;
+
 },{"./JsonRpcEngine":207}],214:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -45169,7 +45181,6 @@ class EcommerceCart {
     this.productDict;
     this.retailer;
     this.shipping;
-    this.popupOpen = false;
   }
 
   createListeners() {
@@ -45181,14 +45192,8 @@ class EcommerceCart {
     // Sends productDict when requested by cartConfirmation popup
     chrome.runtime.onMessage.addListener((msg, sender, response) => {
       if (msg.from === "popup" && msg.subject === "needInfo") {
-        console.log(this.productDict, this.shipping)
+        console.log(this.productDict, this.shipping);
         response([this.productDict, this.shipping]);
-      }
-    });
-    // Listens for when the popup is closed, keeps track of popup state.
-    chrome.runtime.onMessage.addListener((msg, sender, response) => {
-      if (msg.from === "background" && msg.subject === "popupClosed") {
-        this.popupOpen = false;
       }
     });
 
@@ -45396,10 +45401,10 @@ class EcommerceCart {
     cryptoButton.addEventListener("click", () => {
       // We disable the button to prevent multiple clicks.
       this.cryptoButton.disabled = true;
-      if (!this.popupOpen) {
-        this.cryptoButtonPressed();
-        return;
-      }
+      // if (!this.popupOpen) {
+      this.cryptoButtonPressed();
+      return;
+      // }
       this.cryptoButton.disabled = false;
     });
     return cryptoButton;
@@ -45411,9 +45416,14 @@ class EcommerceCart {
       // We check to make sure that the user is connected with Metamask and has a wallet connected.
       let walletID = await this.checkMetamaskSignIn();
 
+      const isPopupOpen = await chrome.runtime.sendMessage({
+        from: "cart",
+        subject: "isPopupOpen",
+      });
+
       // We check to make sure that the request is actually coming from a user with a wallet, and not being spoofed.
       // We do this by calling verifyWallet.
-      await this.verifyWallet(walletID);
+      await this.verifyWallet(walletID, isPopupOpen);
 
       // We get the products selected by the user.
       this.productDict = await this.getProducts();
@@ -45426,7 +45436,7 @@ class EcommerceCart {
       const timer = (ms) => new Promise((res) => setTimeout(res, ms));
 
       // This loop waits for the popup's DOM to load in.
-      while (this.popupOpen) {
+      while (!isPopupOpen) {
         // While the popup is open
 
         // We send a message to the popup with the cartInfo.
@@ -45447,7 +45457,15 @@ class EcommerceCart {
         }
 
         // We wait for 1 second before checking again.
-        await timer(1000);
+        await timer(100);
+      }
+      if (isPopupOpen) {
+        const cartInfoReceived = await chrome.runtime.sendMessage({
+          from: "cart",
+          subject: "sendCartInfo",
+          data: this.productDict,
+          shipping: this.shipping,
+        });
       }
 
       // Re-enable the button.
@@ -45499,7 +45517,7 @@ class EcommerceCart {
 
   // This function checks to make sure that the request is actually coming from a user with a wallet,
   // and not being spoofed.
-  async verifyWallet(walletID) {
+  async verifyWallet(walletID, isPopupOpen) {
     // We check for an existing JWT in local storage.
     let existingToken = await chrome.storage.local.get("glidePayJWT");
     if (
@@ -45509,7 +45527,11 @@ class EcommerceCart {
     ) {
       // If it is, we set it to an empty JSON object, and then we create a new JWT for the user.
       existingToken = {};
-      await this.createJWTToken(walletID, existingToken.glidePayJWT);
+      await this.createJWTToken(
+        walletID,
+        existingToken.glidePayJWT,
+        isPopupOpen
+      );
       return;
     }
     // If the JWT is not empty, we check to make sure that the JWT is valid.
@@ -45519,7 +45541,8 @@ class EcommerceCart {
       // If it is invalid, we create a new JWT for the user.
       await this.createJWTToken(
         walletID.toLowerCase(),
-        existingToken.glidePayJWT
+        existingToken.glidePayJWT,
+        isPopupOpen
       );
       return;
     } else {
@@ -45527,19 +45550,18 @@ class EcommerceCart {
     }
 
     // Check to see if the popup is not open.
-    if (!this.popupOpen) {
-      // If the popup is not open, we send a message asking for it to be created.
+    // If the popup is not open, we send a message asking for it to be created.
+    if (!isPopupOpen) {
       await chrome.runtime.sendMessage({
         from: "cart",
         subject: "createOrderPopup",
         screenSize: screen.width,
       });
     }
-    this.popupOpen = true;
   }
 
   // This function creates a JWT for the user.
-  async createJWTToken(walletID, token) {
+  async createJWTToken(walletID, token, isPopupOpen) {
     // First, we generate a unique nonce for the JWT -- one time use. This is used to prevent replay attacks.
     // This sends a message asking for a nonce to be created.
     let nonceResponse = await chrome.runtime.sendMessage({
@@ -45580,14 +45602,13 @@ class EcommerceCart {
 
     // This then creates the popup. We do this in advance of calling the backend so that we can have a loading animation
     // while awaiting the backend response.
-    if (!this.popupOpen) {
+    if (!isPopupOpen) {
       await chrome.runtime.sendMessage({
         from: "cart",
         subject: "createOrderPopup",
         screenSize: screen.width,
       });
     }
-    this.popupOpen = true;
 
     // We send the signature to the backend.
     let signatureResponse = await chrome.runtime.sendMessage({
@@ -45714,339 +45735,169 @@ module.exports = {
 };
 
 },{}],259:[function(require,module,exports){
+const { LogError } = require("./LogError");
 const ECommerceCart = require("./ECommerceCart");
-// ALL CHANGES TO THIS FILE MUST BE COMPILED WITH "npm run buildWalmart"
+// ALL CHANGES TO THIS FILE MUST BE COMPILED WITH "npm run buildCostco"
 
-class Walmart extends ECommerceCart.EcommerceCart {
-  /**
-   * Defines methods and handles the flow specific to Walmart's website.
-   */
-  constructor() {
-    super();
-  }
-
-  injectButton(buttonLocation) {
+class Costco extends ECommerceCart.EcommerceCart {
     /**
-         * Injects the pay with crypto button into Walmart's cart page.
+     * Defines methods and handles the flow specific to Costco's website.
+     * See the following link (Costco handles Costco Flow).
+     * https://lucid.app/lucidchart/86202d2d-3c46-49a6-89d9-a9164dd5f1ad/edit?invitationId=inv_d5751113-87f0-4abf-a8c3-6a076808331f&page=0_0#?referringapp=slack&login=slack
+     */
+    constructor() {
+        super();
+    }
+
+    injectButton() {
+        /**
+         * Injects the pay with crypto button into Costco's checkout page.
          * @function injectButton
 
          */
-    // Loads in button and aligns it.
-    const buttonBox = document.querySelector(
-      "#maincontent > div > div > div > div:nth-child(2) > div.flex.w-third.flex-column.ml3 > div > div > div:nth-child(1)"
-    );
-    buttonBox.style.alignItems = "center";
-    buttonLocation.after(this.cryptoButton);
-    buttonLocation.style.marginBottom = "10px";
-    buttonLocation.style.paddingBottom = "5px";
-  }
+        console.log("injecting button");
+        const buttonBox = document.querySelector('#checkout-button-wrapper');
+        const add_to_cart = document.querySelector('#shopCartCheckoutSubmitButton');
+        buttonBox.style.display = "flex";
+        buttonBox.style.justifyContent = "center";
+        buttonBox.style.flexDirection = "column";
+        buttonBox.style.alignItems = "center";
+        this.cryptoButton.style.marginTop = "10px";
+        this.cryptoButton.style.marginBottom = "5px";
+        add_to_cart.after(this.cryptoButton);
+    }
 
-  async getProducts() {
-    /**
-     * Parses Walmart's checkout page for the user's selected products.
-     * @function getProducts
-     * @return  {Object} Contains the products selected by the user.
-     */
-
-        // Fucking disgusting ass code lol
-        let productDict = {};
-        let productIndex = 0;
-        let productElements = document.querySelector(
-            "#maincontent > div > div > div > div:nth-child(2) > div.flex.w-two-thirds.flex-column.mr3 > div:nth-child(2) > div > div > div.flex.flex-column > section > div"
-        );
-        let productElementsList = Array.from(productElements.children);
-        productElementsList.forEach(function (part, index) {
-            let productCartSection = part.querySelector('div:nth-child(1) > div > ul');
-            if (productCartSection != null) {
-                let productCartSectionList = Array.from(productCartSection.children);
-                productCartSectionList.forEach(function (part) {
-                    try {
-                    let productItem = part.querySelector('div:nth-child(3)');
-                    console.log("PRODUCT ITEM")
-                    console.log(productItem);
-                    let productInfo = productItem.querySelector('div:nth-child(1) > div > div:nth-child(2)');
-                    console.log("PRODUCT INFO1")
-                    console.log(productInfo);
-                    console.log("QUERY TEST");
-                    console.log(productInfo.querySelector('div'));
-                    let productID = productInfo.querySelector('div > div > div:nth-child(2) > a').getAttribute('href').split('/ip/seort/')[1];
-                    console.log("PRODUCT ID1");
-                    console.log(productID);
-                    let productName = productInfo.querySelector('a > h4 > div > span').innerText;
-                    let unitPrice = productInfo.querySelector('div:nth-child(3) > div > div:nth-child(1) > span').innerText.split('$')[1];
-                    let productQuantityString = productItem.querySelector('a').getAttribute('aria-label').split(' in cart')[0];
-                    let productQuantity = productQuantityString.slice(productQuantityString.length - 1);
-                    let productImage = productInfo.querySelector('a > img').getAttribute('srcset').split(' 1x')[0];
-                    productDict[productIndex] = {
-                        currency: 'USD',
-                        productID: productID,
-                        productName: productName,
-                        unitPrice: parseFloat(unitPrice)/parseFloat(productQuantity),
-                        quantity: productQuantity,
-                        productImage: productImage,
-
-                    };
-                    productIndex++;
-                } catch(err) {
-                    try {
-                    let productItem = part.querySelector('div:nth-child(2)');
-                    console.log("PRODUCT ITEM");
-                    console.log(productItem)
-                    let productInfo = productItem.querySelector('div:nth-child(1) > div > div:nth-child(2)');
-                    console.log("PRODUCT INFO2")
-                    console.log(productInfo);
-                    console.log("QUERY TEST");
-                    console.log(productInfo.querySelector('div > div'));
-                    let productID = productInfo.querySelector('div > div > div:nth-child(2) > a').getAttribute('href').split('/ip/seort/')[1];
-                    let productName = productInfo.querySelector('a > h4 > div > span').innerText;
-                    let unitPrice = productInfo.querySelector('div:nth-child(3) > div > div:nth-child(1) > span').innerText.split('$')[1];
-                    let productQuantityString = productItem.querySelector('a').getAttribute('aria-label').split(' in cart')[0];
-                    let productQuantity = productQuantityString.slice(productQuantityString.length - 1);
-                    let productImage = productInfo.querySelector('a > img').getAttribute('srcset').split(' 1x')[0];
-                    productDict[productIndex] = {
-                        currency: 'USD',
-                        productID: productID,
-                        productName: productName,
-                        unitPrice: parseFloat(unitPrice)/parseFloat(productQuantity),
-                        quantity: productQuantity,
-                        productImage: productImage,
-
-                    };
-                    productIndex++;
-                    } catch(err) {
-                        try {
-                        let productItem = part.querySelector('div:nth-child(3)');
-                        console.log("PRODUCT ITEM")
-                        console.log(productItem);
-                        let productInfo = productItem.querySelector('div:nth-child(1) > div > div.flex.flex-row.relative');
-                        console.log("PRODUCT INFO2.5")
-                        console.log(productInfo);
-                        console.log("QUERY TEST");
-                        console.log(productInfo.querySelector('div'));
-                        let productID = productInfo.querySelector('div > div > div:nth-child(2) > a').getAttribute('href').split('/ip/seort/')[1];
-                        console.log("PRODUCT ID1");
-                        console.log(productID);
-                        let productName = productInfo.querySelector('a > h4 > div > span').innerText;
-                        let unitPrice = productInfo.querySelector('div:nth-child(3) > div > div:nth-child(1) > span').innerText.split('$')[1];
-                        let productQuantityString = productItem.querySelector('a').getAttribute('aria-label').split(' in cart')[0];
-                        let productQuantity = productQuantityString.slice(productQuantityString.length - 1);
-                        let productImage = productInfo.querySelector('a > img').getAttribute('srcset').split(' 1x')[0];
-                        productDict[productIndex] = {
-                            currency: 'USD',
-                            productID: productID,
-                            productName: productName,
-                            unitPrice: parseFloat(unitPrice) / parseFloat(productQuantity),
-                            quantity: productQuantity,
-                            productImage: productImage,
-
-                        };
-                        productIndex++;
-                    } catch (err) {
-                            try {
-                                let productItem = part.querySelector('div:nth-child(2)');
-                                console.log("PRODUCT ITEM")
-                                console.log(productItem);
-                                let productInfo = productItem.querySelector('div:nth-child(1) > div > div.flex.flex-row.relative');
-                                console.log("PRODUCT INFO2.91")
-                                console.log(productInfo);
-                                let productID = productInfo.querySelector('a').getAttribute('href').split('/ip/seort/')[1];
-                                console.log("PRODUCT ID1");
-                                console.log(productID);
-                                let productName = productInfo.querySelector('a > h4 > div > span').innerText;
-                                let unitPrice = productInfo.querySelector('div:nth-child(3) > div > div:nth-child(1) > span').innerText.split('$')[1];
-                                let productQuantityString = productItem.querySelector('a').getAttribute('aria-label').split(' in cart')[0];
-                                let productQuantity = productQuantityString.slice(productQuantityString.length - 1);
-                                let productImage = productInfo.querySelector('a > img').getAttribute('srcset').split(' 1x')[0];
-                                productDict[productIndex] = {
-                                    currency: 'USD',
-                                    productID: productID,
-                                    productName: productName,
-                                    unitPrice: parseFloat(unitPrice) / parseFloat(productQuantity),
-                                    quantity: productQuantity,
-                                    productImage: productImage,
-
-                                };
-                                productIndex++;
-                            } catch (err) {
-                                let productItem = part.querySelector('div:nth-child(3)');
-                                console.log("PRODUCT ITEM")
-                                console.log(productItem);
-                                let productInfo = productItem.querySelector('div:nth-child(1) > div > div.flex.flex-row.relative');
-                                console.log("PRODUCT INFO2.92")
-                                console.log(productInfo);
-                                let productID = productInfo.querySelector('a').getAttribute('href').split('/ip/seort/')[1];
-                                console.log("PRODUCT ID1");
-                                console.log(productID);
-                                let productName = productInfo.querySelector('a > h4 > div > span').innerText;
-                                let unitPrice = productInfo.querySelector('div:nth-child(3) > div > div:nth-child(1) > span').innerText.split('$')[1];
-                                let productQuantityString = productItem.querySelector('a').getAttribute('aria-label').split(' in cart')[0];
-                                let productQuantity = productQuantityString.slice(productQuantityString.length - 1);
-                                let productImage = productInfo.querySelector('a > img').getAttribute('srcset').split(' 1x')[0];
-                                productDict[productIndex] = {
-                                    currency: 'USD',
-                                    productID: productID,
-                                    productName: productName,
-                                    unitPrice: parseFloat(unitPrice) / parseFloat(productQuantity),
-                                    quantity: productQuantity,
-                                    productImage: productImage,
-
-                                };
-                                productIndex++;
-                            }
-                    }
-                    }
-                }
-                });
-            } else {
-                try {
-                    let productCartSection2 = part.querySelector('div > div > ul');
-                    let productCartSection2List = Array.from(productCartSection2.children);
-                    productCartSection2List.forEach(function (part) {
-                        let productItem = part.querySelector('div:nth-child(2)');
-                        console.log("PRODUCT ITEM3");
-                        console.log(productItem);
-                        let productInfo = productItem.querySelector('div:nth-child(1) > div > div:nth-child(2)');
-                        console.log("PRODUCT INFO3");
-                        console.log(productInfo);
-                        console.log("QUERY TEST");
-                        console.log(productInfo.querySelector('div > div'));
-                        let productID = productInfo.querySelector('div > div > div:nth-child(2) > a').getAttribute('href').split('/ip/seort/')[1];
-                        let productName = productInfo.querySelector('a > h4 > div > span').innerText;
-                        let unitPrice = productInfo.querySelector('div:nth-child(3) > div > div:nth-child(1) > span').innerText.split('$')[1];
-                        let productQuantityString = productItem.querySelector('a').getAttribute('aria-label').split(' in cart')[0];
-                        let productQuantity = productQuantityString.slice(productQuantityString.length - 1);
-                        let productImage = productInfo.querySelector('a > img').getAttribute('srcset').split(' 1x')[0];
-                        productDict[productIndex] = {
-                            currency: 'USD',
-                            productID: productID,
-                            productName: productName,
-                            unitPrice: parseFloat(unitPrice)/parseFloat(productQuantity),
-                            quantity: productQuantity,
-                            productImage: productImage,
-                        };
-                        productIndex++;
-                    });
-                } catch(err) {
-                    try {
-                        let productCartSection2 = part.querySelector('div > div > ul');
-                        let productCartSection2List = Array.from(productCartSection2.children);
-                        productCartSection2List.forEach(function (part) {
-                            let productItem = part.querySelector('div:nth-child(3)');
-                            console.log("PRODUCT ITEM3.5");
-                            console.log(productItem);
-                            let productInfo = productItem.querySelector('div:nth-child(1) > div > div:nth-child(2)');
-                            console.log("PRODUCT INFO3.5");
-                            console.log(productInfo);
-                            console.log("QUERY TEST");
-                            console.log(productInfo.querySelector('div > div'));
-                            let productID = productInfo.querySelector('div > div > div:nth-child(2) > a').getAttribute('href').split('/ip/seort/')[1];
-                            let productName = productInfo.querySelector('a > h4 > div > span').innerText;
-                            let unitPrice = productInfo.querySelector('div:nth-child(3) > div > div:nth-child(1) > span').innerText.split('$')[1];
-                            let productQuantityString = productItem.querySelector('a').getAttribute('aria-label').split(' in cart')[0];
-                            let productQuantity = productQuantityString.slice(productQuantityString.length - 1);
-                            let productImage = productInfo.querySelector('a > img').getAttribute('srcset').split(' 1x')[0];
-                            productDict[productIndex] = {
-                                currency: 'USD',
-                                productID: productID,
-                                productName: productName,
-                                unitPrice: parseFloat(unitPrice)/parseFloat(productQuantity),
-                                quantity: productQuantity,
-                                productImage: productImage,
-                            };
-                            productIndex++;
-                        });
-                    } catch(err) {
-                        try {
-                            let productCartSection2 = part.querySelector('div:nth-child(2) > div > ul');
-                            let productCartSection2List = Array.from(productCartSection2.children);
-                            productCartSection2List.forEach(function (part) {
-                                let productItem = part.querySelector('div:nth-child(3)');
-                                console.log("PRODUCT ITEM3.9");
-                                console.log(productItem);
-                                let productInfo = productItem.querySelector('div:nth-child(1) > div > div:nth-child(2)');
-                                console.log("PRODUCT INFO3.9");
-                                console.log(productInfo);
-                                console.log("QUERY TEST");
-                                console.log("TEST AAAAAA");
-                                let productID = productInfo.querySelector('div.flex.flex-column.sans-serif.pt1.relative > div.flex.mt1.w-100 > div > div > div.flex.w-60 > div > div > a').getAttribute('href').split('/ip/seort/')[1]
-                                console.log(productID);
-                                let productName = productInfo.querySelector('a > h4 > div > span').innerText;
-                                console.log("productName3.9 " + productName);
-                                let unitPrice = productItem.querySelector('div:nth-child(1) > div > div:nth-child(3) > div > div > span').innerText.split('$')[1];
-                                console.log("unitPrice3.9 " + unitPrice);
-                                let productQuantityString = productItem.querySelector('a').getAttribute('aria-label').split(' in cart')[0];
-                                console.log("productQuantityString3.9 " + productQuantityString);
-                                let productQuantity = productQuantityString.slice(productQuantityString.length - 1);
-                                console.log("productQuantity3.9 " + productQuantity);
-                                let productImage = productItem.querySelector('div.flex.flex-column.sans-serif.pt1.relative > div.flex.mt1.w-100 > div > div > a > img').getAttribute('srcset').split(' 1x')[0];
-                                console.log("productImage3.9 " + productImage);
-                                productDict[productIndex] = {
-                                    currency: 'USD',
-                                    productID: productID,
-                                    productName: productName,
-                                    unitPrice: parseFloat(unitPrice)/parseFloat(productQuantity),
-                                    quantity: productQuantity,
-                                    productImage: productImage,
-                                };
-                                productIndex++;
-                            });
-                        } catch(err) {
-                            try {
-                                let productCartSection2 = part.querySelector('div > div > ul');
-                                let productCartSection2List = Array.from(productCartSection2.children);
-                                productCartSection2List.forEach(function (part) {
-                                    let productItem = part.querySelector('div.flex.flex-column.sans-serif.pt1.relative');
-                                    console.log("PRODUCT ITEM4.0");
-                                    console.log(productItem);
-                                    let productInfo = productItem.querySelector('div.flex.mt1.w-100 > div > div.flex.flex-row.relative');
-                                    console.log("PRODUCT INFO4.0");
-                                    console.log(productInfo);
-                                    console.log("QUERY TEST");
-                                    console.log(productInfo.querySelector('div > div'));
-                                    let productID = productInfo.querySelector('div > div > div:nth-child(2) > a').getAttribute('href').split('/ip/seort/')[1];
-                                    let productName = productInfo.querySelector('a > h4 > div > span').innerText;
-                                    let unitPrice = productInfo.querySelector('div:nth-child(3) > div > div:nth-child(1) > span').innerText.split('$')[1];
-                                    let productQuantityString = productItem.querySelector('a').getAttribute('aria-label').split(' in cart')[0];
-                                    let productQuantity = productQuantityString.slice(productQuantityString.length - 1);
-                                    let productImage = productInfo.querySelector('a > img').getAttribute('srcset').split(' 1x')[0];
-                                    productDict[productIndex] = {
-                                        currency: 'USD',
-                                        productID: productID,
-                                        productName: productName,
-                                        unitPrice: parseFloat(unitPrice)/parseFloat(productQuantity),
-                                        quantity: productQuantity,
-                                        productImage: productImage,
-                                    };
-                                    productIndex++;
-                                });
-                            } catch(err) {
-                                console.log("ERROR4.0");
-                                console.log(err);
-                            }
-                        }
-                    }
-                }
+    async getCostcoPage() {
+        return new Promise(function (resolve) {
+          let xhr = new XMLHttpRequest();
+          xhr.responseType = "document";
+          let url = "https://www.costco.com/CheckoutCartDisplayView";
+          xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200 /* DONE */) {
+              let html = xhr.response;
+              resolve(
+                html);
             }
+          };
+          xhr.open("GET", url, true);
+          xhr.send("");
         });
-    console.log(productElements);
-    return productDict;
-  }
+      }
 
-  getRetailer() {
-    return "walmart";
-  }
+    async temp() {
+        return await this.getCostcoPage()
+    }
+    async getProducts() {
+        /**
+         * Parses Costco's checkout page for the user's selected products.
+         * @function getProducts
+         * @return  {Object} Contains the products selected by the user.
+         */
+        console.log('calling function')
+        let costcoDocument = await this.temp();
+        console.log(costcoDocument)
 
-  getShipping(productDict) {
-    let total = 0;
-    for (let index in productDict) {
-        total += parseFloat(productDict[index]["unitPrice"]) * parseFloat(productDict[index]["quantity"]);
+        let productDict = {};
+        let productElements = costcoDocument.getElementById(
+            "order-items-regular"
+        );
+        let groceryElements = costcoDocument.getElementById(
+            "order-items-grocery"
+        );
+
+        let productElementsList = undefined;
+        let groceryElementsList = undefined;
+        try {
+        productElementsList = Array.from(productElements.children);}
+        catch{}
+        try {
+        groceryElementsList = Array.from(groceryElements.children);}
+        catch{}
+        let index = 0;
+        if (productElementsList !== undefined) {
+        productElementsList.forEach(function (part) {
+            if (part.tagName === "DIV") {
+                console.log(part)
+                const product = part.querySelector('div > div:nth-child(1)');
+                console.log(product);
+                const productID = product.getAttribute("data-orderitemnumber");
+                console.log("productID: " + productID);
+                const productName = product.querySelector('div:nth-child(1) > div:nth-child(2) > h3 > a').innerText;
+                console.log(product.getElementsByClassName('free-gift'))
+                let unitPrice;
+                try{
+                unitPrice = product.querySelector('div:nth-child(1) > div:nth-child(2) > div:nth-child(7) > div > div > div:nth-child(1) > span > span').innerText;}
+                catch {try {
+                    unitPrice = product.querySelector('div:nth-child(1) > div:nth-child(2) > div:nth-child(6) > div > div > div:nth-child(1) > span > span').innerText;
+                } catch{}}
+
+                console.log(unitPrice)
+                let quantity;
+                try {
+                quantity = product.querySelector('div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > input').value;
+            console.log(quantity)}
+                catch{try {
+                    quantity = product.querySelector('div:nth-child(2) > div:nth-child(1) > div:nth-child(2)').innerHTML;
+                    console.log(quantity)
+                }catch{}}
+
+                const productImage = product.querySelector('div:nth-child(1) > div:nth-child(1) > a > img').getAttribute("src");
+                productDict[index] = {
+                    currency: 'USD',
+                    productID: productID,
+                    productName: productName,
+                    unitPrice: unitPrice,
+                    quantity: quantity,
+                    productImage: productImage,
+                };
+                index++;
+            }
+                });}
+        if (groceryElementsList !== undefined) {
+        groceryElementsList.forEach(function (part) {
+            if (part.tagName === "DIV") {
+                const product = part.querySelector('div > div:nth-child(1)');
+                console.log(product);
+                const productID = product.getAttribute("data-orderitemnumber");
+                const productName = product.querySelector('div:nth-child(1) > div:nth-child(2) > h3 > a').innerText;
+                const unitPrice = product.querySelector('div:nth-child(1) > div:nth-child(2) > div:nth-child(6) > div > div > div:nth-child(1) > span > span').innerText;
+                const quantity = product.querySelector('div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > input').value;
+                const productImage = product.querySelector('div:nth-child(1) > div:nth-child(1) > a > img').getAttribute("src");
+                productDict[index] = {
+                    currency: 'USD',
+                    productID: productID,
+                    productName: productName,
+                    unitPrice: unitPrice,
+                    quantity: quantity,
+                    productImage: productImage,
+                };
+                index++;
+            }
+        });}
+        console.log(productDict)
+        return productDict;
     }
-    if (total < 35.00) {
-        return 6.99
-    } else {
-        return 0
+
+    getRetailer() {
+            return 'costco'
     }
-  }
+    getShipping(productDict) {
+        let total = 0;
+        let shipping = 0;
+        for (let index in productDict) {
+            total += parseFloat(productDict[index]["unitPrice"]) * parseFloat(productDict[index]["quantity"]);
+        }
+        if (total < 75.00) {
+            shipping = 3.00;
+        } else {
+            shipping = 0;
+        }
+        try {
+        console.log(parseFloat(document.getElementById("order-estimated-shipping").innerHTML.split('automation-id="orderEstimatedShipping">$')[1].split("</")[0]))
+        shipping += parseFloat(document.getElementById("order-estimated-shipping").innerHTML.split('automation-id="orderEstimatedShipping">$')[1].split("</")[0]) }
+        catch{}
+        return shipping
+      }
 }
 
 function main() {
@@ -46054,32 +45905,24 @@ function main() {
      * Main runner function.
      * @function main
      */
-    let walmart = new Walmart();
-    walmart.createListeners();
+    console.log('running')
+    let costco = new Costco();
+    costco.createListeners();
+    costco.injectButton();
     chrome.runtime.sendMessage({
         from: "cart",
         subject: "productData",
     });
-    // Waits for page to fully load before injecting the button.
-    const loadObserver = new MutationObserver(function(mutations) {
-        mutations.forEach(function(mutation) {
-            if (mutation.addedNodes.length > 0) {
-                if (mutation.addedNodes[0]) {
-                    if (mutation.addedNodes[0].childNodes) {
-                        if (mutation.addedNodes[0].childNodes[0].childNodes[0].id === "Continue to checkout button") {
-                            console.log("injecting button");
-                            walmart.injectButton(mutation.addedNodes[0].childNodes[0].childNodes[0]);
-                        }
-                    }
-                }
-            }
-        });
+    var observer = new MutationObserver(function(mutations) {
+        console.log("Mutation detected");
+        console.log(mutations);
+        costco.injectButton();
     });
-    const container = document.querySelector("#__next")
-    let config = { attributes: true, childList: true, subtree: true, characterData: true };
-    loadObserver.observe(container, config);
+    var container = document.querySelector('#cart');
+    console.log(container);
+    let config = { attributes: true, subtree: true, characterData: true };
+    observer.observe(container, config);
 }
 
 main();
-
-},{"./ECommerceCart":257}]},{},[259]);
+},{"./ECommerceCart":257,"./LogError":258}]},{},[259]);

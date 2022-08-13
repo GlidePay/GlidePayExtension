@@ -13,10 +13,9 @@
     "xhr2": "^0.2.1"
   },
   "scripts": {
-    "buildMask": "browserify scripts/metamask-controller.js -o scripts/metamaskbundled.js",
-    "buildAmazon": "browserify scripts/amazon-us.js -o scripts/bundledamazon.js",
-    "buildWalmart": "browserify scripts/walmart-us.js -o scripts/bundledwalmart.js",
-    "buildAliExpress": "browserify scripts/aliexpress.js -o scripts/bundledaliexpress.js",
-    "buildCostco": "browserify scripts/costco.js -o scripts/bundledcostco.js"
+    "buildAmazon": "browserify scripts/amazon-us.js -o bundles/bundledamazon.js",
+    "buildWalmart": "browserify scripts/walmart-us.js -o bundles/bundledwalmart.js",
+    "buildAliExpress": "browserify scripts/aliexpress.js -o bundles/bundledaliexpress.js",
+    "buildCostco": "browserify scripts/costco.js -o bundles/bundledcostco.js"
   }
 }
