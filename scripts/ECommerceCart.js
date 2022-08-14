@@ -1,11 +1,11 @@
 // This is a metamask library that allows us to connect to the metamask extension from our extension.
 const createProvider = require("metamask-extension-provider");
-
-const { ethers } = require("ethers");
-const maskInpageProvider = createProvider();
-const provider = new ethers.providers.Web3Provider(maskInpageProvider, "any");
-const signer = provider.getSigner();
 const { LogError } = require("./LogError");
+const { ethers } = require("ethers");
+
+maskInpageProvider = createProvider();
+provider = new ethers.providers.Web3Provider(maskInpageProvider, "any");
+signer = provider.getSigner();
 
 class EcommerceCart {
   /*
@@ -267,7 +267,8 @@ class EcommerceCart {
 
       // We check to make sure that the request is actually coming from a user with a wallet, and not being spoofed.
       // We do this by calling verifyWallet.
-      await this.verifyWallet(walletID, isPopupOpen);
+      let existingToken = await chrome.storage.local.get("glidePayJWT");
+      await this.verifyWallet(walletID, existingToken, isPopupOpen);
 
       // We get the products selected by the user.
       this.productDict = await this.getProducts();
@@ -361,15 +362,17 @@ class EcommerceCart {
 
   // This function checks to make sure that the request is actually coming from a user with a wallet,
   // and not being spoofed.
-  async verifyWallet(walletID, isPopupOpen) {
+  async verifyWallet(walletID, existingToken, isPopupOpen) {
+    console.log(JSON.stringify(existingToken));
     // We check for an existing JWT in local storage.
-    let existingToken = await chrome.storage.local.get("glidePayJWT");
+    console.log("in verifywallet")
     if (
       // We check to see if the JWT is empty.
       JSON.stringify(existingToken) === "{}" ||
       existingToken.hasOwnProperty("message")
     ) {
       // If it is, we set it to an empty JSON object, and then we create a new JWT for the user.
+      console.log("empty")
       existingToken = {};
       await this.createJWTToken(
         walletID,
@@ -402,6 +405,7 @@ class EcommerceCart {
         screenSize: screen.width,
       });
     }
+    return;
   }
 
   // This function creates a JWT for the user.
@@ -511,6 +515,7 @@ class EcommerceCart {
     // Checks to make sure there's no error.
     if (verifyTokenResponse.hasOwnProperty("error")) {
       const verifyTokenResponseError = verifyTokenResponse.error;
+      console.log("hello there" + JSON.stringify(verifyTokenResponse));
       throw new LogError(
         verifyTokenResponseError.customMsg,
         verifyTokenResponseError.error,
@@ -522,7 +527,7 @@ class EcommerceCart {
         verifyTokenResponseError.errorID,
         () => {
           this.cryptoButton.disabled = false;
-          alert("CRITICAL ERROR: VERIFY TOKEN FAILED"); //? Why would we do this?
+          alert("Verifying token failed");
         }
       );
     }

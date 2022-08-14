@@ -42,6 +42,10 @@ async function getAddresses() {
     addresses.push(JSON.parse(tempAddress));
   }
 
+  return addresses
+}
+
+async function setAddressInfo(addresses) {
   const addressSelect = document.getElementById("addressSelect");
   let address;
   for (let i = 0; i < addresses.length; i++) {
@@ -86,6 +90,7 @@ async function getAddresses() {
 
   productSection.appendChild(addressButtonRow);
 }
+
 
 async function setProductInfo(products, shipping, sender) {
   let currency;
@@ -218,7 +223,8 @@ async function setUpCart(products, shipping, senderTabID) {
     );
   }
   try {
-    await getAddresses();
+    let addresses = await getAddresses();
+    await setAddressInfo(addresses);
   } catch (err) {
     console.log(err);
     console.log(err.stack);
@@ -309,3 +315,7 @@ window.addEventListener("load", async () => {
     );
   }
 });
+
+module.exports = {
+  getAddresses,
+};

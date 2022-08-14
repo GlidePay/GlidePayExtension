@@ -1,8 +1,7 @@
-const { LogError } = require("./LogError");
-const ECommerceCart = require("./ECommerceCart");
+const { EcommerceCart} = require("./ECommerceCart");
 // ALL CHANGES TO THIS FILE MUST BE COMPILED WITH "npm run buildAmazon"
 
-class Amazon extends ECommerceCart.EcommerceCart {
+class Amazon extends EcommerceCart {
   /**
    * Defines methods and handles the flow specific to Amazon's website.
    * See the following link (Amazon handles Amazon Flow).
@@ -90,7 +89,6 @@ function main() {
    * Main runner function.
    * @function main
    */
-
   let amazon = new Amazon();
   amazon.createListeners();
   amazon.injectButton();
