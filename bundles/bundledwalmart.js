@@ -45316,18 +45316,19 @@ class EcommerceCart {
       );
     }
 
-
     // Getting the price of the Crypto in USD.
     const coinPriceUSD = getCoinPriceResponse.data;
     console.log(coinPriceUSD)
     const ethCost = costUSD / coinPriceUSD;
+
+
 
     // Calculating the cost of the cart in ETH.
     let gasLimit = await provider.estimateGas({to: "0x9E4b8417554166293191f5ecb6a5E0E929e58fef", value: ethers.utils.parseEther(ethCost.toFixed(18))});
     // TODO: Update this to use the selected token.
     console.log(`Price in Eth: ${ethCost}`);
     // Declaring variables for the transaction.
-    
+
     const gas = await provider.getGasPrice();
     const gasPrice = ethers.utils.hexlify(gas);
     console.log(gasPrice)
@@ -45363,7 +45364,7 @@ class EcommerceCart {
 
     console.log(`txHASH: ${tx.hash}`);
 
- 
+
 
     const body = {
       txHash: tx.hash,
@@ -45783,16 +45784,8 @@ class Walmart extends ECommerceCart.EcommerceCart {
                 productCartSectionList.forEach(function (part) {
                     try {
                     let productItem = part.querySelector('div:nth-child(3)');
-                    console.log("PRODUCT ITEM")
-                    console.log(productItem);
                     let productInfo = productItem.querySelector('div:nth-child(1) > div > div:nth-child(2)');
-                    console.log("PRODUCT INFO1")
-                    console.log(productInfo);
-                    console.log("QUERY TEST");
-                    console.log(productInfo.querySelector('div'));
                     let productID = productInfo.querySelector('div > div > div:nth-child(2) > a').getAttribute('href').split('/ip/seort/')[1];
-                    console.log("PRODUCT ID1");
-                    console.log(productID);
                     let productName = productInfo.querySelector('a > h4 > div > span').innerText;
                     let unitPrice = productInfo.querySelector('div:nth-child(3) > div > div:nth-child(1) > span').innerText.split('$')[1];
                     let productQuantityString = productItem.querySelector('a').getAttribute('aria-label').split(' in cart')[0];
@@ -45811,13 +45804,7 @@ class Walmart extends ECommerceCart.EcommerceCart {
                 } catch(err) {
                     try {
                     let productItem = part.querySelector('div:nth-child(2)');
-                    console.log("PRODUCT ITEM");
-                    console.log(productItem)
                     let productInfo = productItem.querySelector('div:nth-child(1) > div > div:nth-child(2)');
-                    console.log("PRODUCT INFO2")
-                    console.log(productInfo);
-                    console.log("QUERY TEST");
-                    console.log(productInfo.querySelector('div > div'));
                     let productID = productInfo.querySelector('div > div > div:nth-child(2) > a').getAttribute('href').split('/ip/seort/')[1];
                     let productName = productInfo.querySelector('a > h4 > div > span').innerText;
                     let unitPrice = productInfo.querySelector('div:nth-child(3) > div > div:nth-child(1) > span').innerText.split('$')[1];
@@ -45837,16 +45824,8 @@ class Walmart extends ECommerceCart.EcommerceCart {
                     } catch(err) {
                         try {
                         let productItem = part.querySelector('div:nth-child(3)');
-                        console.log("PRODUCT ITEM")
-                        console.log(productItem);
                         let productInfo = productItem.querySelector('div:nth-child(1) > div > div.flex.flex-row.relative');
-                        console.log("PRODUCT INFO2.5")
-                        console.log(productInfo);
-                        console.log("QUERY TEST");
-                        console.log(productInfo.querySelector('div'));
                         let productID = productInfo.querySelector('div > div > div:nth-child(2) > a').getAttribute('href').split('/ip/seort/')[1];
-                        console.log("PRODUCT ID1");
-                        console.log(productID);
                         let productName = productInfo.querySelector('a > h4 > div > span').innerText;
                         let unitPrice = productInfo.querySelector('div:nth-child(3) > div > div:nth-child(1) > span').innerText.split('$')[1];
                         let productQuantityString = productItem.querySelector('a').getAttribute('aria-label').split(' in cart')[0];
@@ -45865,14 +45844,8 @@ class Walmart extends ECommerceCart.EcommerceCart {
                     } catch (err) {
                             try {
                                 let productItem = part.querySelector('div:nth-child(2)');
-                                console.log("PRODUCT ITEM")
-                                console.log(productItem);
                                 let productInfo = productItem.querySelector('div:nth-child(1) > div > div.flex.flex-row.relative');
-                                console.log("PRODUCT INFO2.91")
-                                console.log(productInfo);
                                 let productID = productInfo.querySelector('a').getAttribute('href').split('/ip/seort/')[1];
-                                console.log("PRODUCT ID1");
-                                console.log(productID);
                                 let productName = productInfo.querySelector('a > h4 > div > span').innerText;
                                 let unitPrice = productInfo.querySelector('div:nth-child(3) > div > div:nth-child(1) > span').innerText.split('$')[1];
                                 let productQuantityString = productItem.querySelector('a').getAttribute('aria-label').split(' in cart')[0];
@@ -45890,14 +45863,8 @@ class Walmart extends ECommerceCart.EcommerceCart {
                                 productIndex++;
                             } catch (err) {
                                 let productItem = part.querySelector('div:nth-child(3)');
-                                console.log("PRODUCT ITEM")
-                                console.log(productItem);
                                 let productInfo = productItem.querySelector('div:nth-child(1) > div > div.flex.flex-row.relative');
-                                console.log("PRODUCT INFO2.92")
-                                console.log(productInfo);
                                 let productID = productInfo.querySelector('a').getAttribute('href').split('/ip/seort/')[1];
-                                console.log("PRODUCT ID1");
-                                console.log(productID);
                                 let productName = productInfo.querySelector('a > h4 > div > span').innerText;
                                 let unitPrice = productInfo.querySelector('div:nth-child(3) > div > div:nth-child(1) > span').innerText.split('$')[1];
                                 let productQuantityString = productItem.querySelector('a').getAttribute('aria-label').split(' in cart')[0];
@@ -45924,13 +45891,7 @@ class Walmart extends ECommerceCart.EcommerceCart {
                     let productCartSection2List = Array.from(productCartSection2.children);
                     productCartSection2List.forEach(function (part) {
                         let productItem = part.querySelector('div:nth-child(2)');
-                        console.log("PRODUCT ITEM3");
-                        console.log(productItem);
                         let productInfo = productItem.querySelector('div:nth-child(1) > div > div:nth-child(2)');
-                        console.log("PRODUCT INFO3");
-                        console.log(productInfo);
-                        console.log("QUERY TEST");
-                        console.log(productInfo.querySelector('div > div'));
                         let productID = productInfo.querySelector('div > div > div:nth-child(2) > a').getAttribute('href').split('/ip/seort/')[1];
                         let productName = productInfo.querySelector('a > h4 > div > span').innerText;
                         let unitPrice = productInfo.querySelector('div:nth-child(3) > div > div:nth-child(1) > span').innerText.split('$')[1];
@@ -45953,13 +45914,7 @@ class Walmart extends ECommerceCart.EcommerceCart {
                         let productCartSection2List = Array.from(productCartSection2.children);
                         productCartSection2List.forEach(function (part) {
                             let productItem = part.querySelector('div:nth-child(3)');
-                            console.log("PRODUCT ITEM3.5");
-                            console.log(productItem);
                             let productInfo = productItem.querySelector('div:nth-child(1) > div > div:nth-child(2)');
-                            console.log("PRODUCT INFO3.5");
-                            console.log(productInfo);
-                            console.log("QUERY TEST");
-                            console.log(productInfo.querySelector('div > div'));
                             let productID = productInfo.querySelector('div > div > div:nth-child(2) > a').getAttribute('href').split('/ip/seort/')[1];
                             let productName = productInfo.querySelector('a > h4 > div > span').innerText;
                             let unitPrice = productInfo.querySelector('div:nth-child(3) > div > div:nth-child(1) > span').innerText.split('$')[1];
@@ -45982,25 +45937,13 @@ class Walmart extends ECommerceCart.EcommerceCart {
                             let productCartSection2List = Array.from(productCartSection2.children);
                             productCartSection2List.forEach(function (part) {
                                 let productItem = part.querySelector('div:nth-child(3)');
-                                console.log("PRODUCT ITEM3.9");
-                                console.log(productItem);
                                 let productInfo = productItem.querySelector('div:nth-child(1) > div > div:nth-child(2)');
-                                console.log("PRODUCT INFO3.9");
-                                console.log(productInfo);
-                                console.log("QUERY TEST");
-                                console.log("TEST AAAAAA");
                                 let productID = productInfo.querySelector('div.flex.flex-column.sans-serif.pt1.relative > div.flex.mt1.w-100 > div > div > div.flex.w-60 > div > div > a').getAttribute('href').split('/ip/seort/')[1]
-                                console.log(productID);
                                 let productName = productInfo.querySelector('a > h4 > div > span').innerText;
-                                console.log("productName3.9 " + productName);
                                 let unitPrice = productItem.querySelector('div:nth-child(1) > div > div:nth-child(3) > div > div > span').innerText.split('$')[1];
-                                console.log("unitPrice3.9 " + unitPrice);
                                 let productQuantityString = productItem.querySelector('a').getAttribute('aria-label').split(' in cart')[0];
-                                console.log("productQuantityString3.9 " + productQuantityString);
                                 let productQuantity = productQuantityString.slice(productQuantityString.length - 1);
-                                console.log("productQuantity3.9 " + productQuantity);
                                 let productImage = productItem.querySelector('div.flex.flex-column.sans-serif.pt1.relative > div.flex.mt1.w-100 > div > div > a > img').getAttribute('srcset').split(' 1x')[0];
-                                console.log("productImage3.9 " + productImage);
                                 productDict[productIndex] = {
                                     currency: 'USD',
                                     productID: productID,
@@ -46017,13 +45960,7 @@ class Walmart extends ECommerceCart.EcommerceCart {
                                 let productCartSection2List = Array.from(productCartSection2.children);
                                 productCartSection2List.forEach(function (part) {
                                     let productItem = part.querySelector('div.flex.flex-column.sans-serif.pt1.relative');
-                                    console.log("PRODUCT ITEM4.0");
-                                    console.log(productItem);
                                     let productInfo = productItem.querySelector('div.flex.mt1.w-100 > div > div.flex.flex-row.relative');
-                                    console.log("PRODUCT INFO4.0");
-                                    console.log(productInfo);
-                                    console.log("QUERY TEST");
-                                    console.log(productInfo.querySelector('div > div'));
                                     let productID = productInfo.querySelector('div > div > div:nth-child(2) > a').getAttribute('href').split('/ip/seort/')[1];
                                     let productName = productInfo.querySelector('a > h4 > div > span').innerText;
                                     let unitPrice = productInfo.querySelector('div:nth-child(3) > div > div:nth-child(1) > span').innerText.split('$')[1];
@@ -46041,15 +45978,12 @@ class Walmart extends ECommerceCart.EcommerceCart {
                                     productIndex++;
                                 });
                             } catch(err) {
-                                console.log("ERROR4.0");
-                                console.log(err);
                             }
                         }
                     }
                 }
             }
         });
-    console.log(productElements);
     return productDict;
   }
 
@@ -46088,7 +46022,6 @@ function main() {
                 if (mutation.addedNodes[0]) {
                     if (mutation.addedNodes[0].childNodes) {
                         if (mutation.addedNodes[0].childNodes[0].childNodes[0].id === "Continue to checkout button") {
-                            console.log("injecting button");
                             walmart.injectButton(mutation.addedNodes[0].childNodes[0].childNodes[0]);
                         }
                     }

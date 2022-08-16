@@ -30,37 +30,30 @@ class Amazon extends ECommerceCart.EcommerceCart {
      * @function getProducts
      * @return  {Object} Contains the products selected by the user.
      */
-    console.log("getProducts");
-    console.log(document.querySelector("#activeCartViewForm"));
     let productDict = {};
     let productElements = document.querySelectorAll(
-      "#activeCartViewForm > div.a-section.a-spacing-mini.sc-list-body.sc-java-remote-feature > div.a-row.sc-list-item.sc-list-item-border.sc-java-remote-feature"
-    );
+        "#activeCartViewForm > div.a-section.a-spacing-mini.sc-list-body.sc-java-remote-feature"
+    )[0].children;
     let productElementsList = Array.from(productElements);
 
     productElementsList.forEach(function (part, index, theArray) {
-      const imageElement = theArray[index].querySelectorAll(
-        "div.sc-list-item-content > div > div.a-column.a-span10 > div > div > div.a-fixed-left-grid-col.a-float-left.sc-product-image-desktop.a-col-left > a > img"
-      )[0];
-      if (imageElement === undefined) {
-        return;
+      if (part.className.includes("sc-list-item")) {
+        const currency = JSON.parse(part.getAttribute("data-subtotal")).subtotal.code;
+        const ASIN = part.getAttribute("data-asin");
+        const t = part.querySelectorAll(".a-truncate-full");
+        const productName = t[t.length - 1].innerHTML.trim();
+        const unitPrice = part.getAttribute("data-price");
+        const quantity = part.getAttribute("data-quantity");
+        const productImage = part.querySelector(".sc-product-image").getAttribute("src");
+        productDict[index] = {
+          productID: ASIN,
+          productName: productName,
+          unitPrice: unitPrice,
+          quantity: quantity,
+          productImage: productImage,
+          currency: currency,
+        };
       }
-      const currency = JSON.parse(part.getAttribute("data-subtotal")).subtotal
-        .code;
-      console.log(currency);
-      const ASIN = theArray[index].getAttribute("data-asin");
-      const productName = imageElement.getAttribute("alt");
-      const unitPrice = theArray[index].getAttribute("data-price");
-      const quantity = theArray[index].getAttribute("data-quantity");
-      const productImage = imageElement.getAttribute("src");
-      productDict[index] = {
-        productID: ASIN,
-        productName: productName,
-        unitPrice: unitPrice,
-        quantity: quantity,
-        productImage: productImage,
-        currency: currency,
-      };
     });
     return productDict;
   }

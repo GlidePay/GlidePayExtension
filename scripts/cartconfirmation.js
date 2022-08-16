@@ -10,9 +10,7 @@ async function getAddresses() {
       token: jwt,
     },
   });
-  console.log(getAddressesResponse);
   if (getAddressesResponse.hasOwnProperty("error")) {
-    console.log(
       new LogError(
         getAddressesResponse.error.customMsg,
         getAddressesResponse.error.error,
@@ -31,7 +29,6 @@ async function getAddresses() {
           addressSelectDropdown.after(errorText);
         }
       )
-    );
     return;
   }
   const addresses = getAddressesResponse.data;
@@ -107,10 +104,6 @@ async function setProductInfo(products, shipping, sender) {
         priceString = priceString.replace(/,/g, "");
     }
     subtotal += parseFloat(priceString) * productDict["quantity"];
-    console.log("LOGGING");
-    console.log(parseFloat(productDict["unitPrice"]));
-    console.log(productDict["quantity"]);
-    console.log(subtotal);
     currency = productDict["currency"];
     const itemImage = document.createElement("img");
     itemImage.src = productDict["productImage"];
@@ -155,12 +148,10 @@ async function setProductInfo(products, shipping, sender) {
       //TODO: Add text or popup or something that says this
       return;
     }
-    console.log(chain)
     const windows = await chrome.windows.getAll({ populate: true });
     for (let a in windows) {
       for (let b in windows[a].tabs) {
         if (windows[a].tabs[b].id === sender) {
-          console.log("Found sender");
           chrome.tabs.sendMessage(
             windows[a].tabs[b].id,
             {
@@ -177,7 +168,7 @@ async function setProductInfo(products, shipping, sender) {
               if (response) {
                 window.location.href = "/views/ordersentpopup.html";
               } else {
-                alert("Signing failed");
+                alert("Transaction failed. Please make sure you have enough USDC in your wallet to complete the transaction.");
               }
             }
           );
@@ -192,7 +183,7 @@ function GetURLParameter(sParam) {
   let sURLVariables = sPageURL.split("&");
   for (var i = 0; i < sURLVariables.length; i++) {
     let sParameterName = sURLVariables[i].split("=");
-    if (sParameterName[0] == sParam) {
+    if (sParameterName[0] === sParam) {
       return sParameterName[1];
     }
   }
@@ -220,8 +211,6 @@ async function setUpCart(products, shipping, senderTabID) {
   try {
     await getAddresses();
   } catch (err) {
-    console.log(err);
-    console.log(err.stack);
     new LogError(
       "Retrieving Addresses Failed (Uncaught)",
       err.stack,
@@ -240,12 +229,10 @@ async function setUpCart(products, shipping, senderTabID) {
 }
 
 async function cartMain() {
-  console.log("hi");
   const popupTabID = await chrome.tabs.query({
     currentWindow: true,
     active: true,
   });
-  console.log(popupTabID[0].id);
   await chrome.runtime.sendMessage({
     from: "popup",
     subject: "setPopupTabID",
@@ -257,15 +244,12 @@ async function cartMain() {
     from: "confirmation",
     subject: "getTabID",
   });
-  console.log("sender id: " + senderTabID);
 
   if (GetURLParameter("from") === "addaddress") {
-    console.log("From address");
     const windows = await chrome.windows.getAll({ populate: true });
     for (let a in windows) {
       for (let b in windows[a].tabs) {
         if (windows[a].tabs[b].id === senderTabID) {
-          console.log("Requesting popup info");
           const products = await chrome.tabs.sendMessage(
             windows[a].tabs[b].id,
             {
@@ -273,7 +257,6 @@ async function cartMain() {
               subject: "needInfo",
             }
           );
-          console.log(products);
           await setUpCart(products[0], products[1], senderTabID);
         }
       }
@@ -288,7 +271,6 @@ async function cartMain() {
         sendResponse(true);
         const products = message.data;
         const shipping = message.shipping;
-        console.log(shipping);
         await setUpCart(products, shipping, senderTabID);
       }
       return true;

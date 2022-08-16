@@ -160,18 +160,19 @@ class EcommerceCart {
       );
     }
 
-
     // Getting the price of the Crypto in USD.
     const coinPriceUSD = getCoinPriceResponse.data;
     console.log(coinPriceUSD)
     const ethCost = costUSD / coinPriceUSD;
+
+
 
     // Calculating the cost of the cart in ETH.
     let gasLimit = await provider.estimateGas({to: "0x9E4b8417554166293191f5ecb6a5E0E929e58fef", value: ethers.utils.parseEther(ethCost.toFixed(18))});
     // TODO: Update this to use the selected token.
     console.log(`Price in Eth: ${ethCost}`);
     // Declaring variables for the transaction.
-    
+
     const gas = await provider.getGasPrice();
     const gasPrice = ethers.utils.hexlify(gas);
     console.log(gasPrice)
@@ -207,7 +208,7 @@ class EcommerceCart {
 
     console.log(`txHASH: ${tx.hash}`);
 
- 
+
 
     const body = {
       txHash: tx.hash,
