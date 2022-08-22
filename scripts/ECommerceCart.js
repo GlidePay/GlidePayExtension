@@ -83,25 +83,40 @@ class EcommerceCart {
     console.log(msg);
     const cost = msg.price;
     const currency = msg.currency;
-
-    const algoCost = msg.price;
-    // Creating a new Algorand client, connected to the explorer api.
+    let unsignedTxn;
+        // Creating a new Algorand client, connected to the explorer api.
     const algod = new algosdk.Algodv2(
       "",
       "https://node.testnet.algoexplorerapi.io/",
       443
     );
-    // We get the suggested transaction parameters.
+    if (msg.chain == 'algo') {
+    const algoCost = msg.price;
+        // We get the suggested transaction parameters.
     const suggestedParams = await algod.getTransactionParams().do();
     // We convert to the correct amount of Algorand.
     const amountInMicroAlgos = algosdk.algosToMicroalgos(algoCost); // 2 Algos
     // We make the transaction object.
-    const unsignedTxn = algosdk.makePaymentTxnWithSuggestedParamsFromObject({
+    unsignedTxn = algosdk.makePaymentTxnWithSuggestedParamsFromObject({
       from: wallet,
       to: "XKMC4SU3ZY4XGMS5ESY4CIMH43XIYJVB24MH2UF3SUM5F3QYYUXO7G5YRI", // TODO: Replace with real address.
       amount: amountInMicroAlgos,
       suggestedParams: suggestedParams,
-    });
+    });} else if (msg.chain == 'usdc-algo') {
+      const cost = msg.price;
+      // We get the suggested transaction parameters.
+      const suggestedParams = await algod.getTransactionParams().do();
+      console.log(wallet)
+      unsignedTxn = algosdk.makeAssetTransferTxnWithSuggestedParams(
+       wallet, 
+        "XKMC4SU3ZY4XGMS5ESY4CIMH43XIYJVB24MH2UF3SUM5F3QYYUXO7G5YRI", 
+        undefined,
+        undefined,
+        BigInt(cost * 1000000), 
+        undefined,  
+        10458941, // 31566704
+        suggestedParams);
+    }
 
     console.log(unsignedTxn);
 

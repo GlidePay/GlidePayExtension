@@ -190,6 +190,7 @@ async function setProductInfo(products, shipping, sender, wallet, address) {
       }
     } else if (wallet === "pera") {
       console.log("peraclicked");
+      const chain = document.getElementById("currencySelect").value;
       const windows = await chrome.windows.getAll({ populate: true });
       for (let a in windows) {
         for (let b in windows[a].tabs) {
@@ -205,7 +206,7 @@ async function setProductInfo(products, shipping, sender, wallet, address) {
                 //addressSelect.options[addressSelect.selectedIndex].value,
                 products: products,
                 wallet: address,
-                chain: "algo",
+                chain: chain,
               },
               async (response) => {
                 console.log("RESPONSE!!");
@@ -331,7 +332,8 @@ async function cartMain() {
         const address = message.address;
         if (message.wallet === "pera") {
           let evmSelect = document.getElementById("currencySelect");
-          evmSelect.remove();
+          evmSelect.innerHTML = `<option value="algo">Algo</option>
+          <option value="usdc-algo">USDC on Algorand</option>`;
         }
 
         console.log(shipping);
