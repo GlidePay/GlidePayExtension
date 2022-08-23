@@ -229,7 +229,7 @@ function GetURLParameter(sParam) {
   let sURLVariables = sPageURL.split("&");
   for (var i = 0; i < sURLVariables.length; i++) {
     let sParameterName = sURLVariables[i].split("=");
-    if (sParameterName[0] == sParam) {
+    if (sParameterName[0] === sParam) {
       return sParameterName[1];
     }
   }
@@ -254,7 +254,7 @@ async function setUpCart(products, shipping, senderTabID, wallet, address) {
       }
     );
   }
-  /* try {
+  try {
     await getAddresses();
   } catch (err) {
     console.log(err);
@@ -273,7 +273,7 @@ async function setUpCart(products, shipping, senderTabID, wallet, address) {
         addressSelectDropdown.after(errorText);
       }
     );
-  } */
+  }
 }
 
 async function cartMain() {

@@ -19,7 +19,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       // This creates the order popup.
       case "walletChoice":
         {
-          console.log('walletChoice')
+          console.log("walletChoice");
           // Positions the popup at the top of the page.
           let top = 0;
           let left = message.screenSize - 360;
@@ -283,23 +283,44 @@ async function handleResponse(response) {
 // This function gets the price of the coin being asked for by querying the Gemini API.
 async function getCoinPrice(payload) {
   // Coin must be in the form of "xxxyyy" IE "ethusd"
-  try {
-    const response = await fetch(
-      "https://okmf73layh.execute-api.us-east-1.amazonaws.com/default/getCoinPriceGemini",
-      {
-        method: "post",
-        body: JSON.stringify(payload),
-      }
-    );
+  console.log("Getting price for: ");
+  console.log(payload);
+  switch (payload.ticker) {
+    case "ethusd": {
+      try {
+        const response = await fetch(
+          "https://okmf73layh.execute-api.us-east-1.amazonaws.com/default/getCoinPriceGemini",
+          {
+            method: "post",
+            body: JSON.stringify(payload),
+          }
+        );
 
-    return await handleResponse(response);
-  } catch (err) {
-    return {
-      customMsg: "Get Coin Price Failed",
-      error: err.stack,
-      uiMsg: "Get Coin Price Failed",
-      errorID: Date.now(),
-    };
+        return await handleResponse(response);
+      } catch (err) {
+        return {
+          customMsg: "Get Coin Price Failed",
+          error: err.stack,
+          uiMsg: "Get Coin Price Failed",
+          errorID: Date.now(),
+        };
+      }
+    }
+    case "algousd": {
+      try {
+        const response = await fetch(
+          "https://api.kraken.com/0/public/Ticker?pair=ALGOUSD"
+        );
+        return JSON.parse(await response.text()).result.ALGOUSD["b"][0] * 0.99;
+      } catch (err) {
+        return {
+          customMsg: "Get Coin Price Failed",
+          error: err.stack,
+          uiMsg: "Get Coin Price Failed",
+          errorID: Date.now(),
+        };
+      }
+    }
   }
 }
 

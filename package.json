@@ -23,9 +23,9 @@
   "scripts": {
     "buildAmazon": "browserify scripts/amazon-us.js -p esmify > bundles/bundledamazon.js -t [ babelify --presets [ @babel/preset-env ] --global ]",
     "buildWalmart": "browserify scripts/walmart-us.js -p esmify > bundles/bundledwalmart.js -t [ babelify --presets [ @babel/preset-env ] --global ]",
-    "buildAliExpress": "browserify scripts/aliexpress-us.js -p esmify > bundles/bundledaliexpress.js -t [ babelify --presets [ @babel/preset-env ] --global ]",
     "buildCostco": "browserify scripts/costco.js -p esmify > bundles/bundledcostco.js -t [ babelify --presets [ @babel/preset-env ] --global ]",
-    "buildWalletChoice": "browserify scripts/walletChoice.js -p esmify > bundles/bundledwalletchoice.js"
+    "buildWalletChoice": "browserify scripts/walletChoice.js -p esmify > bundles/bundledwalletchoice.js",
+    "build": "buildAmazon && buildWalmart && buildCostco && buildWalletChoice"
   },
   "devDependencies": {
     "@babel/core": "^7.18.10",

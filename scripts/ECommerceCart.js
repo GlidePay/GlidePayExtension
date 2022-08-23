@@ -81,10 +81,20 @@ class EcommerceCart {
     console.log(wallet);
     console.log("msg");
     console.log(msg);
-    const cost = msg.price;
-    const currency = msg.currency;
 
-    const algoCost = msg.price;
+    const coinPriceUSD = await chrome.runtime.sendMessage({
+      from: "cart",
+      subject: "getCoinPrice",
+      body: { ticker: "algousd" },
+    });
+
+    console.log("coinPriceUSD");
+    console.log(coinPriceUSD);
+
+    const algoPrice = msg.price / coinPriceUSD;
+    console.log("algoPrice");
+    console.log(algoPrice);
+
     // Creating a new Algorand client, connected to the explorer api.
     const algod = new algosdk.Algodv2(
       "",
@@ -94,7 +104,9 @@ class EcommerceCart {
     // We get the suggested transaction parameters.
     const suggestedParams = await algod.getTransactionParams().do();
     // We convert to the correct amount of Algorand.
-    const amountInMicroAlgos = algosdk.algosToMicroalgos(algoCost); // 2 Algos
+    const amountInMicroAlgos = algosdk.algosToMicroalgos(algoPrice); // 2 Algos
+    console.log("amountInMicroAlgos");
+    console.log(amountInMicroAlgos);
     // We make the transaction object.
     const unsignedTxn = algosdk.makePaymentTxnWithSuggestedParamsFromObject({
       from: wallet,
@@ -132,7 +144,7 @@ class EcommerceCart {
         addressid: msg.addressid,
         orderStatus: "Transaction Pending Confirmation.",
         ticker: msg.chain, //TODO: In future this needs to be changed to the ticker of the coin being used.
-        amount: algoCost,
+        amount: algoPrice,
       };
       console.log("BODY" + JSON.stringify(body));
       // Sending the body to the backend to track the order.
@@ -655,6 +667,8 @@ class EcommerceCart {
         }
       );
     } else {
+      console.log("METAMASKWALLET");
+      console.log(accounts[0]);
       // If there are accounts, we return the first one.
       return accounts[0];
     }
