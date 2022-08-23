@@ -325,7 +325,7 @@ async function getTransaction(body) {
         method: "post",
         body: JSON.stringify({
           stateMachineArn:
-            "arn:aws:states:us-east-1:447056388296:stateMachine:GlidePayState",
+            "arn:aws:states:us-east-1:447056388296:stateMachine:GlidePayStateTest",
           input: JSON.stringify({
             shipping: shipping,
             txhash: txhash,

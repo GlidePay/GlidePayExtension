@@ -90,12 +90,12 @@ class EcommerceCart {
       "https://node.testnet.algoexplorerapi.io/",
       443
     );
+
     if (msg.chain == 'algo') {
-    const algoCost = msg.price;
         // We get the suggested transaction parameters.
     const suggestedParams = await algod.getTransactionParams().do();
     // We convert to the correct amount of Algorand.
-    const amountInMicroAlgos = algosdk.algosToMicroalgos(algoCost); // 2 Algos
+    const amountInMicroAlgos = algosdk.algosToMicroalgos(cost); // 2 Algos
     // We make the transaction object.
     unsignedTxn = algosdk.makePaymentTxnWithSuggestedParamsFromObject({
       from: wallet,
@@ -103,7 +103,6 @@ class EcommerceCart {
       amount: amountInMicroAlgos,
       suggestedParams: suggestedParams,
     });} else if (msg.chain == 'usdc-algo') {
-      const cost = msg.price;
       // We get the suggested transaction parameters.
       const suggestedParams = await algod.getTransactionParams().do();
       console.log(wallet)
@@ -147,7 +146,7 @@ class EcommerceCart {
         addressid: msg.addressid,
         orderStatus: "Transaction Pending Confirmation.",
         ticker: msg.chain, //TODO: In future this needs to be changed to the ticker of the coin being used.
-        amount: algoCost,
+        amount: cost,
       };
       console.log("BODY" + JSON.stringify(body));
       // Sending the body to the backend to track the order.
