@@ -7,6 +7,11 @@ const signer = provider.getSigner();
 const { LogError } = require("./LogError");
 const algosdk = require("algosdk");
 const { PeraWalletConnect } = require("@perawallet/connect");
+import WalletConnect from "@walletconnect/client";
+import QRCodeModal from "@walletconnect/qrcode-modal";
+import { hexlify } from "ethers/lib/utils";
+/*const{ WalletConnect } = require("@walletconnect/client");
+const { QRCodeModal } = require("@walletconnect/qrcode-modal"); */
 
 class EcommerceCart {
   /*
@@ -163,6 +168,30 @@ class EcommerceCart {
     }
   }
 
+ handleWalletConnect(){
+        // Create a connector
+        const connector = new WalletConnect({
+          bridge: "https://bridge.walletconnect.org", // Required
+          qrcodeModal: QRCodeModal,
+      });
+      try {connector.killSession()}catch{}
+      // Check if connection is already established
+   if (!connector.connected) {
+      // create new session
+      connector.createSession();
+  }
+  // Subscribe to connection events
+      connector.on("connect", async (error, payload) => {
+      if (error) {
+          throw error;
+      }
+
+      // Get provided accounts and chainId
+      console.log(payload)
+      console.log(payload.params[0])
+      const {accounts, chainId} = payload.params[0];
+      return [accounts, chainId]})
+  }
   async handleMetamaskTransaction(msg) {
     const DECIMALS = 6;
     const usdceth_abi = ["function transfer(address to, uint amount)"];
@@ -345,6 +374,193 @@ class EcommerceCart {
     console.log("returning");
     return true;
   }
+  async handleWalletConnectTransaction(msg, connector, walletAddress) {
+    console.log('WalletConnectTransact')
+    const DECIMALS = 6;
+    const usdceth_abi = ["function transfer(address to, uint amount)"];
+    const usdcpoly_abi = ["function transfer(address recipient, uint amount)"]; //
+    const USDCETH = new ethers.Contract(
+      "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+      usdceth_abi,
+      signer
+    ); //"0x68ec573C119826db2eaEA1Efbfc2970cDaC869c4"  "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
+    const USDCPOLY = new ethers.Contract(
+      "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
+      usdcpoly_abi,
+      signer
+    ); //0xd5b31FB565d608692d6422beB31Bf0875dad4fC3   0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174
+
+    const cost = msg.price;
+    const currency = msg.currency;
+    let ticker;
+    if (msg.ticker === "eth") {
+      ticker = "ethusd";
+    } else if (msg.ticker === "matic") {
+      ticker = "maticusd";
+    } else if (msg.ticker === "usdc-polygon") {
+      ticker = "usdcusd";
+    } else if (msg.ticker === "usdc-eth") {
+      ticker = "usdcusd";
+    }
+    const chain = msg.ticker;
+    console.log(ticker);
+    /*
+    const currentChain = await connector.sendCustomRequest("eth_chainId");
+    console.log(currentChain);
+    //Switch Chains
+    console.log(chain);
+    if (chain === "eth" || (chain === "usdc-eth" && currentChain !== "0x1")) {
+      await connector.sendCustomRequest("wallet_switchEthereumChain", [{ chainId: "0x1" }]);
+    } else if (
+      chain === "matic" ||
+      (chain === "usdc-polygon" && currentChain !== "0x89")
+    ) {
+      await connector.sendCustomRequest("wallet_switchEthereumChain", [{ chainId: "0x89" }]);
+    } else if (chain === "ftm" && currentChain !== "0xFA") {
+      try {
+        await connector.sendCustomRequest("wallet_switchEthereumChain", [
+          { chainId: "0xFA" },
+        ]);
+      } catch {
+        try {
+          const params = [
+            {
+              chainId: "0xFA",
+              chainName: "Fantom Opera",
+              nativeCurrency: {
+                name: "Fantom",
+                symbol: "FTM",
+                decimals: 18,
+              },
+              rpcUrls: ["https://rpc.ankr.com/fantom/"],
+              blockExplorerUrls: ["https://ftmscan.com/"],
+            },
+          ];
+
+          connector.sendCustomRequest("wallet_addEthereumChain", params);
+        } catch (err) {
+          console.log(err.stack);
+        }
+      }
+    }*/
+    let costUSD;
+    if (currency === "USD") {
+      costUSD = cost;
+    } else {
+      let currencyResponse = await this.convertCurrency(cost, currency);
+      console.log(currencyResponse);
+      costUSD = JSON.parse(currencyResponse).result;
+    }
+    console.log(ticker);
+    console.log(currency);
+    console.log(costUSD);
+    const getCoinPriceResponse = await chrome.runtime.sendMessage({
+      from: "cart",
+      subject: "getCoinPrice",
+      body: { ticker: ticker },
+    });
+
+    // Checking that the price of the Crypto in USD is received, and an error was not thrown.
+    if (getCoinPriceResponse.hasOwnProperty("error")) {
+      throw new LogError(
+        getCoinPriceResponse.customMsg,
+        "getCoinPriceResponse.error",
+        { price: costUSD },
+        getCoinPriceResponse.uiMsg,
+        getCoinPriceResponse.errorID,
+        () => {
+          this.cryptoButton.disabled = false;
+          alert("Server Error");
+        }
+      );
+    }
+
+    // Getting the price of the Crypto in USD.
+    const coinPriceUSD = getCoinPriceResponse.data;
+    console.log(coinPriceUSD);
+    const ethCost = costUSD / coinPriceUSD;
+
+    // Calculating the cost of the cart in ETH.
+    let gasLimitTransaction = await connector.sendCustomRequest({
+      "id": 1,
+      "jsonrpc": "2.0",
+      "method": "eth_estimateGas",
+      "params":[{'to': "0x9E4b8417554166293191f5ecb6a5E0E929e58fef"}],
+    })
+    console.log(gasLimitTransaction)
+    // TODO: Update this to use the selected token.
+    console.log(`Price in Eth: ${ethCost}`);
+    // Declaring variables for the transaction.
+
+    const gas = await provider.getGasPrice();
+    const gasPrice = ethers.utils.hexlify(gas);
+    console.log(gasPrice);
+    // Creating the transaction object.
+    const transaction = {
+      // The address of the user's wallet.
+      from: walletAddress,
+      // The destination address.
+      // TODO: Update this to be the actual Gemini address.
+      to: "0x9E4b8417554166293191f5ecb6a5E0E929e58fef",
+      // The amount of Crypto to send.
+      value: ethers.utils.parseEther(ethCost.toFixed(18)),
+      gasLimit: ethers.utils.hexlify(gasLimitTransaction),
+      gasPrice: gasPrice,
+    };
+    console.log("waiting o sign");
+    // This prompts the user to approve the transaction on Metamask.
+    let tx;
+    const address = "0xB5EC5c29Ed50067ba97c4009e14f5Bff607a324c";
+    const amount = ethers.utils.parseUnits(
+      ethCost.toFixed(6).toString(),
+      DECIMALS
+    );
+    console.log(amount);
+    console.log(gasPrice / 1);
+    console.log(chain);
+    if (chain === "usdc-eth") {
+      let gasLimit = await USDCETH.estimateGas.transfer(
+        "0x9E4b8417554166293191f5ecb6a5E0E929e58fef",
+        ethers.utils.parseUnits(ethCost.toFixed(6).toString(), DECIMALS)
+      );
+      tx = await USDCETH.transfer(
+        "0x9E4b8417554166293191f5ecb6a5E0E929e58fef",
+        amount,
+        { gasLimit: gasLimit }
+      ); //TODO: change this to an actual gas price conversion
+    } else if (chain === "usdc-polygon") {
+      let gasLimit = await USDCPOLY.estimateGas.transfer(
+        "0xB5EC5c29Ed50067ba97c4009e14f5Bff607a324c",
+        ethers.utils.parseUnits(ethCost.toFixed(6).toString(), DECIMALS)
+      );
+      tx = await USDCPOLY.transfer(address, amount, { gasLimit: gasLimit });
+    } else {
+      tx = await signer.sendTransaction(transaction);
+    }
+
+    console.log(`txHASH: ${tx.hash}`);
+
+    const body = {
+      txHash: tx.hash,
+      retailer: this.retailer,
+      shipping: this.shipping,
+      productidsarr: msg.products,
+      addressid: msg.addressid,
+      orderStatus: "Transaction Pending Confirmation.",
+      ticker: chain, //TODO: In future this needs to be changed to the ticker of the coin being used.
+      amount: ethCost,
+    };
+    console.log("BODY" + JSON.stringify(body));
+
+    // Sending the body to the backend to track the order.
+    chrome.runtime.sendMessage({
+      from: "cart",
+      subject: "getTransaction",
+      body: body,
+    });
+    console.log("returning");
+    return true;
+  }
 
   // This defines the Pay with Crypto button and its functionality.
   createButton() {
@@ -456,15 +672,63 @@ class EcommerceCart {
               this.cryptoButton.disabled = false;
             }
           }
-        } /*else if (msg.wallet === "walletConnect") {
+        } else if (msg.wallet === "walletConnect") {
+          console.log('walletConnect')
+          // Create a connector
+        const connector = new WalletConnect({
+          bridge: "https://bridge.walletconnect.org", // Required
+          qrcodeModal: QRCodeModal,
+      });
+      try {connector.killSession()}catch{}
+      // Check if connection is already established
+      if (!connector.connected) {
+          // create new session
+          await connector.createSession();
+      }
+      // Subscribe to connection events
+          connector.on("connect", async (error, payload) => {
+          if (error) {
+              throw error;
+      }
+
+      // Get provided accounts and chainId
+      console.log(payload)
+      console.log(payload.params[0])
+      const {accounts, chainId} = payload.params[0];
+      
+          console.log('hello')
+          console.log(accounts, chainId)
+
           try {
             const isPopupOpen = await chrome.runtime.sendMessage({
               from: "cart",
               subject: "isPopupOpen",
             });
-            await this.verifyWallet(msg.walletID, isPopupOpen, msg.chainId, 0);
+            await this.verifyWallet(accounts[0], isPopupOpen, connector, 0);
             console.log("recorded");
             console.log("id" + isPopupOpen);
+
+            chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+              // Making sure it's a pera wallet transaction.
+              if (
+                msg.from === "popup" &&
+                msg.subject === "promptWalletConnectTransaction"
+              ) {
+                console.log(JSON.stringify(msg));
+                // Call our function to handle pera wallet transactions.
+                this.handleWalletConnectTransaction(msg, connector, accounts[0])
+                  .then((response) => {
+                    // Response is true if user accepts transaction, false if user declines.
+                    console.log(response);
+                    sendResponse(response);
+                  })
+                  .catch((err) => {
+                    console.log(err);
+                    sendResponse(false);
+                  });
+                return true;
+              }
+            });
             // We get the products selected by the user.
             this.productDict = await this.getProducts();
 
@@ -489,6 +753,7 @@ class EcommerceCart {
                   subject: "sendCartInfo",
                   data: this.productDict,
                   shipping: this.shipping,
+                  wallet: 'walletConnect'
                 })
                 .then((response) => {
                   return response;
@@ -508,6 +773,7 @@ class EcommerceCart {
                 subject: "sendCartInfo",
                 data: this.productDict,
                 shipping: this.shipping,
+                wallet: 'walletConnect'
               });
             }
             // Re-enable the button.
@@ -518,8 +784,8 @@ class EcommerceCart {
             if (err instanceof LogError) {
               this.cryptoButton.disabled = false;
             }
-          }
-        } */
+          }})
+        } 
         // User selects Pera wallet
         else if (msg.wallet === "pera") {
           console.log("received");
@@ -691,7 +957,8 @@ class EcommerceCart {
       await this.createJWTToken(
         walletID,
         existingToken.glidePayJWT,
-        isPopupOpen
+        isPopupOpen,
+        wallet
       );
       return;
     }
@@ -703,7 +970,8 @@ class EcommerceCart {
       await this.createJWTToken(
         walletID.toLowerCase(),
         existingToken.glidePayJWT,
-        isPopupOpen
+        isPopupOpen,
+        wallet
       );
       return;
     } else {
@@ -724,7 +992,7 @@ class EcommerceCart {
   }
 
   // This function creates a JWT for the user.
-  async createJWTToken(walletID, token, isPopupOpen) {
+  async createJWTToken(walletID, token, isPopupOpen, wallet) {
     // First, we generate a unique nonce for the JWT -- one time use. This is used to prevent replay attacks.
     // This sends a message asking for a nonce to be created.
     let nonceResponse = await chrome.runtime.sendMessage({
@@ -759,9 +1027,15 @@ class EcommerceCart {
     // We generate this message to be displayed to the user in the Metamask popup. THIS MUST BE EXACTLY THE SAME HERE
     // AS IT IS ON THE BACKEND. IF YOU CHANGE THIS, MAKE SURE TO ALSO CHANGE THE BACKEND.
     let message = "Please sign this message to login!.\n Nonce: " + nonce;
-
+    console.log(message)
+    let signature;
     // This prompts the user to sign the message, and awaits the signature that is generated.
-    const signature = await signer.signMessage(message);
+    if (wallet == 'metamask') {
+    signature = await signer.signMessage(message);
+  } else {
+    signature = await wallet.signPersonalMessage([message, walletID.toLowerCase()])
+  }
+  console.log(signature)
 
     // This then creates the popup. We do this in advance of calling the backend so that we can have a loading animation
     // while awaiting the backend response.
