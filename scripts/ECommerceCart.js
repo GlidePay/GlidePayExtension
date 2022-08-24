@@ -382,7 +382,7 @@ class EcommerceCart {
     const USDCETH = new ethers.Contract(
       "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
       usdceth_abi,
-      signer
+      connector
     ); //"0x68ec573C119826db2eaEA1Efbfc2970cDaC869c4"  "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
     const USDCPOLY = new ethers.Contract(
       "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
@@ -502,11 +502,13 @@ class EcommerceCart {
       // The destination address.
       // TODO: Update this to be the actual Gemini address.
       to: "0x9E4b8417554166293191f5ecb6a5E0E929e58fef",
+      data: "0x",
       // The amount of Crypto to send.
-      value: ethers.utils.parseEther(ethCost.toFixed(18)),
+      value: ethers.utils.hexlify(ethers.utils.parseEther(ethCost.toFixed(18))),
       gasLimit: ethers.utils.hexlify(gasLimitTransaction),
       gasPrice: gasPrice,
     };
+    console.log(transaction)
     console.log("waiting o sign");
     // This prompts the user to approve the transaction on Metamask.
     let tx;
@@ -535,7 +537,7 @@ class EcommerceCart {
       );
       tx = await USDCPOLY.transfer(address, amount, { gasLimit: gasLimit });
     } else {
-      tx = await signer.sendTransaction(transaction);
+      tx = await connector.sendTransaction(transaction);
     }
 
     console.log(`txHASH: ${tx.hash}`);
@@ -716,6 +718,7 @@ class EcommerceCart {
               ) {
                 console.log(JSON.stringify(msg));
                 // Call our function to handle pera wallet transactions.
+                
                 this.handleWalletConnectTransaction(msg, connector, accounts[0])
                   .then((response) => {
                     // Response is true if user accepts transaction, false if user declines.
