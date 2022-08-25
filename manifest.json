@@ -10,7 +10,8 @@
   "content_scripts": [
     {
       "matches": ["*://www.amazon.com/gp/cart/*"],
-      "js": ["scripts/bundledamazon.js"]
+      "js": ["scripts/bundledamazon.js"],
+      "all_frames": true
     },
     {
       "matches": ["*://www.walmart.com/cart*", "*://www.walmart.com/*"],
