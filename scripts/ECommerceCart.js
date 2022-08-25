@@ -10,6 +10,7 @@ const { PeraWalletConnect } = require("@perawallet/connect");
 import WalletConnect from "@walletconnect/client";
 import QRCodeModal from "@walletconnect/qrcode-modal";
 import { hexlify } from "ethers/lib/utils";
+import WalletConnectProvider from "@walletconnect/web3-provider";
 /*const{ WalletConnect } = require("@walletconnect/client");
 const { QRCodeModal } = require("@walletconnect/qrcode-modal"); */
 
@@ -168,30 +169,6 @@ class EcommerceCart {
     }
   }
 
- handleWalletConnect(){
-        // Create a connector
-        const connector = new WalletConnect({
-          bridge: "https://bridge.walletconnect.org", // Required
-          qrcodeModal: QRCodeModal,
-      });
-      try {connector.killSession()}catch{}
-      // Check if connection is already established
-   if (!connector.connected) {
-      // create new session
-      connector.createSession();
-  }
-  // Subscribe to connection events
-      connector.on("connect", async (error, payload) => {
-      if (error) {
-          throw error;
-      }
-
-      // Get provided accounts and chainId
-      console.log(payload)
-      console.log(payload.params[0])
-      const {accounts, chainId} = payload.params[0];
-      return [accounts, chainId]})
-  }
   async handleMetamaskTransaction(msg) {
     const DECIMALS = 6;
     const usdceth_abi = ["function transfer(address to, uint amount)"];
@@ -373,6 +350,16 @@ class EcommerceCart {
     });
     console.log("returning");
     return true;
+  }
+  async handleWalletConnectProvider() {
+    const provider = new WalletConnectProvider({
+      infuraId: '2ac0d515797041928a40edf1e6b73984'
+    });
+    await provider.enable();
+
+    let ethProvider = new ethers.providers.Web3Provider(provider);
+
+    return ethProvider
   }
   async handleWalletConnectTransaction(msg, connector, walletAddress) {
     console.log('WalletConnectTransact')
@@ -677,29 +664,8 @@ class EcommerceCart {
         } else if (msg.wallet === "walletConnect") {
           console.log('walletConnect')
           // Create a connector
-        const connector = new WalletConnect({
-          bridge: "https://bridge.walletconnect.org", // Required
-          qrcodeModal: QRCodeModal,
-      });
-      try {connector.killSession()}catch{}
-      // Check if connection is already established
-      if (!connector.connected) {
-          // create new session
-          await connector.createSession();
-      }
-      // Subscribe to connection events
-          connector.on("connect", async (error, payload) => {
-          if (error) {
-              throw error;
-      }
+          let walletConnectProvider = await this.handleWalletConnectProvider();
 
-      // Get provided accounts and chainId
-      console.log(payload)
-      console.log(payload.params[0])
-      const {accounts, chainId} = payload.params[0];
-      
-          console.log('hello')
-          console.log(accounts, chainId)
 
           try {
             const isPopupOpen = await chrome.runtime.sendMessage({
@@ -787,7 +753,7 @@ class EcommerceCart {
             if (err instanceof LogError) {
               this.cryptoButton.disabled = false;
             }
-          }})
+          }
         } 
         // User selects Pera wallet
         else if (msg.wallet === "pera") {
