@@ -140,6 +140,7 @@ async function addAddressButtonClicked() {
   const state = document.getElementById("state-select").value;
   const country = document.getElementById("country-select").value;
   const phone = document.getElementById("phone").value;
+  const email = document.getElementById("email").value;
 
   // Creates the address object.
   const address = {
@@ -152,6 +153,7 @@ async function addAddressButtonClicked() {
     Province_State: state,
     Country: country,
     Phone_Number: phone,
+    Email: email,
   };
 
   // This makes sure all fields are filled out and if not, shows error text.
