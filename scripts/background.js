@@ -405,7 +405,7 @@ async function verifySignature(payload) {
 async function createAddress(payload) {
   try {
     let response = await fetch(
-      "https://6zfr42udog.execute-api.us-east-1.amazonaws.com/default/createAddressRDS",
+      "https://owhcx7nxsi.execute-api.us-east-1.amazonaws.com/default/createAddressWithEmailRDS",
       {
         method: "POST",
         body: JSON.stringify(payload),
