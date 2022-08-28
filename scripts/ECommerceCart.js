@@ -4,6 +4,10 @@ const createProvider = require("metamask-extension-provider");
 const { ethers } = require("ethers");
 const maskInpageProvider = createProvider();
 const provider = new ethers.providers.Web3Provider(maskInpageProvider, "any");
+provider.on('error', (error) => {
+  console.log("ERROR FAILED TO CONNECT!");
+  console.log(error);
+})
 const signer = provider.getSigner();
 const { LogError } = require("./LogError");
 
