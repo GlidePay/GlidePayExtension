@@ -358,10 +358,9 @@ class EcommerceCart {
     await provider.enable();
 
     let ethProvider = new ethers.providers.Web3Provider(provider);
-
     return ethProvider
   }
-  async handleWalletConnectTransaction(msg, connector, walletAddress) {
+  async handleWalletConnectTransaction(msg, provider, walletAddress) {
     console.log('WalletConnectTransact')
     const DECIMALS = 6;
     const usdceth_abi = ["function transfer(address to, uint amount)"];
@@ -369,12 +368,12 @@ class EcommerceCart {
     const USDCETH = new ethers.Contract(
       "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
       usdceth_abi,
-      connector
+      provider
     ); //"0x68ec573C119826db2eaEA1Efbfc2970cDaC869c4"  "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
     const USDCPOLY = new ethers.Contract(
       "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
       usdcpoly_abi,
-      signer
+      provider
     ); //0xd5b31FB565d608692d6422beB31Bf0875dad4fC3   0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174
 
     const cost = msg.price;
@@ -391,21 +390,21 @@ class EcommerceCart {
     }
     const chain = msg.ticker;
     console.log(ticker);
-    /*
-    const currentChain = await connector.sendCustomRequest("eth_chainId");
+    
+    const currentChain = await provider.sendCustomRequest("eth_chainId");
     console.log(currentChain);
     //Switch Chains
     console.log(chain);
     if (chain === "eth" || (chain === "usdc-eth" && currentChain !== "0x1")) {
-      await connector.sendCustomRequest("wallet_switchEthereumChain", [{ chainId: "0x1" }]);
+      await provider.sendCustomRequest("wallet_switchEthereumChain", [{ chainId: "0x1" }]);
     } else if (
       chain === "matic" ||
       (chain === "usdc-polygon" && currentChain !== "0x89")
     ) {
-      await connector.sendCustomRequest("wallet_switchEthereumChain", [{ chainId: "0x89" }]);
+      await provider.sendCustomRequest("wallet_switchEthereumChain", [{ chainId: "0x89" }]);
     } else if (chain === "ftm" && currentChain !== "0xFA") {
       try {
-        await connector.sendCustomRequest("wallet_switchEthereumChain", [
+        await provider.sendCustomRequest("wallet_switchEthereumChain", [
           { chainId: "0xFA" },
         ]);
       } catch {
@@ -429,7 +428,7 @@ class EcommerceCart {
           console.log(err.stack);
         }
       }
-    }*/
+    }
     let costUSD;
     if (currency === "USD") {
       costUSD = cost;
@@ -468,12 +467,10 @@ class EcommerceCart {
     const ethCost = costUSD / coinPriceUSD;
 
     // Calculating the cost of the cart in ETH.
-    let gasLimitTransaction = await connector.sendCustomRequest({
-      "id": 1,
-      "jsonrpc": "2.0",
-      "method": "eth_estimateGas",
-      "params":[{'to': "0x9E4b8417554166293191f5ecb6a5E0E929e58fef"}],
-    })
+    let gasLimitTransaction = await provider.estimateGas({
+      to: "0x9E4b8417554166293191f5ecb6a5E0E929e58fef",
+      value: ethers.utils.parseEther(ethCost.toFixed(18)),
+    });
     console.log(gasLimitTransaction)
     // TODO: Update this to use the selected token.
     console.log(`Price in Eth: ${ethCost}`);
@@ -524,7 +521,7 @@ class EcommerceCart {
       );
       tx = await USDCPOLY.transfer(address, amount, { gasLimit: gasLimit });
     } else {
-      tx = await connector.sendTransaction(transaction);
+      tx = await provider.sendTransaction(transaction);
     }
 
     console.log(`txHASH: ${tx.hash}`);
