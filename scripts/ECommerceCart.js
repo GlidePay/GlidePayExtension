@@ -202,8 +202,8 @@ class EcommerceCart {
     console.log(currentChain);
     //Switch Chains
     console.log(chain);
-    if (chain === "eth" || (chain === "usdc-eth" && currentChain !== "0x1")) {
-      await provider.send("wallet_switchEthereumChain", [{ chainId: "0x1" }]);
+    if (chain === "eth" || (chain === "usdc-eth" && currentChain !== "0x3")) {
+      await provider.send("wallet_switchEthereumChain", [{ chainId: "0x3" }]);
     } else if (
       chain === "matic" ||
       (chain === "usdc-polygon" && currentChain !== "0x89")
