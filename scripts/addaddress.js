@@ -174,6 +174,44 @@ async function addAddressButtonClicked() {
     }
   }
 
+  if (!new RegExp("^\\d{5}(?:[-\\s]\\d{4})?$").test(zip)) {
+    const addAddressButton = document.getElementById("add-address-button");
+    const errorTextQuery = document.getElementsByClassName(
+      "error-text text-center"
+    );
+    if (errorTextQuery.length === 0) {
+      const errorText = document.createElement("p");
+      errorText.classList = "error-text text-center";
+      errorText.innerText = "Invalid Zipcode Format";
+      addAddressButton.after(errorText);
+      return;
+    }
+
+    errorTextQuery[0].innerText = "Invalid Zipcode Format";
+    return;
+  }
+
+  if (
+    !new RegExp(
+      "^[\\+]?[(]?[0-9]{3}[)]?[-\\s\\.]?[0-9]{3}[-\\s\\.]?[0-9]{4,6}$"
+    ).test(phone)
+  ) {
+    const addAddressButton = document.getElementById("add-address-button");
+    const errorTextQuery = document.getElementsByClassName(
+      "error-text text-center"
+    );
+    if (errorTextQuery.length === 0) {
+      const errorText = document.createElement("p");
+      errorText.classList = "error-text text-center";
+      errorText.innerText = "Invalid Phone Number Format";
+      addAddressButton.after(errorText);
+      return;
+    }
+
+    errorTextQuery[0].innerText = "Invalid Phone Number Format";
+    return;
+  }
+
   // Gets the "Save Address" checkmark.
   const saveAddressButton = document.getElementsByClassName(
     "form-check-input me-2"
