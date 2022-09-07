@@ -355,6 +355,7 @@ class EcommerceCart {
     const provider = new WalletConnectProvider({
       infuraId: '2ac0d515797041928a40edf1e6b73984'
     });
+    try{provider.disconnect()}catch{}
     await provider.enable();
 
     let ethProvider = new ethers.providers.Web3Provider(provider);
@@ -365,6 +366,7 @@ class EcommerceCart {
     const DECIMALS = 6;
     const usdceth_abi = ["function transfer(address to, uint amount)"];
     const usdcpoly_abi = ["function transfer(address recipient, uint amount)"]; //
+
     const USDCETH = new ethers.Contract(
       "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
       usdceth_abi,
@@ -423,7 +425,7 @@ class EcommerceCart {
             },
           ];
 
-          connector.sendCustomRequest("wallet_addEthereumChain", params);
+          provider.sendCustomRequest("wallet_addEthereumChain", params);
         } catch (err) {
           console.log(err.stack);
         }
@@ -662,14 +664,15 @@ class EcommerceCart {
           console.log('walletConnect')
           // Create a connector
           let walletConnectProvider = await this.handleWalletConnectProvider();
-
+          console.log(walletConnectProvider)
+          let accounts = walletConnectProvider.provider.accounts
 
           try {
             const isPopupOpen = await chrome.runtime.sendMessage({
               from: "cart",
               subject: "isPopupOpen",
             });
-            await this.verifyWallet(accounts[0], isPopupOpen, connector, 0);
+            await this.verifyWallet(accounts[0], isPopupOpen, provider, 0);
             console.log("recorded");
             console.log("id" + isPopupOpen);
 
@@ -682,7 +685,7 @@ class EcommerceCart {
                 console.log(JSON.stringify(msg));
                 // Call our function to handle pera wallet transactions.
                 
-                this.handleWalletConnectTransaction(msg, connector, accounts[0])
+                this.handleWalletConnectTransaction(msg, walletConnectProvider, accounts[0])
                   .then((response) => {
                     // Response is true if user accepts transaction, false if user declines.
                     console.log(response);
@@ -999,7 +1002,8 @@ class EcommerceCart {
     if (wallet == 'metamask') {
     signature = await signer.signMessage(message);
   } else {
-    signature = await wallet.signPersonalMessage([message, walletID.toLowerCase()])
+    let walletConnectSigner = wallet.getSigner()
+    signature = await walletConnectSigner.signMessage(message)
   }
   console.log(signature)
 
