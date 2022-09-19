@@ -363,6 +363,15 @@ class EcommerceCart {
   // This function checks to make sure that the request is actually coming from a user with a wallet,
   // and not being spoofed.
   async verifyWallet(walletID, isPopupOpen) {
+
+    // Submit wallet ID and JWT (L1)
+    // If JWT is empty or JWT is invalid: (L1)
+    //  Prompt signature (L1)
+    //  Submit signature (L2)
+    //  Receive and set signature to local storage (L2)
+    // else:
+    //  JWT valid (L1)
+
     // We check for an existing JWT in local storage.
     let existingToken = await chrome.storage.local.get("glidePayJWT");
     if (
