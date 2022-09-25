@@ -1,5 +1,40 @@
+class LogError {
+  constructor(customMsg, error, states, uiMsg, errorID, handle) {
+    this.customMsg = customMsg || null;
+    this.error = error || null;
+    this.states = states;
+    this.uiMsg = uiMsg || null;
+    this.errorID = errorID;
+    this.errorOrigin = "Extension";
+    this.timestamp = this.getDate();
+    handle();
+    this.logError();
+  }
+
+  getDate() {
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, "0");
+    const dd = String(today.getDate()).padStart(2, "0");
+    const hh = String(today.getHours()).padStart(2, "0");
+    const nn = String(today.getMinutes()).padStart(2, "0");
+    const ss = String(today.getSeconds()).padStart(2, "0");
+
+    return `${yyyy}/${mm}/${dd}T${hh}:${nn}:${ss}`;
+  }
+
+  logError() {
+    chrome.runtime.sendMessage({
+      from: "cart",
+      subject: "logError",
+      body: { logError: this },
+    });
+    // TODO: Logs error to database
+  }
+}
 //TODO: Load in all saved addresses and display them as selectable options
 //TODO: Think about how we should handle it if someone tries to order to an address the product doesnt ship to
+var addresses_data = [];
 async function getAddresses() {
   const result = await chrome.storage.local.get("glidePayJWT");
   const jwt = result.glidePayJWT;
@@ -11,24 +46,23 @@ async function getAddresses() {
     },
   });
   if (getAddressesResponse.hasOwnProperty("error")) {
-      new LogError(
-        getAddressesResponse.error.customMsg,
-        getAddressesResponse.error.error,
-        {
-          jwt: jwt,
-        },
-        getAddressesResponse.error.uiMsg,
-        getAddressesResponse.error.errorID,
-        () => {
-          const addressSelectDropdown =
-            document.getElementById("addressSelect");
-          const errorText = document.createElement("p");
-          errorText.classList = "error-text text-center";
-          errorText.innerText =
-            getAddressesResponse.uiMsg ?? "Retrieving Addresses Failed";
-          addressSelectDropdown.after(errorText);
-        }
-      )
+    new LogError(
+      getAddressesResponse.error.customMsg,
+      getAddressesResponse.error.error,
+      {
+        jwt: jwt,
+      },
+      getAddressesResponse.error.uiMsg,
+      getAddressesResponse.error.errorID,
+      () => {
+        const addressSelectDropdown = document.getElementById("addressSelect");
+        const errorText = document.createElement("p");
+        errorText.classList = "error-text text-center";
+        errorText.innerText =
+          getAddressesResponse.uiMsg ?? "Retrieving Addresses Failed";
+        addressSelectDropdown.after(errorText);
+      }
+    );
     return;
   }
   const addresses = getAddressesResponse.data;
@@ -43,31 +77,83 @@ async function getAddresses() {
   let address;
   for (let i = 0; i < addresses.length; i++) {
     const option = document.createElement("option");
-    address = [
-      addresses[i].Address_Line_1,
-      addresses[i].Address_Line_2,
-      addresses[i].City,
-      addresses[i].Province_State,
-      addresses[i].Zip_Postal_Code,
-      addresses[i].Country,
-      addresses[i].Phone_Number,
-    ];
-    option.setAttribute("address", address);
-    const addressString =
-      addresses[i].Address_Line_1 +
-      " " +
-      addresses[i].Address_Line_2 +
-      " " +
-      addresses[i].City +
-      " " +
-      addresses[i].Province_State +
-      " " +
-      addresses[i].Zip_Postal_Code +
-      " " +
-      addresses[i].Country +
-      " " +
-      addresses[i].Phone_Number;
-    option.textContent = addressString.substring(0, 20) + "...";
+    address = {
+      Address_Line_1: addresses[i].Address_Line_1,
+      Address_Line_2: addresses[i].Address_Line_2,
+      City: addresses[i].City,
+      Province_State: addresses[i].Province_State,
+      Zip_Postal_Code: addresses[i].Zip_Postal_Code,
+      Country: addresses[i].Country,
+      Phone_Number: addresses[i].Phone_Number,
+    };
+    addresses_data.push(address);
+    let addressString;
+    switch (address.Country) {
+      case "United States of America":
+        addressString =
+          address.Address_Line_1 +
+          " " +
+          address.Address_Line_2 +
+          " " +
+          address.City +
+          " " +
+          address.Province_State +
+          " " +
+          address.Zip_Postal_Code +
+          " " +
+          address.Country +
+          " " +
+          address.Phone_Number;
+      case "Canada":
+        addressString =
+          address.Address_Line_1 +
+          " " +
+          address.Address_Line_2 +
+          " " +
+          address.City +
+          " " +
+          address.Province_State +
+          " " +
+          address.Zip_Postal_Code +
+          " " +
+          address.Country +
+          " " +
+          address.Phone_Number;
+      case "United Kingdom":
+        addressString =
+          address.Address_Line_1 +
+          " " +
+          address.Address_Line_2 +
+          " " +
+          address.City +
+          " " +
+          address.Zip_Postal_Code +
+          " " +
+          address.Country +
+          " " +
+          address.Phone_Number;
+      default:
+        addressString =
+          address.Address_Line_1 +
+          " " +
+          address.Address_Line_2 +
+          " " +
+          address.City +
+          " " +
+          address.Province_State +
+          " " +
+          address.Zip_Postal_Code +
+          " " +
+          address.Country +
+          " " +
+          address.Phone_Number;
+    }
+
+    option.textContent =
+      addressString.length > 20
+        ? addressString.substring(0, 20) + "..."
+        : addressString;
+
     option.value = addresses[i].Address_ID;
 
     addressSelect.appendChild(option);
@@ -85,6 +171,7 @@ async function getAddresses() {
 }
 
 async function setProductInfo(products, shipping, sender) {
+  console.log(addresses_data + "ddd");
   let currency;
   const cartView = document.getElementById("cart-view");
   const loadingView = document.getElementById("loading-view");
@@ -101,7 +188,7 @@ async function setProductInfo(products, shipping, sender) {
     itemImgEntry.setAttribute("class", "ps-4");
     let priceString = productDict["unitPrice"].toString();
     if (priceString.includes(",")) {
-        priceString = priceString.replace(/,/g, "");
+      priceString = priceString.replace(/,/g, "");
     }
     subtotal += parseFloat(priceString) * productDict["quantity"];
     currency = productDict["currency"];
@@ -127,23 +214,123 @@ async function setProductInfo(products, shipping, sender) {
     i++;
   }
 
-  let tax = (subtotal + shipping) * 0.095;
-  let totalPrice = tax + subtotal + shipping;
-  //let value = addressSelect.options[addressSelect.selectedIndex].text;
+  const us_tax_info = {
+    AL: 11.5,
+    AL: 7.5,
+    AZ: 11.2,
+    AR: 12.625,
+    CA: 9.75,
+    CO: 11.2,
+    CT: 6.35,
+    DE: 0.0,
+    FL: 8.0,
+    GA: 8.9,
+    HI: 4.5,
+    ID: 9.0,
+    IL: 11.0,
+    IN: 7.0,
+    IA: 7.0,
+    KS: 10.5,
+    KY: 6.0,
+    LA: 11.45,
+    ME: 5.5,
+    MD: 6.0,
+    MA: 6.25,
+    MI: 6.0,
+    MN: 8.875,
+    MS: 8.0,
+    MO: 9.988,
+    MT: 0.0,
+    NE: 8.0,
+    NV: 8.38,
+    NH: 0.0,
+    NJ: 9.94,
+    NM: 9.44,
+    NY: 8.88,
+    NC: 7.5,
+    ND: 8.5,
+    OH: 8.0,
+    OK: 11.5,
+    OR: 0.0,
+    PA: 8.0,
+    RI: 7.0,
+    SC: 9.0,
+    SD: 9.0,
+    TN: 9.75,
+    TX: 8.25,
+    UT: 9.05,
+    VT: 7.0,
+    VA: 6.0,
+    WA: 10.5,
+    WV: 7.0,
+    WI: 6.75,
+    WY: 6.0,
+  };
 
-  document.getElementById("shipping-total").innerHTML =
-    "Shipping: $" + shipping.toFixed(2).toString();
-  document.getElementById("tax-total").innerHTML =
-    "Tax: $" + tax.toFixed(2).toString();
-  document.getElementById("sub-total").innerHTML =
-    "Subtotal: $" + subtotal.toFixed(2).toString();
-  document.getElementById("final-total").innerHTML =
-    "Total: $" + totalPrice.toFixed(2).toString();
+  const canada_tax_info = {
+    AB: 5.0,
+    BC: 12.0,
+    MB: 12.0,
+    NB: 15.0,
+    NL: 15.0,
+    NS: 15.0,
+    NT: 5.0,
+    NU: 5.0,
+    ON: 13.0,
+    PE: 15.0,
+    QC: 15.0,
+    SK: 11.0,
+    YT: 5.0,
+  };
+
+  let selectedCountry =
+    addresses_data[document.getElementById("addressSelect").selectedIndex]
+      .Country;
+  let selectedState =
+    addresses_data[document.getElementById("addressSelect").selectedIndex]
+      .Province_State;
+  console.log("------");
+  console.log(selectedCountry);
+  switch (selectedCountry) {
+    case "United States of America":
+      console.log("This is us");
+      updateTaxInfo(subtotal, shipping, us_tax_info[selectedState]);
+      break;
+    case "United Kingdom":
+      updateTaxInfo(subtotal, shipping, 2.0);
+      break;
+    case "Canada":
+      updateTaxInfo(subtotal, shipping, canada_tax_info[selectedState]);
+      break;
+  }
+
+  document
+    .getElementById("addressSelect")
+    .addEventListener("change", function () {
+      console.log("HIIIII");
+      let selectedCountry =
+        addresses_data[document.getElementById("addressSelect").selectedIndex]
+          .Country;
+      let selectedState =
+        addresses_data[document.getElementById("addressSelect").selectedIndex]
+          .Province_State;
+      switch (selectedCountry) {
+        case "United States of America":
+          console.log("This is us");
+          updateTaxInfo(subtotal, shipping, us_tax_info[selectedState]);
+          break;
+        case "United Kingdom":
+          updateTaxInfo(subtotal, shipping, 2.0);
+          break;
+        case "Canada":
+          updateTaxInfo(subtotal, shipping, canada_tax_info[selectedState]);
+          break;
+      }
+    });
 
   const confirmButton = document.getElementById("submit-button");
   confirmButton.addEventListener("click", async () => {
-    const addressSelect = document.getElementById("addressSelect");
-    const chain = document.getElementById("currencySelect").value
+    const chain = document.getElementById("currencySelect").value;
     if (addressSelect.selectedIndex === -1) {
       //TODO: Add text or popup or something that says this
       return;
@@ -162,13 +349,15 @@ async function setProductInfo(products, shipping, sender) {
               addressid:
                 addressSelect.options[addressSelect.selectedIndex].value,
               products: products,
-              ticker: chain
+              ticker: chain,
             },
             (response) => {
               if (response) {
                 window.location.href = "/views/ordersentpopup.html";
               } else {
-                alert("Transaction failed. Please make sure you have enough USDC in your wallet to complete the transaction.");
+                alert(
+                  "Transaction failed. Please make sure you have enough USDC in your wallet to complete the transaction."
+                );
               }
             }
           );
@@ -176,6 +365,19 @@ async function setProductInfo(products, shipping, sender) {
       }
     }
   });
+}
+
+function updateTaxInfo(subtotal, shipping, tax_rate) {
+  document.getElementById("shipping-total").innerHTML =
+    "Shipping: $" + shipping.toFixed(2).toString();
+  tax = (subtotal * (tax_rate / 100)).toFixed(2);
+
+  document.getElementById("tax-total").innerHTML = "Tax: $" + tax;
+  document.getElementById("sub-total").innerHTML =
+    "Subtotal: $" + subtotal.toFixed(2).toString();
+  let totalPrice = tax + subtotal + shipping;
+  document.getElementById("final-total").innerHTML =
+    "Total: $" + totalPrice.toFixed(2).toString();
 }
 
 function GetURLParameter(sParam) {
@@ -191,24 +393,6 @@ function GetURLParameter(sParam) {
 
 async function setUpCart(products, shipping, senderTabID) {
   try {
-    await setProductInfo(products, shipping, senderTabID);
-  } catch (err) {
-    new LogError(
-      "Setting Product Info Failed (Uncaught)",
-      err,
-      {},
-      "Getting Products Failed",
-      Date.now(),
-      () => {
-        const columnLabelRow = document.getElementById("column-label-row");
-        const errorText = document.createElement("p");
-        errorText.classList = "error-text text-center";
-        errorText.innerText = "Getting Products Failed";
-        columnLabelRow.after(errorText);
-      }
-    );
-  }
-  try {
     await getAddresses();
   } catch (err) {
     new LogError(
@@ -223,6 +407,25 @@ async function setUpCart(products, shipping, senderTabID) {
         errorText.classList = "error-text text-center";
         errorText.innerText = "Retrieving Addresses Failed";
         addressSelectDropdown.after(errorText);
+      }
+    );
+  }
+  try {
+    await setProductInfo(products, shipping, senderTabID);
+  } catch (err) {
+    console.log(err);
+    new LogError(
+      "Setting Product Info Failed (Uncaught)",
+      err,
+      {},
+      "Getting Products Failed",
+      Date.now(),
+      () => {
+        const columnLabelRow = document.getElementById("column-label-row");
+        const errorText = document.createElement("p");
+        errorText.classList = "error-text text-center";
+        errorText.innerText = "Getting Products Failed";
+        columnLabelRow.after(errorText);
       }
     );
   }
